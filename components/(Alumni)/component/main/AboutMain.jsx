@@ -31,8 +31,8 @@ const AboutMain = () => {
                   <div className='feature-content'>
                     {/* <h6 className="feature-title">Make a Decision</h6> */}
                     <p className='feature-description'>
-                      To bring the old students of the KARPAGAM INSTITUTE OF
-                      TECHNOLOGY under one forum for exchanging of their
+                      To bring the old students of the KARPAGAM COLLEGE OF
+                      ENGINEERING under one forum for exchanging of their
                       experience, dissemination of knowledge and talents amongst
                       its members and also for the furtherance of fellowship,
                       advancement of scientific knowledge in general of the
