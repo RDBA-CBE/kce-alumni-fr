@@ -1,0 +1,32 @@
+{
+  "gallery": [
+    {
+      "img": "/images/KITGallery/pic-1.jpg"
+    },
+    {
+      "img": "/images/KITGallery/pic-2.jpg"
+    },
+    {
+      "img": "/images/KITGallery/pic-3.jpg"
+    },
+    {
+      "img": "/images/KITGallery/pic-4.jpg"
+    },
+    {
+      "img":  "/images/KITGallery/pic-5.jpg"
+    },
+    {
+      "img":  "/images/KITGallery/pic-6.jpg"
+    },
+    {
+      "img":  "/images/KITGallery/pic-7.jpg"
+    },
+    {
+      "img":  "/images/KITGallery/pic-8.jpg"
+    },
+    {
+      "img":  "/images/KITGallery/pic-9.jpg"
+    }
+    
+  ]
+}

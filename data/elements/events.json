@@ -1,0 +1,44 @@
+{
+  "events": [
+    {
+      "slug": "nextjs-performance-tips",
+      "thumbnail": {
+        "large": "/images/blogs/nextjs-performance.jpg"
+      },
+      "title": "10 Tips to Improve Next.js Performance",
+      "desc": "Learn how to optimize your Next.js applications for speed and better SEO performance with these practical tips."
+    },
+    {
+      "slug": "react-hooks-guide",
+      "thumbnail": {
+        "large": "/images/blogs/react-hooks.jpg"
+      },
+      "title": "A Complete Guide to React Hooks",
+      "desc": "Master the power of React Hooks and simplify your code with useState, useEffect, and custom hooks."
+    },
+    {
+      "slug": "javascript-es2025-features",
+      "thumbnail": {
+        "large": "/images/blogs/javascript-es2025.jpg"
+      },
+      "title": "Upcoming JavaScript ES2025 Features",
+      "desc": "Get an early look at the exciting new features coming to JavaScript in ES2025 and how they will impact development."
+    },
+    {
+      "slug": "nodejs-scaling-techniques",
+      "thumbnail": {
+        "large": "/images/blogs/nodejs-scaling.jpg"
+      },
+      "title": "Scaling Node.js Applications",
+      "desc": "Discover techniques and tools to scale your Node.js applications for high traffic and better performance."
+    },
+    {
+      "slug": "tailwindcss-vs-bootstrap",
+      "thumbnail": {
+        "large": "/images/blogs/tailwind-vs-bootstrap.jpg"
+      },
+      "title": "Tailwind CSS vs Bootstrap: Which One Should You Choose?",
+      "desc": "Compare Tailwind CSS and Bootstrap to decide which framework suits your next project best."
+    }
+  ]
+}

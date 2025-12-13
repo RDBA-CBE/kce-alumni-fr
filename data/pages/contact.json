@@ -1,0 +1,50 @@
+{
+  "contactOne": [
+    {
+      "title": "Contact Phone Number",
+      "numOne": "+444 555 666 777",
+      "numTwo": "+222 222 222 333",
+      "icon": "feather-headphones",
+      "address": ""
+    },
+    {
+      "title": "Our Email Address",
+      "mailOne": "admin@gmail.com",
+      "mailTwo": "example@gmail.com",
+      "icon": "feather-mail",
+      "numOne": "",
+      "address": "",
+      "numTwo": ""
+    },
+    {
+      "title": "Our Location",
+      "address": "5678 Bangla Main Road, cities 580 GBnagla, example 54786",
+      "icon": "feather-map-pin",
+      "numOne": "",
+      "numTwo": ""
+    }
+  ],
+
+  "contactTwo": [
+    {
+      "title": "Principal",
+      "subTi": "Karpagam Institute Of Technology ",
+      "address": "S.F.No.247,248, L&T Bypass Road, Seerapalayam Village, Bodipalayam Post, Coimbatore – 641 105",
+      "mailOne": "info@karpagamtech.ac.in",
+      "icon": "feather-map-pin",
+      "numOne": "91-8220333850",
+      "numTwo": "91-78457 22799",
+      "telNum": "0422 3502440",
+      "fax": ""
+    },
+    {
+      "title": "Administrative Office",
+      "subTi": "Karpagam Institutions",
+      "address": "S.F.No.247,248, L&T Bypass Road, Seerapalayam Village, Bodipalayam Post, Coimbatore – 641 105",
+      "icon": "feather-map-pin",
+      "telNum": "0422 - 0422 3502440",
+      "fax": "91 (422) 2611043",
+      "mailOne": "info@karpagamtech.ac.in"
+    }
+  ]
+}
