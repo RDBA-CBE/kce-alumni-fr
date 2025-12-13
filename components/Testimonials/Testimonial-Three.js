@@ -117,7 +117,7 @@ const TestimonialThree = ({ bgClass, designation, isStar,subTitleBg }) => {
                                   </Link>
                                 </div>
                               ) : (
-                                <Link className="rbt-btn-link" style={{color:'#2a8c4d'}} href="#">
+                                <Link className="rbt-btn-link" style={{color:'#d76239'}} href="#">
                                   Read Project Case Study
                                   <i className="feather-arrow-right"></i>
                                 </Link>

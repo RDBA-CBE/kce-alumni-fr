@@ -7,7 +7,7 @@ import Image from "next/image";
 import HeaderRightTwo from "../Header-Right/HeaderRight-Two";
 import Search from "../Offcanvas/Search";
 
-import logo from "../../../public/images/logo/KCE_LOGO.webp";
+import logo from "../../../public/images/logo/KCE_LOGO.png";
 import logoLight from "../../../public/images/dark/logo/logo-light.png";
 import { useAppContext } from "@/context/Context";
 import KITNav from "../KITNav";

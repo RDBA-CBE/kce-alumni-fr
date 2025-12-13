@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import logo from "../../public/images/logo/KCE_LOGO.webp";
+import logo from "../../public/images/logo/KCE_LOGO.png";
 import logoLight from "../../public/images/dark/logo/logo-light.png";
 
 import SingleFooter from "./FooterProps/SingleFooter";

@@ -52,7 +52,7 @@ const HeaderRightTwo = ({ btnClass, btnText, userType }) => {
 
         <li className="account-access rbt-user-wrapper d-none d-xl-block">
           <Link href="#">
-            <i className="feather-user" style={{color:'#43ad27'}}></i>
+            <i className="feather-user" style={{color:'#d76239'}}></i>
 
           </Link>
           <KITUser />
