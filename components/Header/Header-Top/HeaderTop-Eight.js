@@ -29,9 +29,9 @@ const HeaderTopEight = ({ gapSpaceBetween, container, flexDirection }) => {
                       <div className='header-info'>
                         <ul className='rbt-information-list'>
                           <li>
-                            <Link className='text-white' href='mailto:info@karpagamtech.ac.in'>
+                            <Link className='text-white' href='mailto:info@kce.ac.in'>
                               <i className='fas fa-envelope'></i>
-                              info@karpagamtech.ac.in
+                              info@kce.ac.in
                             </Link>
                           </li>
                           {/* <li>
@@ -47,9 +47,9 @@ const HeaderTopEight = ({ gapSpaceBetween, container, flexDirection }) => {
                             ''
                           ) : (
                             <li>
-                              <Link className='text-white' href='tel:04223502440'>
+                              <Link className='text-white' href='tel:+91 422 2619006'>
                               <i className='fas fa-phone' style={{ transform: 'scaleX(-1)' }}></i>
-                                0422 3502440
+                              +91 422 2619006
                                 
                               </Link>
                             </li>
@@ -90,22 +90,22 @@ const HeaderTopEight = ({ gapSpaceBetween, container, flexDirection }) => {
                         <div className='header-info d-none d-xl-block'>
                           <ul className='social-share-transparent'>
                             <li>
-                              <Link className='text-white' href='https://www.facebook.com/' target='blank'>
+                              <Link className='text-white' href='https://www.facebook.com/wekceians/' target='blank'>
                                 <i className='fab fa-facebook-f'></i>
                               </Link>
                             </li>
                             <li>   
-                              <Link className='text-white' href='https://x.com/i/flow/login' target='blank'>
+                              <Link className='text-white' href='https://x.com/wekceians' target='blank'>
                                 <i className='fab fa-twitter'></i>
                               </Link>
                             </li>
                             <li>
-                              <Link className='text-white' href='https://www.linkedin.com/login/in' target='blank'>
+                              <Link className='text-white' href='https://www.linkedin.com/school/wekceians/' target='blank'>
                                 <i className='fab fa-linkedin-in'></i>
                               </Link>
                             </li>
                             <li>
-                              <Link className='text-white' href='https://www.instagram.com/accounts/login/' target='blank'>
+                              <Link className='text-white' href='https://www.instagram.com/wekceians/' target='blank'>
                                 <i className='fab fa-instagram'></i>
                               </Link>
                             </li>

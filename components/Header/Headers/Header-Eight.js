@@ -7,7 +7,7 @@ import Image from "next/image";
 import HeaderRightTwo from "../Header-Right/HeaderRight-Two";
 import Search from "../Offcanvas/Search";
 
-import logo from "../../../public/images/logo/logo.png";
+import logo from "../../../public/images/logo/KCE_LOGO.webp";
 import logoLight from "../../../public/images/dark/logo/logo-light.png";
 import { useAppContext } from "@/context/Context";
 import KITNav from "../KITNav";
@@ -91,8 +91,8 @@ const HeaderEight = ({
                     {isLightTheme ? (
                       <Image
                         src={logo}
-                        width={152}
-                        height={50}
+                        width={250}
+                        height={65}
                         priority={true}
                         alt="Education Logo Images"
                       />
