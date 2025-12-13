@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import logo from "../../public/images/logo/logo.png";
+import logo from "../../public/images/logo/KCE_LOGO.webp";
 
 import { useAppContext } from "@/context/Context";
 import KITMblNav from "./KITMblNav";
@@ -96,12 +96,12 @@ const MobileMenu = () => {
             <ul className="navbar-top-left rbt-information-list justify-content-start">
               <li>
                 <Link href="mailto:hello@example.com">
-                  <i className="feather-mail"></i>info@karpagamtech.ac.in
+                  <i className="feather-mail"></i>info@kce.ac.in
                 </Link>
               </li>
               <li>
                 <Link href="#">
-                  <i className="feather-phone"></i>0422 3502440
+                  <i className="feather-phone"></i>+91 422 2619006
                 </Link>
               </li>
             </ul>
@@ -127,22 +127,22 @@ const MobileMenu = () => {
               <span className="rbt-short-title d-block">Find With Us</span>
               <ul className="social-icon social-default transparent-with-border justify-content-start mt--20">
                 <li>
-                  <Link href="https://www.facebook.com/">
+                  <Link href="https://www.facebook.com/wekceians/" target="blank">
                     <i className="feather-facebook"></i>
                   </Link>
                 </li>
                 <li>
-                  <Link href="https://www.twitter.com">
+                  <Link href="https://x.com/wekceians" target="blank">
                     <i className="feather-twitter"></i>
                   </Link>
                 </li>
                 <li>
-                  <Link href="https://www.instagram.com/">
+                  <Link href="https://www.instagram.com/wekceians" target="blank">
                     <i className="feather-instagram"></i>
                   </Link>
                 </li>
                 <li>
-                  <Link href="https://www.linkdin.com/">
+                  <Link href="https://www.linkedin.com/school/wekceians/" target="blank">
                     <i className="feather-linkedin"></i>
                   </Link>
                 </li>

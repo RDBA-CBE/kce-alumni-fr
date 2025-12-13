@@ -4,7 +4,7 @@ import ProfileEducation from "./(profile-photograph)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Profile Education",
+  title: "Karpagam College Of Engineering - Profile Education",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

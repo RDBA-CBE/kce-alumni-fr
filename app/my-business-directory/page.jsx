@@ -2,7 +2,7 @@ import BackToTop from "@/app/backToTop";
 import MyBusinessDirectory from "./(my-business-directory)";
 
 export const metadata = {
-  title: "karpagam Institute of Technology - Bussiness Directory",
+  title: "Karpagam College Of Engineering - Bussiness Directory",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

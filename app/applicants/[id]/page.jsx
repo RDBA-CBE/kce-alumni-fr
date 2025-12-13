@@ -2,7 +2,7 @@ import Applicants from '../(id)';
 import BackToTop from '@/app/backToTop';
 
 export const metadata = {
-  title: 'Karpagam Institute Of Technology - Members',
+  title: 'Karpagam College Of Engineering - Members',
   description: 'Online Courses & Education NEXTJS14 Template',
 };
 

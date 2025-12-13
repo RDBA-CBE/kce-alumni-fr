@@ -173,7 +173,7 @@ const MyProfileMain = () => {
               {(isAdmin == true || isAdmin == "true") && (
                  <RWebShare
                           data={{
-                            title: "Karpagam Institute Of Technology",
+                            title: "Karpagam College Of Engineering",
                             text: `Check this out!`,
                             url: window.location.href,
                           }}

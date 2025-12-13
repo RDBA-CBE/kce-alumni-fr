@@ -5,7 +5,7 @@ import MyProfilePicture from "./(edit-profile-picture)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Profile Picture",
+  title: "Karpagam College Of Engineering - Profile Picture",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

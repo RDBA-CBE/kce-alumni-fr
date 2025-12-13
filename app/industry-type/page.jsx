@@ -3,7 +3,7 @@ import IndustryType from "./(industry-type)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Industry Type",
+  title: "Karpagam College Of Engineering - Industry Type",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

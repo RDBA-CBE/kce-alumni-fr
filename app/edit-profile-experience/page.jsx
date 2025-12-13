@@ -5,7 +5,7 @@ import MyProfileExperience from "./(edit-profile-experience)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Experience",
+  title: "Karpagam College Of Engineering - Experience",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

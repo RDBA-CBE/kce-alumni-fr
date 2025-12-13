@@ -2,7 +2,7 @@ import JobBoard from './(job-board)';
 import BackToTop from '@/app/backToTop';
 
 export const metadata = {
-  title: 'Karpagam Institute Of Technology - Job Board',
+  title: 'Karpagam College Of Engineering - Job Board',
   description: 'Online Courses & Education NEXTJS14 Template',
 };
 

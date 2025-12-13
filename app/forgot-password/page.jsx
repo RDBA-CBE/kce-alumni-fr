@@ -3,7 +3,7 @@ import Password from "./(forgot-password)";
 import ForgetPassword from "./(forgot-password)";
 
 export const metadata = {
-  title: "Login & Register - Karpagam Institute of Technology",
+  title: "Login & Register - Karpagam College Of Engineering",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

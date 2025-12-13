@@ -54,7 +54,7 @@ const KITUser = () => {
   return (
     <>
      
-      <div className="rbt-user-menu-list-wrapper">
+      <div className="rbt-user-menu-list-wrapper header-user">
         {UserData &&
           UserData.user.map((person, index) => (
             <div className="inner" key={index}>

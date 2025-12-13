@@ -3,8 +3,8 @@ import BackToTop from './backToTop';
 import HomePage from './home/page';
 
 export const metadata = {
-  title: 'Karpagam Institute Of Technology ',
-  description: 'Karpagam Institute Of Technology ',
+  title: 'Karpagam College Of Engineering ',
+  description: 'Karpagam College Of Engineering ',
 };
 
 export default function Home() {

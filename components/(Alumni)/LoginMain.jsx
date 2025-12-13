@@ -195,7 +195,10 @@ const LoginMain = () => {
 
               <div className="mt-5 text-center">
                 <p>
-                  Don't have an account? <Link href={"/signin"}>Sign up</Link>
+                  Don't have an account?{" "}
+                  <Link href="/signin" className="underline">
+                    Sign up
+                  </Link>
                 </p>
               </div>
             </form>

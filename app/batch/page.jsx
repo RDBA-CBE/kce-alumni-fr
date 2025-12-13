@@ -4,7 +4,7 @@ import Batch from "./(batch)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Batch",
+  title: "Karpagam College Of Engineering - Batch",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

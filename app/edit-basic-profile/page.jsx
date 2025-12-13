@@ -2,7 +2,7 @@ import BackToTop from '@/app/backToTop';
 import MyBasicDetails from './(edit-basic-profile)';
 
 export const metadata = {
-  title: 'Karpagam Institute Of Technology - Profile',
+  title: 'Karpagam College Of Engineering - Profile',
   description: 'Online Courses & Education NEXTJS14 Template',
 };
 

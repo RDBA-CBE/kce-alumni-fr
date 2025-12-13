@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import logo from "../../public/images/logo/footer-logo.png";
+import logo from "../../public/images/logo/KCE_LOGO.webp";
 import logoLight from "../../public/images/dark/logo/logo-light.png";
 
 import SingleFooter from "./FooterProps/SingleFooter";
@@ -28,10 +28,10 @@ KITFooter = () => {
     ],
     description:
       "To impart quality technical education emphasizing innovations and research with social and ethical values.",
-    phone: "0422 3502440",
-    mail: "info@karpagamtech.ac.in",
+    phone: "+91 422 2619005",
+    mail: "info@kce.ac.in",
     address:
-      "S.F.No.247,248, L&T Bypass Road, Seerapalayam Village, Coimbatore – 641 105",
+      "Myleripalayam Village, Othakkal Mandapam Post, Coimbatore - 641032, Tamilnadu, India",
   };
 
   return (

@@ -43,7 +43,7 @@ const Banner = () => {
                           </span>
                         </div>
                         <h1 className='title w-700'>
-                          Karpagam Institute Of Technology <br />
+                          Karpagam College Of Engineering <br />
                           <strong className='color-white'></strong>
                         </h1>
                         <div className="button-group mt--30">

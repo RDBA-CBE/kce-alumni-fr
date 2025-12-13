@@ -3,7 +3,7 @@ import Skills from "./(skills)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Skills",
+  title: "Karpagam College Of Engineering - Skills",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

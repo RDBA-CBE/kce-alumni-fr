@@ -4,7 +4,7 @@ import PostCategory from "./(post-category)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Post Category",
+  title: "Karpagam College Of Engineering - Post Category",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

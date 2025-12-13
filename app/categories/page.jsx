@@ -6,7 +6,7 @@ import Category from "./(categories)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Categories",
+  title: "Karpagam College Of Engineering - Categories",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

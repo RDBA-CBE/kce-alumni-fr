@@ -3,7 +3,7 @@ import CreateMember from "./(create-member)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Create Member",
+  title: "Karpagam College Of Engineering - Create Member",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

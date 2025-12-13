@@ -3,7 +3,7 @@ import Dashboard from "./(my-posts)";
 import BackToTop from "@/app/backToTop";
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Dashboard",
+  title: "Karpagam College Of Engineering - Dashboard",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

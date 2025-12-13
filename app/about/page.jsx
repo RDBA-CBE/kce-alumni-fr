@@ -1,7 +1,7 @@
 import About from './(about)';
 
 export const metadata = {
-  title: ' Karpagam Institute Of Technology - About',
+  title: ' Karpagam College Of Engineering - About',
   description: 'Online Courses & Education NEXTJS14 Template',
 };
 

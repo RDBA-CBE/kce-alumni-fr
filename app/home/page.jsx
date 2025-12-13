@@ -2,7 +2,7 @@ import Home from './(home)';
 import { getAllPostsMeta } from '@/mdx';
 
 export const metadata = {
-  title: 'Karpagam Institute Of Technology ',
+  title: 'Karpagam College Of Engineering ',
   description: 'Online Courses & Education NEXTJS14 Template',
 };
 

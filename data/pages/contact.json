@@ -28,23 +28,23 @@
   "contactTwo": [
     {
       "title": "Principal",
-      "subTi": "Karpagam Institute Of Technology ",
-      "address": "S.F.No.247,248, L&T Bypass Road, Seerapalayam Village, Bodipalayam Post, Coimbatore – 641 105",
-      "mailOne": "info@karpagamtech.ac.in",
+      "subTi": "Karpagam College Of Engineering ",
+      "address": "Myleripalayam Village, Othakkal Mandapam Post, Coimbatore - 641032, Tamilnadu, India",
+      "mailOne": "info@kce.ac.in",
       "icon": "feather-map-pin",
-      "numOne": "91-8220333850",
-      "numTwo": "91-78457 22799",
-      "telNum": "0422 3502440",
+      "numOne": "+91 82203 33750",
+      "numTwo": "+91 82203 33620",
+      "telNum": "+91 – 422 2619005",
       "fax": ""
     },
     {
       "title": "Administrative Office",
       "subTi": "Karpagam Institutions",
-      "address": "S.F.No.247,248, L&T Bypass Road, Seerapalayam Village, Bodipalayam Post, Coimbatore – 641 105",
+      "address": "Myleripalayam Village, Othakkal Mandapam Post, Coimbatore - 641032, Tamilnadu, India",
       "icon": "feather-map-pin",
-      "telNum": "0422 - 0422 3502440",
-      "fax": "91 (422) 2611043",
-      "mailOne": "info@karpagamtech.ac.in"
+      "telNum": "+91 422 2619005",
+      "fax": " +91 – 422 2619005",
+      "mailOne": "info@kce.ac.in"
     }
   ]
 }

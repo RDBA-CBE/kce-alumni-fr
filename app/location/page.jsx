@@ -4,7 +4,7 @@ import Locations from "./(location)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Location",
+  title: "Karpagam College Of Engineering - Location",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

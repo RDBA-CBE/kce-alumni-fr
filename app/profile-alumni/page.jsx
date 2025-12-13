@@ -4,7 +4,7 @@ import ProfileAlumni from "./(profile-alumni)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Profile Contact",
+  title: "Karpagam College Of Engineering - Profile Contact",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

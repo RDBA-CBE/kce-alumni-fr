@@ -5,7 +5,7 @@ import MyContacts from "./(edit-profile-contact)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Contact",
+  title: "Karpagam College Of Engineering - Contact",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

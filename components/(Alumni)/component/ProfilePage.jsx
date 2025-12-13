@@ -51,7 +51,7 @@ const ProfilePage = () => {
               </button>{" "}
               <RWebShare
                           data={{
-                            title: "Karpagam Institute Of Technology",
+                            title: "Karpagam College Of Engineering",
                             text: `Check this out!`,
                             url: window.location.href,
                           }}

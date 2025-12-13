@@ -1,7 +1,7 @@
 import GalleryPage from './(gallery)';
 
 export const metadata = {
-  title: 'Karpagam Institute Of Technology - Gallery',
+  title: 'Karpagam College Of Engineering - Gallery',
   description: 'Online Courses & Education NEXTJS14 Template',
 };
 

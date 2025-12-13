@@ -382,7 +382,7 @@ const MemoriesMain = () => {
                         </button>
                         <RWebShare
                           data={{
-                            title: "Karpagam Institute Of Technology - Memory",
+                            title: "Karpagam College Of Engineering - Memory",
                             text: `Check this out!`,
                             url: window.location.href,
                           }}
@@ -585,7 +585,7 @@ const MemoriesMain = () => {
                           </button>
                            <RWebShare
                           data={{
-                            title: "Karpagam Institute Of Technology - Memory",
+                            title: "Karpagam College Of Engineering - Memory",
                             text: `Check this out! `,
                             url: window.location.href,
                           }}

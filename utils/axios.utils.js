@@ -20,7 +20,7 @@ export const instance = () => {
   if (api) return api;
 
   api = axios.create({
-    baseURL: "http://88.222.213.249/",
+    baseURL: "https://alumnibk.kce.ac.in/",
   });
 
   // Request interceptor

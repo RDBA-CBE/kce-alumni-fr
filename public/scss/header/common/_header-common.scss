@@ -6,9 +6,37 @@
         display: block;
 
         img {
-            max-height: 65px;
+           
             object-fit: cover;
+
+            
+        @media #{$laptop-device} {
+            max-height: 62px;
+                
         }
+        @media #{$lg-layout} {
+            max-height: 62px;
+            
+        }
+        @media #{$md-layout} {
+            max-height: 62px;
+
+        }
+        @media #{$sm-layout} {
+            max-height:62px;
+
+        }
+        @media #{$large-mobile} {
+            max-height: 52px;
+
+        }
+        @media #{$small-mobile} {
+            max-height: 42px;
+
+        }
+        
+    }
+
     }
 }
 

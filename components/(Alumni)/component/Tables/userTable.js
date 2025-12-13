@@ -164,7 +164,7 @@ const UserTable = (props) => {
             )}
           </div>
         </div>
-        {tableData?.length > 9 ? (
+        {tableData?.length > 9 && (
           <div>
             <div
               className="mb-20 "
@@ -181,17 +181,7 @@ const UserTable = (props) => {
               />
             </div>
           </div>
-        ) : (
-          <div
-            className="text-center pt-10 d-flex justify-content-center align-items-center"
-            style={{
-              height: "500px",
-              maxWidth: "100%",
-            }}
-          >
-            No Data Found
-          </div>
-        )}
+        ) }
       </div>
     </>
   );

@@ -95,22 +95,18 @@ const ForgetPasswordMain = () => {
               />
               <span className="focus-border"></span>
             </div>
-            
-
-            
 
             <div className="form-submit-group d-flex justify-content-between">
               <button
                 type="button"
                 className="rbt-btn btn-border-gradient radius-round btn-sm hover-transform-none"
-                 onClick={()=>router.push("/login")}
+                onClick={() => router.push("/login")}
               >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">Cancel</span>
                   <span className="btn-icon">
                     <i className="feather-arrow-right"></i>
                   </span>
-                  
                 </span>
               </button>
               <button
@@ -131,7 +127,10 @@ const ForgetPasswordMain = () => {
 
             <div className="mt-5 text-center">
               <p>
-               Back to <Link href={"/login"}>Login</Link>
+                Back to{" "}
+                <Link href="/login" className="underline">
+                  Login
+                </Link>
               </p>
             </div>
           </form>

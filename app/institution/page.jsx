@@ -4,7 +4,7 @@ import Institution from "./(institution)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Institution",
+  title: "Karpagam College Of Engineering - Institution",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

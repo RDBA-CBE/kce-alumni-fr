@@ -4,7 +4,7 @@ import Members from "../(members)";
 import MyAccount from "../(id)/MyAccount";
 
 export const metadata = {
-  title: "Karpagam Institute of Technology",
+  title: "Karpagam College Of Engineering",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 

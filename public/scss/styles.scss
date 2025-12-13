@@ -1787,11 +1787,13 @@ select {
 .font-20 {
   font-size: 20px !important;
 }
-@media screen and (min-width: 1600px) and (max-width: 1200px) {
-  .rbt-user-wrapper:hover .rbt-user-menu-list-wrapper {
+@media screen and (min-width: 1200px) and (max-width: 1600px) {
+ .header-user.rbt-user-menu-list-wrapper {
     left: -180px;
   }
 }
+
+
 
 @media screen and (min-width: 1200px) and (max-width: 1800px) {
   .con-wid {
@@ -1870,4 +1872,7 @@ select {
 
 .p-15 {
   padding: 15px;
+}
+.underline{
+  text-decoration: underline;
 }

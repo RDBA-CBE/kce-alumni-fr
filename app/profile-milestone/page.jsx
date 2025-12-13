@@ -4,7 +4,7 @@ import ProfileMilestone from "./(profile-milestone)";
 
 
 export const metadata = {
-  title: "Karpagam Institute of Technology - Profile Milestone",
+  title: "Karpagam College Of Engineering - Profile Milestone",
   description: "Online Courses & Education NEXTJS14 Template",
 };
 
