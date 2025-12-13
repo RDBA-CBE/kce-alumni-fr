@@ -28,22 +28,22 @@
   "contactTwo": [
     {
       "title": "Principal",
-      "subTi": "Karpagam College Of Engineering ",
+      "subTi": "Karpagam College Of Engineering",
       "address": "Myleripalayam Village, Othakkal Mandapam Post, Coimbatore - 641032, Tamilnadu, India",
       "mailOne": "info@kce.ac.in",
       "icon": "feather-map-pin",
       "numOne": "+91 82203 33750",
       "numTwo": "+91 82203 33620",
-      "telNum": "+91 – 422 2619005",
+      "telNum": "+91 422 2619005",
       "fax": ""
     },
     {
       "title": "Administrative Office",
-      "subTi": "Karpagam Institutions",
+      "subTi": "Karpagam College Of Engineering",
       "address": "Myleripalayam Village, Othakkal Mandapam Post, Coimbatore - 641032, Tamilnadu, India",
       "icon": "feather-map-pin",
       "telNum": "+91 422 2619005",
-      "fax": " +91 – 422 2619005",
+      "fax": " +91 422 2619005",
       "mailOne": "info@kce.ac.in"
     }
   ]
