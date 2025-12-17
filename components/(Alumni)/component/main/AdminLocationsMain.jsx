@@ -216,7 +216,7 @@ const AdminLocationsMain = () => {
             <div className="rbt-button-group justify-content-end">
               <div
                 className="rbt-btn btn-xs bg-secondary-opacity radius-round"
-                title="Create Department"
+                title="Create Location"
                 onClick={showModal}
               >
                 <i className="feather-plus pl--0" onClick={showModal} />

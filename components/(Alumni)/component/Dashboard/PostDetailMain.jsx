@@ -453,7 +453,7 @@ const PostDetailMain = () => {
                         <a
                           className="rbt-btn btn-xs bg-white radius-round text-white"
                           href="#"
-                          title="Edit Memory"
+                          title="Edit"
                           onClick={() => editPost(state?.postList)}
                         >
                           <i className="feather-edit pl--0" />

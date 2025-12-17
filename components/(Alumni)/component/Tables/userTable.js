@@ -45,7 +45,7 @@ const UserTable = (props) => {
                 <a
                   className="rbt-btn btn-xs bg-secondary-opacity radius-round"
                   href="#"
-                  title="Edit Album"
+                  title={subtitile_1??""}
                   onClick={() => subtitile_1_onPress()}
                 >
                   <i
@@ -58,7 +58,7 @@ const UserTable = (props) => {
                 <a
                   className="rbt-btn btn-xs bg-primary radius-round"
                   href="#"
-                  title="Delete Album"
+                  title={subtitile_2??""}
                   onClick={() => subtitile_2_onPress()}
                 >
                   <i

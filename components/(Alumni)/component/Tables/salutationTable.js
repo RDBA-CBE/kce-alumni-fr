@@ -40,7 +40,7 @@ const SalutationTable = (props) => {
                 <a
                   className="rbt-btn btn-xs bg-secondary-opacity radius-round"
                   href="#"
-                  title="Edit Album"
+                  title=""
                   onClick={() => subtitile_1_onPress()}
                 >
                   <i
@@ -53,7 +53,7 @@ const SalutationTable = (props) => {
                 <a
                   className="rbt-btn btn-xs bg-primary radius-round"
                   href="#"
-                  title="Delete Album"
+                  title=""
                   onClick={() => subtitile_2_onPress()}
                 >
                   <i
@@ -66,7 +66,7 @@ const SalutationTable = (props) => {
                 <a
                   className="rbt-btn btn-xs  radius-round"
                   href="#"
-                  title="Create Album"
+                  title=""
                   // onClick={() => setState({ isUploadPic: true })}
                 >
                   <i className="feather-plus-circle pl--0" />

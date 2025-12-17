@@ -325,7 +325,7 @@ setState({ btnLoading: false });
                           <div className="rbt-button-group align-items-start">
                             <div
                               className="rbt-btn btn-xs  radius-round"
-                              title="Add Skill"
+                              title="Add "
                               onClick={showModal}
                             >
                               <i className="feather-plus pl--0"></i>

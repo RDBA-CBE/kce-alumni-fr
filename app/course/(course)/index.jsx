@@ -42,7 +42,6 @@ const Course = () => {
   });
 
   console.log("formData", formData);
-  
 
   const [errMsg, setErrMsg] = useState({});
   const [getDepartment, setGetDepartment] = useState([]);
@@ -265,7 +264,7 @@ const Course = () => {
                                 "Department",
                                 "Actions",
                               ]}
-                              subtitile_1
+                              subtitile_1="Create Course"
                               tableData={state.courseList}
                               loading={state.loading || state.btnLoading}
                               total={state.total}
@@ -276,9 +275,7 @@ const Course = () => {
                                 GetCourse(number);
                               }}
                               subtitile_1_onPress={() =>
-                                setState({ isOpen: true ,
-                                  editId:null
-                                })
+                                setState({ isOpen: true, editId: null })
                               }
                             />
                           </div>
@@ -355,7 +352,7 @@ const Course = () => {
             </Modal>
           </div>
 
-           {/* <Separator /> */}
+          {/* <Separator /> */}
           <KITFooter />
         </Context>
       </Provider>

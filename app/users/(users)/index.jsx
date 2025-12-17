@@ -215,8 +215,8 @@ const Users = () => {
                                 setState({ currentPage: number });
                                 userList(number);
                               }}
-                              subtitile_1={true}
-                              subtitile_2={true}
+                              subtitile_1={"Create User"}
+                              subtitile_2={"Create Member"}
                               subtitile_1_onPress={() =>
                                 setState({
                                   isOpen1: true,

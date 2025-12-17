@@ -46,7 +46,7 @@ const CourseTable = (props) => {
                 <a
                   className="rbt-btn btn-xs bg-secondary-opacity radius-round"
                   href="#"
-                  title=" Album"
+                  title={subtitile_1??""}
                   onClick={() => subtitile_1_onPress()}
                 >
                   <i
@@ -59,7 +59,7 @@ const CourseTable = (props) => {
                 <a
                   className="rbt-btn btn-xs bg-primary radius-round"
                   href="#"
-                  title="Delete Album"
+                  title={subtitile_2??""}
                   onClick={() => subtitile_2_onPress()}
                 >
                   <i
@@ -72,7 +72,7 @@ const CourseTable = (props) => {
                 <a
                   className="rbt-btn btn-xs  radius-round"
                   href="#"
-                  title="Create Album"
+                  title={subtitile_3??""}
                   // onClick={() => setState({ isUploadPic: true })}
                 >
                   <i className="feather-plus-circle pl--0" />
