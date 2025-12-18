@@ -217,7 +217,7 @@ const Course = () => {
                                 "End Year",
                                 "Actions"
                               ]}
-                              subtitile_1
+                              subtitile_1="Create Batch"
                               tableData={state.batchList}
                               loading={state.loading || state.btnLoading}
                               total={state.total}
