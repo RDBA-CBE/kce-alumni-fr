@@ -117,7 +117,7 @@ const Course = () => {
   const update = (approval) => {
     setFormData({
       department: {
-        value: approval?.department,
+        value: approval?.department_id,
         label: approval?.department,
       },
       graduate: approval?.graduate,
@@ -329,7 +329,7 @@ const Course = () => {
                     label="Department"
                     type="loadMoreSelect"
                     name="department"
-                    value={formData.department.name}
+                    value={formData.department}
                     onChange={(e) =>
                       setFormData({ ...formData, department: e })
                     }
