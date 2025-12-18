@@ -919,7 +919,7 @@ const JobBoardMain = () => {
                                         <th>Job Title</th>
                                         <th>Industry</th>
                                         <th>Role</th>
-                                        <th>N.Of Applicants</th>
+                                        <th>No.Of Applicants</th>
                                         <th>Posted Date</th>
                                         <th></th>
                                       </tr>
