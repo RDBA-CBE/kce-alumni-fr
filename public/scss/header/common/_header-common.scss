@@ -11,27 +11,27 @@
 
             
         @media #{$laptop-device} {
-            max-height: 71px;
+            max-height: "auto";
                 
         }
         @media #{$lg-layout} {
-            max-height: 71px;
+            max-height: "auto"
             
         }
         @media #{$md-layout} {
-            max-height: 71px;
+            max-height: "auto"
 
         }
         @media #{$sm-layout} {
-            max-height:71px;
+            max-height: "auto"
 
         }
         @media #{$large-mobile} {
-            max-height: 59px;
+            max-height:  "auto"
 
         }
         @media #{$small-mobile} {
-            max-height: 48px;
+            max-height:  "auto"
 
         }
         
