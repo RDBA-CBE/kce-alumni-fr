@@ -6,7 +6,7 @@
     "lesson": "March 14, 2025",
     "student": "By Edit role",
     "courseTitle": "One Day Hands-on Workshop on Statistical Discovery For Pharmaceutical Sciences",
-    "desc": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    "desc": "",
     "review": 45,
     "price": 199
   },
@@ -17,7 +17,7 @@
     "lesson": "Feb 4, 2025",
     "student": "By author",
     "courseTitle": "International Conference On Developments In Drug Discovery Science",
-    "desc": "It has survived not only five centuries, but also the leap into electronic typesetting",
+    "desc": "",
     "review": 60,
     "price": 299
   },
@@ -28,7 +28,7 @@
     "lesson": "Feb 7, 2025",
     "student": "By author",
     "courseTitle": "Two Days National Conference on Preclinical To Clinical Approach In Neuropharmacology",
-    "desc": "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested.",
+    "desc": "",
     "review": 30,
     "price": 149
   }
