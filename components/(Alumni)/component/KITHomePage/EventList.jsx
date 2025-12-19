@@ -21,10 +21,10 @@ const EventList = ({ isPagination, top, start, end }) => {
                   <span className="theme-gradient">EVENTS</span>
                 </h6>
                 <h2 className="title w-600">
-                 Lorem ipsum dolor sit amet  <br />{" "}
-                  <span className="theme-gradient"> adipisicing elit</span>
+                Celebrating Connections, Knowledge and   <br />{" "}
+                  <span className="theme-gradient"> Achievements</span>
                 </h2>
-                <p className="mt-4">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin <br /> literature from 45 BC, making it over 2000 years old.</p>
+                <p className="mt-4">Our events bring together alumni, faculty, students, and industry experts to reconnect, share knowledge, and celebrate milestones. From alumni meets and conferences to workshops and cultural gatherings, each event strengthens the KCE community and creates lasting memories.</p>
               </div>
             </div>
           </div>

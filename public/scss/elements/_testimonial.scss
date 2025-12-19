@@ -374,6 +374,7 @@ ul {
 
         @media #{$laptop-device} {
             padding: 40px 30px;
+            height: 320px;
         }
 
         @media #{$lg-layout} {

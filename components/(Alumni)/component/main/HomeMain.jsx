@@ -15,6 +15,8 @@ import CallToActionFour from "../../../Call-To-Action/CallToAction-Four";
 import EventList from "../KITHomePage/EventList";
 import Loader from "../../Loader";
 import AlumniConnect from "../KITHomePage/AlumniConnect";
+import HomeAbout from "../KITHomePage/about";
+
 
 const HomeMain = ({ blogs }) => {
   const [loading, setLoading] = useState(true);
@@ -49,9 +51,11 @@ const HomeMain = ({ blogs }) => {
             <Connect />
           </div>
         </div>
-        <div className="p-0 mt--60" style={{borderRadius:"none"}}>
+        <div className="p-0 mt--60" style={{ borderRadius: "none" }}>
           <AlumniConnect />
         </div>
+
+       <HomeAbout />
       </div>
 
       {/* ----------Connect end----------- */}
@@ -71,8 +75,7 @@ const HomeMain = ({ blogs }) => {
                 </h6>
                 <h2 className="title">What Our Alumini's Say</h2>
                 <p className="description mt--20">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry.
+                Our alumni share their experiences, memories, and the impact KCE has had on their personal and professional journeys.
                 </p>
                 <div className="call-to-btn  mt-0">
                   <Link
@@ -116,9 +119,7 @@ const HomeMain = ({ blogs }) => {
                 </h6>
                 <h2 className="title w-600">Latest Jobs</h2>
                 <p className="mt-4">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor <br /> incididunt ut labore et dolore magna
-                  aliqua.
+                Explore the latest job opportunities shared by our alumni network and industry partners.<br /> Stay updated with openings across various domains and take the next step in your career with guidance from the KCE community.
                 </p>
               </div>
             </div>

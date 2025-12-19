@@ -4,6 +4,7 @@ import React from 'react';
 import videoImage from '../../../../public/images/others/health-b-01.png';
 import videoImage2 from '../../../../public/images/others/faq-01.png';
 import videoImage1 from '../../../../public/images/others/kids-video-01.jpg';
+import HomeAbout from '../KITHomePage/about';
 
 const AboutMain = () => {
   return (
@@ -18,7 +19,9 @@ const AboutMain = () => {
             </div>
           </div>
         </div>
-        <div className='row row--35 align-items-center '>
+               <HomeAbout />
+        
+        {/* <div className='row row--35 align-items-center '>
           <div className='col-lg-7 col-12 mt--50'>
             <div className='inner'>
               <div className='rbt-feature-wrapper'>
@@ -29,7 +32,6 @@ const AboutMain = () => {
                     </span>
                   </div>
                   <div className='feature-content'>
-                    {/* <h6 className="feature-title">Make a Decision</h6> */}
                     <p className='feature-description'>
                       To bring the old students of the KARPAGAM COLLEGE OF
                       ENGINEERING under one forum for exchanging of their
@@ -102,14 +104,7 @@ const AboutMain = () => {
                 unoptimized={true}
                 alt='Video Images'
               />
-              {/* <a
-                    className="rbt-btn btn-white rounded-player-2 popup-video position-to-top bounced-btn"
-                    data-vbtype="video"
-                    controls
-                    href="https://www.youtube.com/watch?v=nA1Aqp0sPQo"
-                  >
-                    <span className="play-icon"></span>
-                  </a> */}
+             
             </div>
           </div>
         </div>
@@ -125,14 +120,7 @@ const AboutMain = () => {
                 unoptimized={true}
                 alt='Video Images'
               />
-              {/* <a
-                    className="rbt-btn btn-white rounded-player-2 popup-video position-to-top bounced-btn"
-                    data-vbtype="video"
-                    controls
-                    href="https://www.youtube.com/watch?v=nA1Aqp0sPQo"
-                  >
-                    <span className="play-icon"></span>
-                  </a> */}
+             
             </div>
           </div>
 
@@ -262,17 +250,10 @@ const AboutMain = () => {
                 unoptimized={true}
                 alt='Video Images'
               />
-              {/* <a
-                    className="rbt-btn btn-white rounded-player-2 popup-video position-to-top bounced-btn"
-                    data-vbtype="video"
-                    controls
-                    href="https://www.youtube.com/watch?v=nA1Aqp0sPQo"
-                  >
-                    <span className="play-icon"></span>
-                  </a> */}
+             
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

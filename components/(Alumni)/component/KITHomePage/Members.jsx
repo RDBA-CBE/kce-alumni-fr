@@ -11,6 +11,7 @@ const Members = () => {
   const router = useRouter();
 
   const [latestMembers, setLatestMembers] = useState([]);
+console.log('✌️latestMembers --->', latestMembers);
   const [memData, setMemData] = useState([]);
 
   useEffect(() => {
@@ -44,13 +45,11 @@ const Members = () => {
           <div className='col-lg-12'>
             <div className='section-title text-center'>
               <h6 className='b2 mb--15'>
-                <span className='theme-gradient'>LOREM</span>
+                <span className='theme-gradient'> Members</span>
               </h6>
               <h2 className='title w-600'>Latest Members</h2>
               <p className='mt-4'>
-                Equal blame belongs to those who fail in their duty through
-                weakness of will, which is the <br /> same as saying through
-                shrinking from toil and pain.
+              Our alumni community brings together members from different batches, professions, and regions.<br /> From recent graduates to experienced professionals, each member contributes to the strength, diversity, and success of the KCE alumni network.
               </p>
             </div>
           </div>

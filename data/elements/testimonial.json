@@ -123,132 +123,106 @@
     {
       "left": [
         {
-          "img": "/images/testimonial/1.jpg",
-          "title": "Martha Maldonado",
-          "position": "Executive Chairman",
-          "company": "@ Google",
-          "desc": "After the launch, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
+          "img": "/images/client/senthil-kumar.webp",
+          "title": "P.Senthil Kumar",
+          "position": "Junior Engineer – CPWD",
+          "company": "",
+          "desc": "My College days are unforgettable and in fact those days are the most happiest & fruitful days in my life. I proudly feel that I cherished every moments of my college."
         },
         {
           "img": "/images/testimonial/2.jpg",
-          "title": "Michael D. Lovelady",
-          "position": "CEO",
-          "company": "@ Google",
-          "desc": "Histudy education, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit. "
-        },
-        {
-          "img": "/images/testimonial/3.jpg",
-          "title": "Valerie J. Creasman",
-          "position": "Executive Designer",
-          "company": "@ Google",
-          "desc": "Our educational, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi. "
-        },
-        {
-          "img": "/images/testimonial/4.jpg",
-          "title": "Hannah R. Sutton",
-          "position": "Executive Chairman",
-          "company": "@ Google",
-          "desc": "People says about, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
+          "title": "SARAVANAN S",
+          "position": "Project Engineer– RGN Engineering & Constructions Pvt Ltd,Bangalore.",
+          "company": "",
+          "desc": "Firstly, Karpagam College of Engineering is not a college, it is a brand. It is unique in its field. Discipline is like in the air of its environment. I am so grateful to be a part of this college."
         },
         {
           "img": "/images/testimonial/1.jpg",
-          "title": "Pearl B. Hill",
-          "position": "Chairman SR",
-          "company": "@ Facebook",
-          "desc": "Like this histudy, vulputate at sapien sit amet,auctor iaculis lorem. In vel hend rerit."
-        },
-        {
-          "img": "/images/testimonial/2.jpg",
-          "title": "Mandy F. Wood",
-          "position": "SR Designer",
-          "company": "@ Google",
-          "desc": "Educational template, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
+          "title": "K.Saravanan",
+          "position": "Entrepreneur – Balaji Construction",
+          "company": "",
+          "desc": "Karpagam College of Engineering is much beyond just an “Institution”…It actually denotes a “Culture”…Culture of excellence, empowerment, and enrichment."
         },
         {
           "img": "/images/testimonial/3.jpg",
-          "title": "Mildred W. Diaz",
-          "position": "Executive Officer",
-          "company": "@ Yelp",
-          "desc": "Online leaning, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi. Vestibulum eget risus velit."
-        },
-        {
-          "img": "/images/testimonial/4.jpg",
-          "title": "Christopher H. Win",
-          "position": "Product Designer",
-          "company": "@ Google",
-          "desc": "Remote learning, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi."
+          "title": "Ms. Priya A (2014-2018 Batch)",
+          "position": "Engineer | Cost Audit Sobha Limited,Bangalore.",
+          "company": "",
+          "desc": "From the moment I walked towards the entrance door,there were a couple of mentors who guided me to the conference hall for ‘Freshers’ day celebration’. "
         },
         {
           "img": "/images/testimonial/1.jpg",
-          "title": "Martha Maldonado",
-          "position": "Executive Chairman",
-          "company": "@ Google",
-          "desc": "University managemnet, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi."
+          "title": "Shankar P",
+          "position": "Civil Engineering Batch:2014-2018",
+          "company": "",
+          "desc": "Hi, I am studying M.tech in IIT PALAKKAD. I am very glad to say that I am an Alumni of Karpagam college of Engineering. I always feel that the four years which I spent here are the most memorable days of my life."
+        },
+        {
+          "img": "/images/client/arun.webp",
+          "title": "Arun",
+          "position": "EEE -2013",
+          "company": "",
+          "desc": "I look forward to coming back and giving back to the college that gave me so much. Thank you for everything."
+        },
+        {
+          "img": "/images/client/gowtham.webp",
+          "title": "Mr.Gowtham M",
+          "position": "DCS System Engineer Yokogawa India Ltd",
+          "company": "",
+          "desc": "College life’ is that phase in one’s life when one learns the most important lessons of life."
         }
+       
+        
       ],
       "right": [
         {
-          "img": "/images/testimonial/1.jpg",
-          "title": "Martha Maldonado",
-          "position": "Executive Chairman",
-          "company": "@ Google",
-          "desc": "After the launch, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
+          "img": "/images/client/senthil-kumar.webp",
+          "title": "P.Senthil Kumar",
+          "position": "Junior Engineer – CPWD",
+          "company": "",
+          "desc": "My College days are unforgettable and in fact those days are the most happiest & fruitful days in my life. I proudly feel that I cherished every moments of my college."
         },
         {
           "img": "/images/testimonial/2.jpg",
-          "title": "Michael D. Lovelady",
-          "position": "CEO",
-          "company": "@ Google",
-          "desc": "Histudy education, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit. "
-        },
-        {
-          "img": "/images/testimonial/3.jpg",
-          "title": "Valerie J. Creasman",
-          "position": "Executive Designer",
-          "company": "@ Google",
-          "desc": "Our educational, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi. "
-        },
-        {
-          "img": "/images/testimonial/4.jpg",
-          "title": "Hannah R. Sutton",
-          "position": "Executive Chairman",
-          "company": "@ Google",
-          "desc": "People says about, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
+          "title": "SARAVANAN S",
+          "position": "Project Engineer– RGN Engineering & Constructions Pvt Ltd,Bangalore.",
+          "company": "",
+          "desc": "Firstly, Karpagam College of Engineering is not a college, it is a brand. It is unique in its field. Discipline is like in the air of its environment. I am so grateful to be a part of this college."
         },
         {
           "img": "/images/testimonial/1.jpg",
-          "title": "Pearl B. Hill",
-          "position": "Chairman SR",
-          "company": "@ Facebook",
-          "desc": "Like this histudy, vulputate at sapien sit amet,auctor iaculis lorem. In vel hend rerit."
-        },
-        {
-          "img": "/images/testimonial/2.jpg",
-          "title": "Mandy F. Wood",
-          "position": "SR Designer",
-          "company": "@ Google",
-          "desc": "Educational template, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
+          "title": "K.Saravanan",
+          "position": "Entrepreneur – Balaji Construction",
+          "company": "",
+          "desc": "Karpagam College of Engineering is much beyond just an “Institution”…It actually denotes a “Culture”…Culture of excellence, empowerment, and enrichment."
         },
         {
           "img": "/images/testimonial/3.jpg",
-          "title": "Mildred W. Diaz",
-          "position": "Executive Officer",
-          "company": "@ Yelp",
-          "desc": "Online leaning, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi. Vestibulum eget risus velit."
-        },
-        {
-          "img": "/images/testimonial/4.jpg",
-          "title": "Christopher H. Win",
-          "position": "Product Designer",
-          "company": "@ Google",
-          "desc": "Remote learning, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi. Vestibulum eget risus velit."
+          "title": "Ms. Priya A (2014-2018 Batch)",
+          "position": "Engineer | Cost Audit Sobha Limited,Bangalore.",
+          "company": "",
+          "desc": "From the moment I walked towards the entrance door,there were a couple of mentors who guided me to the conference hall for ‘Freshers’ day celebration’. "
         },
         {
           "img": "/images/testimonial/1.jpg",
-          "title": "Martha Maldonado",
-          "position": "Executive Chairman",
-          "company": "@ Google",
-          "desc": "University managemnet, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit nisi. Vestibulum eget risus velit."
+          "title": "Shankar P",
+          "position": "Civil Engineering Batch:2014-2018",
+          "company": "",
+          "desc": "Hi, I am studying M.tech in IIT PALAKKAD. I am very glad to say that I am an Alumni of Karpagam college of Engineering."
+        },
+        {
+          "img": "/images/client/arun.webp",
+          "title": "Arun",
+          "position": "EEE -2013",
+          "company": "",
+          "desc": "I look forward to coming back and giving back to the college that gave me so much. Thank you for everything."
+        },
+        {
+          "img": "/images/client/gowtham.webp",
+          "title": "Mr.Gowtham M",
+          "position": "DCS System Engineer Yokogawa India Ltd",
+          "company": "",
+          "desc": "College life’ is that phase in one’s life when one learns the most important lessons of life."
         }
       ]
     }
@@ -372,7 +346,7 @@
           "img": "/images/icons/facebook.png",
           "wtd": 50,
           "ht": 50,
-          "title": "Hannah R. Sutton",
+          "title": "Hannah Rb. Sutton",
           "position": "CEO",
           "desc": "People says about, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
         },
@@ -447,7 +421,7 @@
           "img": "/images/icons/bing.png",
           "wtd": 50,
           "ht": 50,
-          "title": "Hannah R. Sutton",
+          "title": "Hannah Rc. Sutton",
           "position": "Executive Chairman",
           "desc": "People says about, vulputate at sapien sit amet, auctor iaculis lorem. In vel hend rerit."
         },

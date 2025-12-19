@@ -30,7 +30,7 @@ const Banner = () => {
             <div
               className='rbt-banner-area rbt-banner-6 variation-03 bg_image bg_image--17'
               data-gradient-overlay='5'
-              style={{ backgroundImage: 'url("/images/category/image/banner-option-2.jpg")' }}
+              style={{ backgroundImage: 'url("/images/new/KCEAlumnibanner.png")' }}
             >
               <div className='wrapper w-100'>
                 <div className='container'>
