@@ -44,9 +44,10 @@ const Contact = () => {
             </div>
           </div>
 
-          <KITContactForm />
+          {/* <KITContactForm /> */}
+          {/* rbt-section-gapTop */}
 
-          <div className='rbt-google-map bg-color-white rbt-section-gapTop'>
+          <div className='rbt-google-map bg-color-white '>
             <iframe
               className='w-100'
               src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.098651947413!2d77.01979347510165!3d10.88010088927501!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba84ffc9b3ea755%3A0xda7508a90583d22f!2sKarpagam%20College%20of%20Engineering!5e0!3m2!1sen!2sin!4v1765617181404!5m2!1sen!2sin'
