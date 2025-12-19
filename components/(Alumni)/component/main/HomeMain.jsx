@@ -109,7 +109,7 @@ const HomeMain = ({ blogs }) => {
       {/* ----------Event List end----------- */}
 
       {/* ----------Job list start----------- */}
-      <div className="section-pad">
+      {/* <div className="section-pad">
         <div className="container">
           <div className="row mb--50">
             <div className="col-lg-12">
@@ -132,14 +132,14 @@ const HomeMain = ({ blogs }) => {
             getEvents={EventData}
           />
         </div>
-      </div>
+      </div> */}
 
       {/* ----------Job list end----------- */}
 
       {/* ----------Team start----------- */}
-      <div className="rbt-team-area bg-color-extra2 section-pad">
+      {/* <div className="rbt-team-area bg-color-extra2 section-pad">
         <Members />
-      </div>
+      </div> */}
 
       {/* ----------Team end----------- */}
 
