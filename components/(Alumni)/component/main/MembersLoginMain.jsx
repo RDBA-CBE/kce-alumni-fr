@@ -1058,7 +1058,7 @@ const MembersLoginMain = () => {
                                 )}
                               </div>
 
-                              {state.memberList?.length > 9 && (
+                              {Number(state.total) > 0 && (
                                 <div>
                                   <div
                                     className="mb-20 "

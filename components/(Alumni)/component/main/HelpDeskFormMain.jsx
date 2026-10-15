@@ -116,6 +116,15 @@ const HelpDeskFormMain = () => {
     }));
   };
 
+  const handleFixedFormChange = (e) => {
+    const { name, value } = e.target;
+
+    setFixedFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -203,8 +212,9 @@ const HelpDeskFormMain = () => {
                         <FormField
                           label='Name'
                           type='text'
-                          name='name'
+                          name='full_name'
                           value={fixedFormData.full_name}
+                          onChange={handleFixedFormChange}
                           required={true}
                         />
                         <span className='focus-border'></span>
@@ -218,6 +228,7 @@ const HelpDeskFormMain = () => {
                           type='email'
                           name='email'
                           value={fixedFormData.email}
+                          onChange={handleFixedFormChange}
                           // className="applicant-input"
                           required={true}
                         />
@@ -228,7 +239,9 @@ const HelpDeskFormMain = () => {
                         <FormField
                           label='Contact Number'
                           type='tel'
+                          name='contact'
                           value={fixedFormData.contact}
+                          onChange={handleFixedFormChange}
                           // className="applicant-input"
                           required={true}
                           // disabled={true}

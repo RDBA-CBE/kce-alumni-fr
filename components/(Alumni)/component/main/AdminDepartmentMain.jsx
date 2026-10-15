@@ -239,10 +239,7 @@ const AdminDepartmentMain = () => {
 
   const handlePageChange = (number) => {
     GetDepartment(number);
-    setState({ currentPage: number });
     window.scrollTo({ top: 0, behavior: "smooth" });
-
-    return number;
   };
 
   return (
@@ -332,7 +329,7 @@ const AdminDepartmentMain = () => {
                     ))}
                   </tbody>
                 </table>
-                {state.deparmentList?.length > 9 && (
+                {Number(state.total) > 0 && (
                   <div>
                     <div
                       className="mb-20 "
@@ -346,6 +343,7 @@ const AdminDepartmentMain = () => {
                         activeNumber={handlePageChange}
                         totalPage={state.total}
                         currentPages={state.currentPage}
+                        pageSize={state.pageSize}
                       />
                     </div>
                   </div>

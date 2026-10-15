@@ -268,7 +268,7 @@ const AdminLocationsMain = () => {
                     ))}
                   </tbody>
                 </table>
-                {state.locationList?.length > 9 && (
+                {Number(state.total) > 0 && (
                   <div>
                     <div
                       className="mb-20 "

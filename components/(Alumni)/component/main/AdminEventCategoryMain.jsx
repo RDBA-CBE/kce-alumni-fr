@@ -247,7 +247,7 @@ const AdminEventCategoryMain = () => {
                     ))}
                   </tbody>
                 </table>
-                {state.postCategoryList?.length > 9 && (
+                {Number(state.total) > 0 && (
                   <div>
                     <div
                       className="mb-20 "

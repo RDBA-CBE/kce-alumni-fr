@@ -635,7 +635,7 @@ const MyPostMain = () => {
                                   </div>
                                 </div>
 
-                                {state?.postList.length > 9 && (
+                                {Number(state.total) > 0 && (
                                   <div>
                                     <div
                                       className='mb-20 '

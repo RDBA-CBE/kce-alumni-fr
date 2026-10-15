@@ -276,7 +276,7 @@ const AdminIndustryTypeMain = () => {
                     ))}
                   </tbody>
                 </table>
-                {state.bussinessTypeList?.length > 9 && (
+                {Number(state.total) > 0 && (
                   <div>
                     <div
                       className="mb-20 "

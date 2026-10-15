@@ -273,7 +273,7 @@ const AdminInstitutiontMain = () => {
                     ))}
                   </tbody>
                 </table>
-                {state.institutionList?.length > 9 && (
+                {Number(state.total) > 0 && (
                   <div>
                     <div
                       className="mb-20 "

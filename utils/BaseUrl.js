@@ -1,1 +1,1 @@
-export const BaseURL = "https://alumnib.decodeschool.com";
+export const BaseURL = "https://alumnibk.kce.ac.in";

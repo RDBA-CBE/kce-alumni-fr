@@ -135,7 +135,7 @@ const BatchTable = (props) => {
             )}
           </div>
         </div>
-        {tableData?.length > 9 && (
+        {Number(total) > 0 && (
           <div>
             <div
               className="mb-20 "

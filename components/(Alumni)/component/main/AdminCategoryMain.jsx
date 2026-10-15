@@ -232,7 +232,7 @@ const { confirm } = Modal;
                     ))}
                   </tbody>
                 </table>
-                {state.categoryList?.length > 9 && (
+                {Number(state.total) > 0 && (
                   <div>
                     <div
                       className="mb-20 "

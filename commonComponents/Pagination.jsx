@@ -1,106 +1,121 @@
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+"use client";
 
-const Pagination = (props) => {
-  const { activeNumber, totalPage, currentPages } = props;
-  const totalPages = Math.ceil(totalPage / 10);
-  const [currentPage, setCurrentPage] = useState(1);
+const Pagination = ({
+  activeNumber,
+  totalPage,
+  currentPages,
+  pageSize = 10,
+}) => {
+  const totalItems = Number(totalPage);
+  const itemsPerPage = Number(pageSize);
+  const resolvedPageSize =
+    Number.isFinite(itemsPerPage) && itemsPerPage > 0 ? itemsPerPage : 10;
+  const totalPages = Number.isFinite(totalItems)
+    ? Math.max(0, Math.ceil(totalItems / resolvedPageSize))
+    : 0;
+  const requestedPage = Number(currentPages);
+  const currentPage =
+    totalPages > 0
+      ? Math.min(
+          totalPages,
+          Math.max(
+            1,
+            Number.isFinite(requestedPage) ? Math.floor(requestedPage) : 1
+          )
+        )
+      : 0;
 
-  useEffect(() => {
-    setCurrentPage(currentPages);
-  }, [currentPages]);
-
-  const handlePrevClick = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      activeNumber(currentPage - 1);
-    }
-  };
-
-  const handleNextClick = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-      activeNumber(currentPage + 1);
-    }
-  };
+  if (totalPages <= 1) {
+    return null;
+  }
 
   const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    activeNumber(pageNumber);
+    if (
+      pageNumber >= 1 &&
+      pageNumber <= totalPages &&
+      pageNumber !== currentPage
+    ) {
+      activeNumber(pageNumber);
+    }
   };
 
   const renderPageNumbers = () => {
-    let pageNumbers = [];
-    const pageBuffer = 2;
-
     if (totalPages <= 6) {
-      // If total pages are small, just show all the pages
-      for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else if (currentPage <= 3) {
-      // Show first 5 pages and '... last'
-      for (let i = 1; i <= Math.min(5, totalPages); i++) {
-        pageNumbers.push(i);
-      }
-      if (totalPages > 5) pageNumbers.push('...', totalPages);
-    } else if (currentPage >= totalPages - 3) {
-      // Show '1 ... last 5 pages'
-      pageNumbers.push(1, '...');
-      for (let i = totalPages - 4; i <= totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Show '1 ... currentPage-2 currentPage currentPage+2 ... totalPages'
-      pageNumbers.push(1, '...');
-      for (
-        let i = currentPage - pageBuffer;
-        i <= currentPage + pageBuffer;
-        i++
-      ) {
-        pageNumbers.push(i);
-      }
-      pageNumbers.push('...', totalPages);
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
     }
 
-    return pageNumbers;
+    if (currentPage <= 3) {
+      return [1, 2, 3, 4, 5, "...", totalPages];
+    }
+
+    if (currentPage >= totalPages - 3) {
+      return [
+        1,
+        "...",
+        ...Array.from({ length: 5 }, (_, index) => totalPages - 4 + index),
+      ];
+    }
+
+    return [
+      1,
+      "...",
+      currentPage - 2,
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      currentPage + 2,
+      "...",
+      totalPages,
+    ];
   };
 
   return (
-    <div id='pagination' className='rbt-elements-area mt--50'>
-      <div className='wrapper'>
-        <div className='row g-5'>
-          <div className='col-lg-12'>
-            <nav>
-              <ul className='rbt-pagination justify-content-center'>
-                <li onClick={handlePrevClick} disabled={currentPage === 1}>
-                  <Link href='#' aria-label='Previous'>
-                    <i className='feather-chevron-left'></i>
-                  </Link>
+    <div className="rbt-elements-area mt--50">
+      <div className="wrapper">
+        <div className="row g-5">
+          <div className="col-lg-12">
+            <nav aria-label="Pagination">
+              <ul className="rbt-pagination justify-content-center">
+                <li className={currentPage === 1 ? "disabled" : ""}>
+                  <button
+                    type="button"
+                    aria-label="Previous page"
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageClick(currentPage - 1)}
+                  >
+                    <i className="feather-chevron-left" />
+                  </button>
                 </li>
                 {renderPageNumbers().map((pageNumber, index) => (
                   <li
-                    key={index}
-                    className={` ${pageNumber === currentPage ? 'active' : ''}`}
-                    onClick={() =>
-                      typeof pageNumber === 'number' &&
-                      handlePageClick(pageNumber)
-                    }
-                    disabled={
-                      pageNumber === '...' || pageNumber === currentPage
-                    }
+                    key={`${pageNumber}-${index}`}
+                    className={pageNumber === currentPage ? "active" : ""}
                   >
-                    <Link href='#'>{pageNumber}</Link>
+                    {typeof pageNumber === "number" ? (
+                      <button
+                        type="button"
+                        aria-label={`Go to page ${pageNumber}`}
+                        aria-current={
+                          pageNumber === currentPage ? "page" : undefined
+                        }
+                        onClick={() => handlePageClick(pageNumber)}
+                      >
+                        {pageNumber}
+                      </button>
+                    ) : (
+                      <span aria-hidden="true">{pageNumber}</span>
+                    )}
                   </li>
                 ))}
-
-                <li
-                  onClick={handleNextClick}
-                  disabled={currentPage === totalPages}
-                >
-                  <Link href='#' aria-label='Next'>
-                    <i className='feather-chevron-right'></i>
-                  </Link>
+                <li className={currentPage === totalPages ? "disabled" : ""}>
+                  <button
+                    type="button"
+                    aria-label="Next page"
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageClick(currentPage + 1)}
+                  >
+                    <i className="feather-chevron-right" />
+                  </button>
                 </li>
               </ul>
             </nav>

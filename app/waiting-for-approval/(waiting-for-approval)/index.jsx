@@ -74,8 +74,18 @@ const WaitingForApproval = () => {
       setState({ btnLoading: true });
       let res = await Models.member.approveMember(approval.member_id);
       message.success(res.message || "Operation successful!");
-      getData();
-      setState({ btnLoading: false });
+      const approvalList = state.approvalList.filter(
+        (item) => item.member_id !== approval.member_id
+      );
+      setState({
+        approvalList,
+        total: Math.max(0, state.total - 1),
+        btnLoading: false,
+      });
+
+      if (approvalList.length === 0 && state.currentPage > 1) {
+        getData(state.currentPage - 1);
+      }
     } catch (err) {
       setState({ btnLoading: false });
       console.log("err", err);

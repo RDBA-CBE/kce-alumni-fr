@@ -72,7 +72,7 @@ export const instance = () => {
         return new Promise(async (resolve, reject) => {
           try {
             const response = await axios.post(
-             `https://alumnib.decodeschool.com/login/refresh/`,
+             `https://alumnibk.kce.ac.in/`,
               {
                 refresh: refreshToken,
               }
