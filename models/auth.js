@@ -104,6 +104,7 @@ const auth = {
     });
     return promise;
   },
+  
 };
 
 export default auth;
