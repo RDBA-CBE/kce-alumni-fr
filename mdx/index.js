@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import matter from "gray-matter";
 import { compileMDX } from "next-mdx-remote/rsc";
 
 const rootDirectory = path.join(process.cwd(), "data/blog");
@@ -15,11 +16,9 @@ export const getPostBySlug = async (slug) => {
   }
 
   const fileContent = fs.readFileSync(filePath, { encoding: "utf8" });
+  const { data: frontmatter, content: source } = matter(fileContent);
 
-  const { frontmatter, content } = await compileMDX({
-    source: fileContent,
-    options: { parseFrontmatter: true },
-  });
+  const { content } = await compileMDX({ source });
 
   return { meta: { ...frontmatter, slug: realSlug }, content };
 };
