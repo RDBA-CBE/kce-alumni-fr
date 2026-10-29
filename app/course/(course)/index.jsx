@@ -8,7 +8,6 @@ import Context from "@/context/Context";
 import Store from "@/redux/store";
 import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
-
 import KITHeader from "@/components/Header/KITHeader";
 import KITFooter from "@/components/Footer/KITFooter";
 import MasterDataSidebar from "@/components/(Alumni)/component/KITMaster/MasterDataSidebar";
