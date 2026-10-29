@@ -70,7 +70,7 @@ const MemberData = (props) => {
       setState({
         salutation: find,
         gender: findGender,
-        mobile_no: Number(res?.member_data?.mobile_no),
+        mobile_no: String(res?.member_data?.mobile_no ?? ""),
         email: res?.member_data?.email,
         file: state.file,
         register_no: res?.member_data?.register_no,
@@ -213,7 +213,11 @@ const MemberData = (props) => {
   };
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, type, files } = e.target;
+    const value =
+      name === "mobile_no"
+        ? e.target.value.replace(/\D/g, "").slice(0, 10)
+        : e.target.value;
 
     if (type === "file") {
       setState({ [name]: files[0] });
@@ -309,7 +313,7 @@ const MemberData = (props) => {
             <div className="form-group">
               <FormField
                 placeholder="Mobile No"
-                type="number"
+                type="tel"
                 name="mobile_no"
                 onChange={handleChange}
                 value={state.mobile_no}

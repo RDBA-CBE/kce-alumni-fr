@@ -6,6 +6,7 @@ import { message, Select } from "antd";
 import Link from "next/link";
 import {
   Dropdown,
+  setCourseDropdownData,
   setDropdownData,
   useSetState,
   validateForm,
@@ -13,6 +14,23 @@ import {
 import FormField from "@/commonComponents/FormFields";
 import { BloodGroupChooice } from "@/utils/constant.utils";
 import Models from "@/imports/models.import";
+
+const getUniqueRoleOptions = (options = []) => {
+  const seenTitles = new Set();
+
+  return options.filter((option) => {
+    const title = String(option?.label ?? "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+
+    if (!title || seenTitles.has(title)) {
+      return false;
+    }
+
+    seenTitles.add(title);
+    return true;
+  });
+};
 
 const CreateMemberForm = () => {
   const router = useRouter();
@@ -84,8 +102,10 @@ const CreateMemberForm = () => {
 
   const GetRoleList = async () => {
     try {
-      const res = await Models.job.roleList();
-      const dropdown = setDropdownData(res?.results, "role");
+      const res = await Models.masters.courseList(1);
+      const dropdown = getUniqueRoleOptions(
+        setCourseDropdownData(res?.results, "title")
+      );
       setRoleList(dropdown);
       setState({
         hasRoleLoadMore: res?.next,
@@ -161,12 +181,33 @@ const CreateMemberForm = () => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleFieldChange = (name, value) => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+
+    const hasValue =
+      value !== undefined &&
+      value !== null &&
+      (typeof value !== "string" || value.trim() !== "");
+
+    if (hasValue) {
+      setErrMsg((prevErrors) => {
+        if (!prevErrors[name]) {
+          return prevErrors;
+        }
+
+        const nextErrors = { ...prevErrors };
+        delete nextErrors[name];
+        return nextErrors;
+      });
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    handleFieldChange(name, value);
   };
 
   const handleSubmit = (e) => {
@@ -230,6 +271,7 @@ const CreateMemberForm = () => {
         mobile_no: { required: true },
         email: { required: true },
         course: { required: true },
+        department: { required: true },
         batch: { required: true },
         register: { required: true },
         dob: { required: true },
@@ -252,6 +294,7 @@ const CreateMemberForm = () => {
         mobile_no: formData.mobile_no,
         email: formData.email,
         course_id: formData.course?.value,
+        department_id: formData.department?.value,
         batch_id: formData.batch?.value,
         register_no: formData.register,
       };
@@ -297,9 +340,12 @@ const CreateMemberForm = () => {
   const roleListLoadMore = async () => {
     try {
       if (state.hasRoleLoadMore) {
-        const res = await Models.job.roleList(state.currenRolePage + 1);
-        const RoleOption = setDropdownData(res?.results, "role");
-        setRoleList([...roleList, ...RoleOption]);
+        const res = await Models.masters.courseList(state.currenRolePage + 1);
+        const roleOptions =
+          setCourseDropdownData(res?.results, "title") ?? [];
+        setRoleList((currentRoleList) =>
+          getUniqueRoleOptions([...currentRoleList, ...roleOptions])
+        );
         setState({
           currenRolePage: state.currenRolePage + 1,
           hasRoleLoadMore: res.next,
@@ -491,6 +537,7 @@ const CreateMemberForm = () => {
                         <span className="focus-border"></span>
                       </div>
                       {formData?.member_type == "alumni" ? (
+                        <>
                         <div className="form-group">
                           <FormField
                             placeholder="Course"
@@ -498,8 +545,8 @@ const CreateMemberForm = () => {
                             className="form-dd"
                             name="course"
                             value={formData.course}
-                            onChange={(e) =>
-                              setFormData({ ...formData, course: e })
+                            onChange={(value) =>
+                              handleFieldChange("course", value)
                             }
                             error={errMsg.course}
                             options={roleList}
@@ -508,6 +555,26 @@ const CreateMemberForm = () => {
                           />
                           <span className="focus-border"></span>
                         </div>
+
+                         <div className="form-group">
+                          <FormField
+                            placeholder="Department"
+                            type="loadMoreSelect"
+                            className="form-dd"
+                            name="department"
+                            value={formData.department}
+                            onChange={(value) =>
+                              handleFieldChange("department", value)
+                            }
+                            error={errMsg.department}
+                            options={state.departmentList}
+                            required={true}
+                            loadMore={() => departmentListLoadMore()}
+                          />
+
+                          <span className="focus-border"></span>
+                        </div>
+                        </>
                       ) : (
                         <div className="form-group">
                           <FormField
@@ -516,8 +583,8 @@ const CreateMemberForm = () => {
                             className="form-dd"
                             name="department"
                             value={formData.department}
-                            onChange={(e) =>
-                              setFormData({ ...formData, department: e })
+                            onChange={(value) =>
+                              handleFieldChange("department", value)
                             }
                             error={errMsg.department}
                             options={state.departmentList}
@@ -528,10 +595,10 @@ const CreateMemberForm = () => {
                           <span className="focus-border"></span>
                         </div>
                       )}
-                      <div className="form-group">
+                      <div className="form-group" style={{marginTop:"-10px"}}>
                         <FormField
                           placeholder="Mobile Number"
-                          type="number"
+                          type="tel"
                           name="mobile_no"
                           value={formData.mobile_no}
                           onChange={(e) => handleChange(e)}
@@ -548,8 +615,8 @@ const CreateMemberForm = () => {
                             className="form-dd"
                             name="batch"
                             value={formData.batch}
-                            onChange={(e) =>
-                              setFormData({ ...formData, batch: e })
+                            onChange={(value) =>
+                              handleFieldChange("batch", value)
                             }
                             error={errMsg.batch}
                             options={state.batchList}
@@ -594,10 +661,7 @@ const CreateMemberForm = () => {
                           error={errMsg.file}
                           className="file-input"
                           onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              file: e.target.files[0],
-                            })
+                            handleFieldChange("file", e.target.files[0])
                           }
                           accept=".xls,.xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                           required={true}

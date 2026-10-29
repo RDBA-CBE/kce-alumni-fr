@@ -180,9 +180,26 @@ const Register = (props) => {
   };
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, type, files } = e.target;
+    const value =
+      name === "mobile_no"
+        ? e.target.value.replace(/\D/g, "").slice(0, 10)
+        : e.target.value;
 
     if (type === "file") {
+      const file = files[0];
+      if (file && file.size > 2 * 1024 * 1024) {
+        setState({
+          [name]: null,
+          errMsg: {
+            ...state.errMsg,
+            [name]: "Max file size of 2 MB is allowed.",
+          },
+        });
+        e.target.value = "";
+        return;
+      }
+
       setState({ [name]: files[0] });
     } else {
       setState({ [name]: value });
@@ -380,7 +397,7 @@ const Register = (props) => {
               <div className="form-group">
                 <FormField
                   placeholder="Mobile No *"
-                  type="number"
+                  type="tel"
                   name="mobile_no"
                   onChange={handleChange}
                   value={state.mobile_no}
@@ -405,6 +422,7 @@ const Register = (props) => {
               {/* </div> */}
               <div className="mt-3 mb-5">
                 <label htmlFor="file">file (Proof of Graduation)</label>
+                <p>Max file size: 2 MB.</p>
                 <FormField
                   placeholder="file (Proof of Graduation)"
                   className={"formdate pt-3"}

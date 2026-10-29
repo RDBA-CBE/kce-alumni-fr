@@ -202,6 +202,16 @@ export const setDropdownData = (data, label) => {
   return result;
 };
 
+export const setCourseDropdownData = (data, label) => {
+  const result = data?.map((item) => {
+    return {
+      value: item.course_id,
+      label: item[label],
+    };
+  });
+  return result;
+};
+
 
 export const ConvertFormData = (body) => {
   const formData = new FormData();

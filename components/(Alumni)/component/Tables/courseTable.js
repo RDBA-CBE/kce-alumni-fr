@@ -109,7 +109,7 @@ const CourseTable = (props) => {
                     >
                       <td style={{ width: "25%" }}>{item.title}</td>
                       <td style={{ width: "15%" }}>{item.graduate}</td>
-                      <td style={{ width: "40%" }}>{item.department}</td>
+                      {/* <td style={{ width: "40%" }}>{item.department}</td> */}
                       <td style={{ width: "20%" }}>
                         {item?.is_active && (
                           <Tooltip title="Edit Course">

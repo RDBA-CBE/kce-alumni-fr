@@ -131,7 +131,7 @@ const Course = () => {
       e.preventDefault();
 
       const validationRules = {
-        department: { required: true },
+        // department: { required: true },
         graduate: { required: true },
         title: { required: true },
       };
@@ -162,7 +162,7 @@ const Course = () => {
       e.preventDefault();
 
       const validationRules = {
-        department: { required: true },
+        // department: { required: true },
         graduate: { required: true },
         title: { required: true },
       };
@@ -261,7 +261,7 @@ const Course = () => {
                               tableHead={[
                                 "Course Name",
                                 "Graduate",
-                                "Department",
+                                // "Department",
                                 "Actions",
                               ]}
                               subtitile_1="Create Course"
@@ -323,7 +323,7 @@ const Course = () => {
                     error={errMsg?.graduate}
                   />
                 </div>
-                <div className="mt-3">
+                {/* <div className="mt-3">
                   <FormField
                     placeholder="Department"
                     label="Department"
@@ -338,7 +338,7 @@ const Course = () => {
                     required={true}
                     loadMore={() => departmentListLoadMore()}
                   />
-                </div>
+                </div> */}
 
                 <div className="d-flex justify-content-end mt-3">
                   <button
