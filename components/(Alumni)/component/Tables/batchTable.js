@@ -106,10 +106,11 @@ const BatchTable = (props) => {
                 <tbody>
                   {tableData?.map((item) => (
                     <tr key={item.batch_id}>
-                      <td style={{ width: "30%" }}>{item.title}</td>
-                      <td style={{ width: "25%" }}>{item.start_year}</td>
-                      <td style={{ width: "25%" }}>{item.end_year}</td>
-                      <td style={{ width: "20%" }}>
+                      <td style={{ width: "25%" }}>{item.title}</td>
+                      <td style={{ width: "25%" }}>{item.courseNames || "-"}</td>
+                      <td style={{ width: "17%" }}>{item.start_year}</td>
+                      <td style={{ width: "17%" }}>{item.end_year}</td>
+                      <td style={{ width: "16%" }}>
                         <Tooltip title="Edit Batch">
                           <EditOutlined
                             onClick={() => updateUser(item)}

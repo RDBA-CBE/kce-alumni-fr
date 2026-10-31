@@ -19,6 +19,7 @@ const Register = (props) => {
     confrmModelOpen: false,
     confrmModelOpen: false,
     proofModelOpen: false,
+    currenBatchPage: 1,
   });
 
   useEffect(() => {
@@ -53,15 +54,19 @@ const Register = (props) => {
     }
   };
 
-  const getBatch = async () => {
+  const getBatch = async (page = 1, courseId) => {
     try {
-      const res = await Models.masters.batch(1);
+      const res = await Models.masters.batch(page, courseId);
       const BatchOption = res?.results?.map((bat) => ({
         value: bat.batch_id,
         label: bat.title,
       }));
 
-      setState({ batchList: BatchOption, hasBatchLoadMore: res?.next });
+      setState({
+        batchList: BatchOption,
+        currenBatchPage: page,
+        hasBatchLoadMore: res?.next,
+      });
     } catch (error) {
       console.log("✌️error --->", error);
     }
@@ -91,12 +96,20 @@ const Register = (props) => {
       const validateBody = {
         mobile_no: state.mobile_no,
         email: state.email,
+        register_no: state.register_no,
       };
 
       // validate
-      await registerUser.validate(validateBody, {
-        abortEarly: false,
-      });
+      await registerUser
+        .shape({
+          register_no: yup
+            .string()
+            .trim()
+            .required("Register No is required"),
+        })
+        .validate(validateBody, {
+          abortEarly: false,
+        });
 
       const body = {
         salutation: state.salutation?.value,
@@ -136,13 +149,14 @@ const Register = (props) => {
   const batchListLoadMore = async () => {
     try {
       if (state.hasBatchLoadMore) {
-        const res = await Models.masters.batch(state.currenBatchPage + 1);
+        const nextPage = state.currenBatchPage + 1;
+        const res = await Models.masters.batch(nextPage, state.course?.value);
         const BatchOption = res?.results?.map((bat) => ({
           value: bat.batch_id,
           label: bat.title,
         }));
         setState({
-          currenBatchPage: state.currenBatchPage + 1,
+          currenBatchPage: nextPage,
           hasBatchLoadMore: res.next,
           batchList: [...state.batchList, ...BatchOption],
         });
@@ -205,6 +219,7 @@ const Register = (props) => {
       setState({ [name]: value });
     }
     setState({ errMsg: { ...state.errMsg, [name]: "" } });
+    setState({ errors: { ...state.errors, [name]: "" } });
   };
 
   return (
@@ -363,6 +378,22 @@ const Register = (props) => {
                   className="formdate pt-3"
                 />
               </div>
+               <div className="form-group mt-3">
+                <FormField
+                  type="loadMoreSelect"
+                  name="course"
+                  label="Course"
+                  onChange={(value) => {
+                    setState({ course: value, batch: null });
+                    getBatch(1, value?.value);
+                  }}
+                  value={state.course}
+                  options={state.courseList}
+                  error={state.errMsg?.course}
+                  required
+                  loadMore={() => courseListLoadMore()}
+                />
+              </div>
               <div className="form-group mt-3">
                 <FormField
                   type="loadMoreSelect"
@@ -378,21 +409,7 @@ const Register = (props) => {
                   loadMore={() => batchListLoadMore()}
                 />
               </div>
-              <div className="form-group mt-3">
-                <FormField
-                  type="loadMoreSelect"
-                  name="course"
-                  label="Course"
-                  onChange={(value) => {
-                    setState({ course: value });
-                  }}
-                  value={state.course}
-                  options={state.courseList}
-                  error={state.errMsg?.course}
-                  required
-                  loadMore={() => courseListLoadMore()}
-                />
-              </div>
+             
 
               <div className="form-group">
                 <FormField
@@ -443,7 +460,7 @@ const Register = (props) => {
                   name="register_no"
                   onChange={handleChange}
                   value={state.register_no}
-                  error={state.errMsg?.register_no}
+                  error={state.errors?.register_no || state.errMsg?.register_no}
                   required={true}
                   className={"application-input"}
                 />

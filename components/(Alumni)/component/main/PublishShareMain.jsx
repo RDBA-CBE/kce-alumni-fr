@@ -226,10 +226,10 @@ const PublishShareMain = () => {
     }
   };
 
-  const batch = async () => {
+  const batch = async (page = 1, courseId) => {
     try {
       setState({ loading: true });
-      const res = await Models.masters.batch();
+      const res = await Models.masters.batch(page, courseId);
       const dropdown = res?.results?.map((item) => ({
         value: item?.batch_id,
         label: item?.title,
@@ -237,6 +237,7 @@ const PublishShareMain = () => {
       setState({
         batchList: dropdown,
         loading: false,
+        currenBatchPage: page,
         hasBatchLoadMore: res?.next,
       });
     } catch (e) {
@@ -413,14 +414,15 @@ const PublishShareMain = () => {
   const batchListLoadMore = async () => {
     try {
       if (state.hasBatchLoadMore) {
-        const res = await Models.masters.batch(state.currenBatchPage + 1);
+        const nextPage = state.currenBatchPage + 1;
+        const res = await Models.masters.batch(nextPage, state.course?.value);
         const BatchOption = res?.results?.map((bat) => ({
           value: bat.batch_id,
           label: bat.title,
         }));
         setState({
           batchList: [...state.batchList, ...BatchOption],
-          currenBatchPage: state.currenBatchPage + 1,
+          currenBatchPage: nextPage,
           hasBatchLoadMore: res.next,
         });
       } else {
@@ -664,6 +666,38 @@ const PublishShareMain = () => {
                                     </a>
                                   </li>
 
+                                   <li
+                                        className="nav-item"
+                                        role="presentation"
+                                      >
+                                        <a
+                                          className={`w-100 ${
+                                            pathname === "#" ? "active" : ""
+                                          }`}
+                                          href="#"
+                                        >
+                                          <FormField
+                                            type="loadMoreSelect"
+                                            className="member-dd"
+                                            onChange={(e) => {
+                                              setState({
+                                                course: e,
+                                                batch: null,
+                                                currenBatchPage: 1,
+                                              });
+                                              batch(1, e?.value);
+                                            }}
+                                            name="course"
+                                            value={state.course}
+                                            options={state.courseList}
+                                            placeholder={"Course"}
+                                            loadMore={() =>
+                                              courseListLoadMore()
+                                            }
+                                          />
+                                        </a>
+                                      </li>
+
                                   {state.member_type == "Alumni" && (
                                     <>
                                       <li
@@ -691,32 +725,7 @@ const PublishShareMain = () => {
                                         </a>
                                       </li>
 
-                                      <li
-                                        className="nav-item"
-                                        role="presentation"
-                                      >
-                                        <a
-                                          className={`w-100 ${
-                                            pathname === "#" ? "active" : ""
-                                          }`}
-                                          href="#"
-                                        >
-                                          <FormField
-                                            type="loadMoreSelect"
-                                            className="member-dd"
-                                            onChange={(e) =>
-                                              setState({ course: e })
-                                            }
-                                            name="course"
-                                            value={state.course}
-                                            options={state.courseList}
-                                            placeholder={"Course"}
-                                            loadMore={() =>
-                                              courseListLoadMore()
-                                            }
-                                          />
-                                        </a>
-                                      </li>
+                                     
                                     </>
                                   )}
 

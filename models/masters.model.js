@@ -630,9 +630,12 @@ const masters = {
     return promise;
   },
 
-  batch: (page = 1) => {
+  batch: (page = 1, courseId) => {
     let promise = new Promise((resolve, reject) => {
       let url = `retrieve_batch/?page=${page}`;
+      if (courseId !== undefined && courseId !== null && courseId !== "") {
+        url += `&course_id=${courseId}`;
+      }
       instance()
         .get(url)
         .then((res) => {

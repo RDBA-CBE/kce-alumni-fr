@@ -85,16 +85,19 @@ const BasicDetailMain = () => {
     }
   };
 
-  const getBatch = async () => {
+  const getBatch = async (page = 1, courseId) => {
     try {
-      const res = await Models.masters.batch(1);
+      const res = await Models.masters.batch(page, courseId);
       console.log("getBatch --->", res);
       const BatchOption = res?.results?.map((bat) => ({
         value: bat.batch_id,
         label: bat.title,
       }));
       setBatch(BatchOption);
-      setState({ hasBatchLoadMore: res?.next });
+      setState({
+        hasBatchLoadMore: res?.next,
+        currenBatchPage: page,
+      });
     } catch (error) {
       console.log("✌️error --->", error);
     }
@@ -131,6 +134,7 @@ const BasicDetailMain = () => {
         } || "",
         about_me: res.about_me || "",
       });
+      getBatch(1, res?.course_detail?.id);
     } catch (error) {
       console.log("✌️error --->", error);
     }
@@ -239,14 +243,18 @@ const BasicDetailMain = () => {
   const batchListLoadMore = async () => {
     try {
       if (state.hasBatchLoadMore) {
-        const res = await Models.masters.batch(state.currenBatchPage + 1);
+        const nextPage = state.currenBatchPage + 1;
+        const res = await Models.masters.batch(
+          nextPage,
+          formData.course?.value
+        );
         const BatchOption = res?.results?.map((bat) => ({
           value: bat.batch_id,
           label: bat.title,
         }));
         setBatch([...batch, ...BatchOption]);
         setState({
-          currenBatchPage: state.currenBatchPage + 1,
+          currenBatchPage: nextPage,
           hasBatchLoadMore: res.next,
         });
       } else {
@@ -388,6 +396,27 @@ const BasicDetailMain = () => {
                                     />
                                     <span className="focus-border"></span>
                                   </div>
+                                  <div className="">
+                                    <FormField
+                                      label="Course"
+                                      type="loadMoreSelect"
+                                      name="course"
+                                      value={formData.course}
+                                      onChange={(value) => {
+                                        setFormData((previous) => ({
+                                          ...previous,
+                                          course: value,
+                                          batch: "",
+                                        }));
+                                        getBatch(1, value?.value);
+                                      }}
+                                      error={errMsg.course}
+                                      options={course}
+                                      required={false}
+                                      loadMore={() => courseListLoadMore()}
+                                    />
+                                    <span className="focus-border"></span>
+                                  </div>
 
                                   <div className="">
                                     <FormField
@@ -410,25 +439,7 @@ const BasicDetailMain = () => {
                                     <span className="focus-border"></span>
                                   </div>
 
-                                  <div className="">
-                                    <FormField
-                                      label="Course"
-                                      type="loadMoreSelect"
-                                      name="course"
-                                      value={formData.course}
-                                      onChange={(value) =>
-                                        setFormData({
-                                          ...formData,
-                                          course: value,
-                                        })
-                                      }
-                                      error={errMsg.course}
-                                      options={course}
-                                      required={false}
-                                      loadMore={() => courseListLoadMore()}
-                                    />
-                                    <span className="focus-border"></span>
-                                  </div>
+                                  
 
                                   {/* Submit */}
                                 </div>

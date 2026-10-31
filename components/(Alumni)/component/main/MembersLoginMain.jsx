@@ -213,10 +213,10 @@ const MembersLoginMain = () => {
     }
   };
 
-  const batch = async () => {
+  const batch = async (page = 1, courseId) => {
     try {
       setState({ loading: true });
-      const res = await Models.masters.batch();
+      const res = await Models.masters.batch(page, courseId);
       const dropdown = res?.results?.map((item) => ({
         value: item?.batch_id,
         label: item?.title,
@@ -224,6 +224,7 @@ const MembersLoginMain = () => {
       setState({
         batchList: dropdown,
         loading: false,
+        currenBatchPage: page,
         hasBatchLoadMore: res?.next,
       });
     } catch (e) {
@@ -404,14 +405,15 @@ const MembersLoginMain = () => {
   const batchListLoadMore = async () => {
     try {
       if (state.hasBatchLoadMore) {
-        const res = await Models.masters.batch(state.currenBatchPage + 1);
+        const nextPage = state.currenBatchPage + 1;
+        const res = await Models.masters.batch(nextPage, state.course?.value);
         const BatchOption = res?.results?.map((bat) => ({
           value: bat.batch_id,
           label: bat.title,
         }));
         setState({
           batchList: [...state.batchList, ...BatchOption],
-          currenBatchPage: state.currenBatchPage + 1,
+          currenBatchPage: nextPage,
           hasBatchLoadMore: res.next,
         });
       } else {
@@ -645,6 +647,33 @@ const MembersLoginMain = () => {
                                     </a>
                                   </li>
 
+                                  <li className="nav-item" role="presentation">
+                                    <a
+                                      className={`w-100 ${
+                                        pathname === "#" ? "active" : ""
+                                      }`}
+                                      href="#"
+                                    >
+                                      <FormField
+                                        type="loadMoreSelect"
+                                        className="member-dd"
+                                        name="course"
+                                        value={state.course}
+                                        onChange={(e) => {
+                                          setState({
+                                            course: e,
+                                            batch: null,
+                                            currenBatchPage: 1,
+                                          });
+                                          batch(1, e?.value);
+                                        }}
+                                        options={state.courseList}
+                                        placeholder={"Course"}
+                                        loadMore={() => courseListLoadMore()}
+                                      />
+                                    </a>
+                                  </li>
+
                                  {state.member_type == "Alumni" &&
                                  <>
                                   <li className="nav-item" role="presentation">
@@ -679,9 +708,14 @@ const MembersLoginMain = () => {
                                         className="member-dd"
                                         name="course"
                                         value={state.course}
-                                        onChange={(e) =>
-                                          setState({ course: e })
-                                        }
+                                        onChange={(e) => {
+                                          setState({
+                                            course: e,
+                                            batch: null,
+                                            currenBatchPage: 1,
+                                          });
+                                          batch(1, e?.value);
+                                        }}
                                         options={state.courseList}
                                         placeholder={"Course"}
                                         loadMore={() => courseListLoadMore()}

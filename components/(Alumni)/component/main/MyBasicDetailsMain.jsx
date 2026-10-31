@@ -100,16 +100,20 @@ const MyBasicDetailsMain = () => {
     }
   };
 
-  const getBatch = async () => {
+  const getBatch = async (page = 1, courseId) => {
     setState({ pageLoading: true });
     try {
-      const res = await Models.masters.batch();
+      const res = await Models.masters.batch(page, courseId);
       const BatchOption = res?.results?.map((bat) => ({
         value: bat.batch_id,
         label: bat.title,
       }));
       setBatch(BatchOption);
-      setState({ hasBatchLoadMore: res?.next, pageLoading: false });
+      setState({
+        hasBatchLoadMore: res?.next,
+        currenBatchPage: page,
+        pageLoading: false,
+      });
     } catch (error) {
       console.log("✌️error --->", error);
       setState({ pageLoading: false });
@@ -133,6 +137,7 @@ const MyBasicDetailsMain = () => {
           { value: res.course_detail.id, label: res.course_detail.title } || "",
         about_me: res.about_me || "",
       });
+      getBatch(1, res?.course_detail?.id);
       setState({ pageLoading: false });
     } catch (error) {
       console.log("✌️error --->", error);
@@ -248,14 +253,18 @@ const MyBasicDetailsMain = () => {
   const batchListLoadMore = async () => {
     try {
       if (state.hasBatchLoadMore) {
-        const res = await Models.masters.batch(state.currenBatchPage + 1);
+        const nextPage = state.currenBatchPage + 1;
+        const res = await Models.masters.batch(
+          nextPage,
+          formData.course?.value
+        );
         const BatchOption = res?.results?.map((bat) => ({
           value: bat.batch_id,
           label: bat.title,
         }));
         setBatch([...batch, ...BatchOption]);
         setState({
-          currenBatchPage: state.currenBatchPage + 1,
+          currenBatchPage: nextPage,
           hasBatchLoadMore: res.next,
         });
       } else {
@@ -400,6 +409,28 @@ const MyBasicDetailsMain = () => {
 
                                   <div className="">
                                     <FormField
+                                      label="Course"
+                                      type="loadMoreSelect"
+                                      name="course"
+                                      value={formData.course}
+                                      onChange={(value) => {
+                                        setFormData((previous) => ({
+                                          ...previous,
+                                          course: value,
+                                          batch: "",
+                                        }));
+                                        getBatch(1, value?.value);
+                                      }}
+                                      error={errMsg.course}
+                                      options={course}
+                                      required={false}
+                                      loadMore={() => courseListLoadMore()}
+                                    />
+                                    <span className="focus-border"></span>
+                                  </div>
+
+                                  <div className="">
+                                    <FormField
                                       label="Batch"
                                       type="loadMoreSelect"
                                       name="batch"
@@ -419,25 +450,7 @@ const MyBasicDetailsMain = () => {
                                     <span className="focus-border"></span>
                                   </div>
 
-                                  <div className="">
-                                    <FormField
-                                      label="Course"
-                                      type="loadMoreSelect"
-                                      name="course"
-                                      value={formData.course}
-                                      onChange={(value) =>
-                                        setFormData({
-                                          ...formData,
-                                          course: value,
-                                        })
-                                      }
-                                      error={errMsg.course}
-                                      options={course}
-                                      required={false}
-                                      loadMore={() => courseListLoadMore()}
-                                    />
-                                    <span className="focus-border"></span>
-                                  </div>
+                                  
 
                                   {/* Submit */}
                                 </div>

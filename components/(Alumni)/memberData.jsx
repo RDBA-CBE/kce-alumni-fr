@@ -4,6 +4,7 @@ import {
   formattedDate,
   objectToFormData,
   useSetState,
+  validateForm,
 } from "@/utils/commonFunction.utils";
 import Link from "next/link";
 import React, { useRef, useEffect } from "react";
@@ -25,6 +26,8 @@ const MemberData = (props) => {
     confrmModelOpen: false,
     proofModelOpen: false,
     dob: "",
+    currenBatchPage: 1,
+    errMsg: {},
   });
   console.log("✌️dob --->", state.dob);
 
@@ -65,6 +68,7 @@ const MemberData = (props) => {
           label: res?.member_data?.course_detail?.title,
         };
         setState({ course });
+        getBatch(1, course.value);
       }
 
       setState({
@@ -99,15 +103,19 @@ const MemberData = (props) => {
     }
   };
 
-  const getBatch = async () => {
+  const getBatch = async (page = 1, courseId) => {
     try {
-      const res = await Models.masters.batch(1);
+      const res = await Models.masters.batch(page, courseId);
       const BatchOption = res?.results?.map((bat) => ({
         value: bat.batch_id,
         label: bat.title,
       }));
 
-      setState({ batchList: BatchOption, hasBatchLoadMore: res?.next });
+      setState({
+        batchList: BatchOption,
+        currenBatchPage: page,
+        hasBatchLoadMore: res?.next,
+      });
     } catch (error) {
       console.log("✌️error --->", error);
     }
@@ -116,6 +124,16 @@ const MemberData = (props) => {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
+      const isValid = validateForm(
+        { email: state.email, register_no: state.register_no },
+        {
+          email: { required: true, email: true },
+          register_no: { required: true },
+        },
+        (errMsg) => setState({ errMsg })
+      );
+      if (!isValid) return;
+
       const body = {
         salutation: state.salutation?.value,
         gender: state.salutation?.value,
@@ -123,9 +141,9 @@ const MemberData = (props) => {
         batch: state.batch?.value,
         course: state.course?.value,
         mobile_no: state.mobile_no,
-        email: state.email,
+        email: state.email.trim(),
         file: state.file,
-        register_no: state.register_no,
+        register_no: state.register_no.trim(),
       };
 
       const res = await Models.member.updateMemberData(state.memberId, body);
@@ -143,6 +161,15 @@ const MemberData = (props) => {
   const submitProof = async (e) => {
     try {
       e.preventDefault();
+      const isValid = validateForm(
+        { email: state.email, register_no: state.register_no },
+        {
+          email: { required: true, email: true },
+          register_no: { required: true },
+        },
+        (errMsg) => setState({ errMsg })
+      );
+      if (!isValid) return;
 
       const body = {
         salutation: state.salutation?.value,
@@ -151,9 +178,9 @@ const MemberData = (props) => {
         batch: state.batch?.value,
         course: state.course?.value,
         mobile_no: state.mobile_no,
-        email: state.email,
+        email: state.email.trim(),
         file: state.file,
-        register_no: state.register_no,
+        register_no: state.register_no.trim(),
       };
       const formData = objectToFormData(body);
       const res = await Models.auth.newMemberProof(formData);
@@ -169,13 +196,14 @@ const MemberData = (props) => {
   const batchListLoadMore = async () => {
     try {
       if (state.hasBatchLoadMore) {
-        const res = await Models.masters.batch(state.currenBatchPage + 1);
+        const nextPage = state.currenBatchPage + 1;
+        const res = await Models.masters.batch(nextPage, state.course?.value);
         const BatchOption = res?.results?.map((bat) => ({
           value: bat.batch_id,
           label: bat.title,
         }));
         setState({
-          currenBatchPage: state.currenBatchPage + 1,
+          currenBatchPage: nextPage,
           hasBatchLoadMore: res.next,
           batchList: [...state.batchList, ...BatchOption],
         });
@@ -279,6 +307,22 @@ const MemberData = (props) => {
                 className="applicant-input"
               />
             </div> */}
+             <div className="form-group mt-3">
+              <FormField
+                type="loadMoreSelect"
+                name="course"
+                label="Course"
+                onChange={(value) => {
+                  setState({ course: value, batch: null });
+                  getBatch(1, value?.value);
+                }}
+                value={state.course}
+                options={state.courseList}
+                error={state.errMsg?.course}
+                required
+                loadMore={() => courseListLoadMore()}
+              />
+            </div>
             <div className="form-group mt-3">
               <FormField
                 type="loadMoreSelect"
@@ -294,21 +338,7 @@ const MemberData = (props) => {
                 loadMore={() => batchListLoadMore()}
               />
             </div>
-            <div className="form-group mt-3">
-              <FormField
-                type="loadMoreSelect"
-                name="course"
-                label="Course"
-                onChange={(value) => {
-                  setState({ course: value });
-                }}
-                value={state.course}
-                options={state.courseList}
-                error={state.errMsg?.course}
-                required
-                loadMore={() => courseListLoadMore()}
-              />
-            </div>
+           
 
             <div className="form-group">
               <FormField
@@ -364,7 +394,7 @@ const MemberData = (props) => {
 
             <div className="form-group mt-3">
               <FormField
-                placeholder="Register No"
+                placeholder="Register No *"
                 type="text"
                 name="register_no"
                 onChange={handleChange}

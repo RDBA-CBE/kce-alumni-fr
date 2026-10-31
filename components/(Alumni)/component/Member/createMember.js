@@ -133,14 +133,18 @@ const CreateMemberForm = () => {
     }
   };
 
-  const getBatch = async () => {
+  const getBatch = async (page = 1, courseId) => {
     try {
-      const res = await Models.masters.batch(1);
+      const res = await Models.masters.batch(page, courseId);
       const BatchOption = res?.results?.map((bat) => ({
         value: bat.batch_id,
         label: bat.title,
       }));
-      setState({ hasBatchLoadMore: res?.next, batchList: BatchOption });
+      setState({
+        hasBatchLoadMore: res?.next,
+        batchList: BatchOption,
+        currenBatchPage: page,
+      });
     } catch (error) {
       console.log("✌️error --->", error);
     }
@@ -185,7 +189,11 @@ const CreateMemberForm = () => {
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
+      ...(name === "course" ? { batch: "" } : {}),
     }));
+    if (name === "course") {
+      getBatch(1, value?.value);
+    }
 
     const hasValue =
       value !== undefined &&
@@ -280,7 +288,7 @@ const CreateMemberForm = () => {
       const isValid = validateForm(formData, validationRules, setErrMsg);
       console.log("isValid result:", isValid);
 
-      if (isValid) {
+      if (!isValid) {
         console.log("form validation failed ❌");
         return;
       }
@@ -361,13 +369,17 @@ const CreateMemberForm = () => {
   const batchListLoadMore = async () => {
     try {
       if (state.hasBatchLoadMore) {
-        const res = await Models.masters.batch(state.currenBatchPage + 1);
+        const nextPage = state.currenBatchPage + 1;
+        const res = await Models.masters.batch(
+          nextPage,
+          formData.course?.value
+        );
         const BatchOption = res?.results?.map((bat) => ({
           value: bat.batch_id,
           label: bat.title,
         }));
         setState({
-          currenBatchPage: state.currenBatchPage + 1,
+          currenBatchPage: nextPage,
           hasBatchLoadMore: res.next,
           batchList: [...state.batchList, ...BatchOption],
         });
