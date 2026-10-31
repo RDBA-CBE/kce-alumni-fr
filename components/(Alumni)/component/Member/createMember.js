@@ -250,6 +250,8 @@ const CreateMemberForm = () => {
       }
       let body = {
         group_name: formData.member_type,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         salutation_id: formData.salutation,
         gender: formData.gender,
         dob: formData.dob,
@@ -286,6 +288,8 @@ const CreateMemberForm = () => {
 
       let body = {
         group_name: formData.member_type,
+         first_name: formData.first_name,
+        last_name: formData.last_name,
         salutation_id: formData.salutation,
         gender: formData.gender,
         dob: formData.dob,
@@ -419,6 +423,7 @@ const CreateMemberForm = () => {
                 >
                   {!state.step ? (
                     <div className="form-grid">
+
                       <div className="form-group">
                         <FormField
                           placeholder="Member Type"
@@ -437,6 +442,30 @@ const CreateMemberForm = () => {
                         />
                         <span className="focus-border"></span>
                       </div>
+
+                       <div className="form-group">
+                                  
+                                    <FormField
+                            placeholder="First Name"
+                            type="text"
+                                      name="first_name"
+                                      value={formData.first_name}
+                            onChange={(e) => handleChange(e)}
+                            
+                          />
+                                    <span className="focus-border"></span>
+                                  </div>
+                                  <div className="form-group">
+                                 <FormField
+                            placeholder="Last Name"
+                            type="text"
+                                      name="last_name"
+                                      value={formData.last_name}
+                            onChange={(e) => handleChange(e)}
+                          
+                          />
+                                    <span className="focus-border"></span>
+                                  </div>
 
                       <div className="form-group">
                         <FormField

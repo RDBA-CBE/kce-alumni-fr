@@ -24,6 +24,8 @@ const MyBasicDetailsMain = () => {
     key: 1,
   });
   const [formData, setFormData] = useState({
+    first_name:"",
+    last_name:"",
     salutation: "",
     dob: "",
     gender: "",
@@ -126,6 +128,8 @@ const MyBasicDetailsMain = () => {
       const response = await Models.member.memberData(memberId);
       const res = response?.member_data;
       setFormData({
+        first_name: res.first_name || "",
+        last_name: res.last_name || "",
         salutation: res.salutation || "",
         dob: res.dob || "",
         gender: res.gender || "",
@@ -204,6 +208,8 @@ const MyBasicDetailsMain = () => {
     if (!isValid) return;
 
     const body = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
       salutation: formData.salutation,
       dob: formData.dob,
       gender: formData.gender,
@@ -349,6 +355,33 @@ const MyBasicDetailsMain = () => {
                               >
                                 <div className="form-grid">
                                   {/* Left Column */}
+                                  <div className="">
+                                    <FormField
+                                      label="First Name"
+                                      type="text"
+                                      name="first_name"
+                                      value={formData.first_name}
+                                      onChange={handleChange}
+                                      error={errMsg.first_name}
+                                      // className="applicant-input"
+                                      required={false}
+                                    />
+                                    <span className="focus-border"></span>
+                                  </div>
+                                  <div className="">
+                                  <FormField
+                                      label="Last Name"
+                                      type="text"
+                                      name="last_name"
+                                      value={formData.last_name}
+                                      onChange={handleChange}
+                                      error={errMsg.last_name}
+                                      // className="applicant-input"
+                                      required={false}
+                                    />
+                                    <span className="focus-border"></span>
+                                  </div>
+
                                   <div className="">
                                     <FormField
                                       label="Salutation"
