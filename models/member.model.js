@@ -5,7 +5,7 @@ import { modelError } from "@/utils/commonFunction.utils";
 const member = {
   list: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `all_members/?page=${page}`;
+      let url = `all_members/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -50,7 +50,7 @@ const member = {
 
   pendingMember: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `pending_members/?page=${page}`;
+      let url = `pending_members/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -159,7 +159,7 @@ const member = {
 
   users: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `users/?page=${page}`;
+      let url = `users/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -189,7 +189,7 @@ const member = {
 
   filter: (page, body) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `filter_by/?page=${page}`;
+      let url = `filter_by/?page=${page}&pagesize=100`;
       instance()
         .post(url, body)
         .then((res) => {

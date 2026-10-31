@@ -3,7 +3,7 @@ import { instance } from "@/utils/axios.utils";
 const event = {
   GetAllEventsAdminData: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_event/?page=${page}`;
+      let url = `retrieve_event/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -23,7 +23,7 @@ const event = {
 
   filterEvent: (page, body) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `event_by_category/?page=${page}`;
+      let url = `event_by_category/?page=${page}&pagesize=100`;
       if (body.category_id) {
         url += `&category_id=${encodeURIComponent(body.category_id)}`;
       }
@@ -53,7 +53,7 @@ const event = {
 
   GetMyEventsAdminData: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `my_event/?page=${page}`;
+      let url = `my_event/?page=${page}&pagesize=100`;
 
       instance()
         .get(url)
@@ -74,7 +74,7 @@ const event = {
 
   filterMyEvent: (page, body) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `my_event/?page=${page}`;
+      let url = `my_event/?page=${page}&pagesize=100`;
       if (body?.category_id) {
         url += `&event_category_id=${encodeURIComponent(body.category_id)}`;
       }
@@ -199,7 +199,7 @@ const event = {
 
   registered_details: (id,page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `registered_details/${id}/?page=${page}`;
+      let url = `registered_details/${id}/?page=${page}&pagesize=100`;
 
       instance()
         .get(url)

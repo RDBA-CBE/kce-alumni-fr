@@ -4,7 +4,7 @@ import { instance } from "@/utils/axios.utils";
 const post = {
   GetAllPostData: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `postpending/published_posts/?page=${page}`;
+      let url = `postpending/published_posts/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -24,7 +24,7 @@ const post = {
 
   GetPostData: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `posts/?page=${page}`;
+      let url = `posts/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -103,7 +103,7 @@ const post = {
 
   FilterPostData: (data,page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `filter_posts/?page=${page}`;
+      let url = `filter_posts/?page=${page}&pagesize=100`;
       instance()
         .post(url, data)
         .then((res) => {

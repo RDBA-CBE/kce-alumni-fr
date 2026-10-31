@@ -4,7 +4,7 @@ const masters = {
   // Country Start
   GetCountryList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_countries/?page=${page}`;
+      let url = `retrieve_countries/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -44,7 +44,7 @@ const masters = {
 
   courseList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_course/?page=${page}`;
+      let url = `retrieve_course/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -124,7 +124,7 @@ const masters = {
 
   batchList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_batch/?page=${page}`;
+      let url = `retrieve_batch/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -184,7 +184,7 @@ const masters = {
 
   departmentList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_department/?page=${page}`;
+      let url = `retrieve_department/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -204,7 +204,7 @@ const masters = {
 
   institutionList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_industries/?page=${page}`;
+      let url = `retrieve_industries/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -224,7 +224,7 @@ const masters = {
 
   skillList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_skills/?page=${page}`;
+      let url = `retrieve_skills/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -244,7 +244,7 @@ const masters = {
 
   roleList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_role/?page=${page}`;
+      let url = `retrieve_role/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -264,7 +264,7 @@ const masters = {
 
   bussinessTypeList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_industry_type/?page=${page}`;
+      let url = `retrieve_industry_type/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -284,7 +284,7 @@ const masters = {
 
   locationList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_locations/?page=${page}`;
+      let url = `retrieve_locations/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -304,7 +304,7 @@ const masters = {
 
   industryList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_industries/?page=${page}`;
+      let url = `retrieve_industries/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -367,7 +367,7 @@ const masters = {
   // Ticket Category Start
   GetTicketCategoryData: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_ticket_category/?page=${page}`;
+      let url = `retrieve_ticket_category/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -429,7 +429,7 @@ const masters = {
   // Post Category Start
   GetPostCategoryData: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `postcategory/?page=${page}&for_create=True`;
+      let url = `postcategory/?page=${page}&pagesize=100&for_create=True`;
       instance()
         .get(url)
         .then((res) => {
@@ -449,7 +449,7 @@ const masters = {
 
   GetPostCategoryList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `postcategory/?page=${page}`;
+      let url = `postcategory/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -512,7 +512,7 @@ const masters = {
   // Event Category Start
   GetEventCategoryData: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_event_category/?page=${page}`;
+      let url = `retrieve_event_category/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -632,7 +632,7 @@ const masters = {
 
   batch: (page = 1, courseId) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_batch/?page=${page}`;
+      let url = `retrieve_batch/?page=${page}&pagesize=100`;
       if (courseId !== undefined && courseId !== null && courseId !== "") {
         url += `&course_id=${courseId}`;
       }
@@ -655,7 +655,7 @@ const masters = {
 
   course: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `active_course/?page=${page}`;
+      let url = `active_course/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -675,7 +675,7 @@ const masters = {
 
   department: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `active_department/?page=${page}`;
+      let url = `active_department/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -695,7 +695,7 @@ const masters = {
 
   institutions: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_institutions/?page=${page}`;
+      let url = `retrieve_institutions/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -735,7 +735,7 @@ const masters = {
 
   status: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_status/?page=${page}`;
+      let url = `retrieve_status/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -754,7 +754,7 @@ const masters = {
 
   facultyList: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `faculty_users/?page=${page}`;
+      let url = `faculty_users/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {

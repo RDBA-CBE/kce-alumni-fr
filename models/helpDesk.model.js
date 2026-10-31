@@ -4,7 +4,7 @@ import { instance } from "@/utils/axios.utils";
 const helpDesk = {
   facultyAssignedTickets: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `assignments/?page=${page}`;
+      let url = `assignments/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -24,7 +24,7 @@ const helpDesk = {
 
   filter_ticket: (body,page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `filter_ticket/?page=${page}`;
+      let url = `filter_ticket/?page=${page}&pagesize=100`;
       instance()
         .post(url,body)
         .then((res) => {
@@ -44,7 +44,7 @@ const helpDesk = {
 
   ticketList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = ` retrieve_ticket/?page=${page}`;
+      let url = ` retrieve_ticket/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -64,7 +64,7 @@ const helpDesk = {
 
   retrieve_ticket: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_ticket/?page=${page}`;
+      let url = `retrieve_ticket/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -84,7 +84,7 @@ const helpDesk = {
 
   retrieve_open_ticket: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_open_ticket/?page=${page}`;
+      let url = `retrieve_open_ticket/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -106,7 +106,7 @@ const helpDesk = {
 
   openTicketList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = ` retrieve_open_ticket/?page=${page}`;
+      let url = ` retrieve_open_ticket/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -126,7 +126,7 @@ const helpDesk = {
 
   open_filter_ticket: (body,page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `open_filter_ticket/?page=${page}`;
+      let url = `open_filter_ticket/?page=${page}&pagesize=100`;
       instance()
         .post(url,body)
         .then((res) => {

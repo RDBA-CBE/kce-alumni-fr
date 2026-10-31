@@ -46,7 +46,7 @@ const CreateMemberForm = () => {
     course: "",
     blood_group: "",
     gender: "",
-    dob: "",
+    dob: null,
     email: "",
     name: "",
     register: "",
@@ -272,17 +272,8 @@ const CreateMemberForm = () => {
     console.log("hello from createMember");
     try {
       let validationRules = {
-        salutation: { required: true },
-        name: { required: true },
-        gender: { required: true },
-        blood_group: { required: true },
-        mobile_no: { required: true },
         email: { required: true },
-        course: { required: true },
-        department: { required: true },
-        batch: { required: true },
         register: { required: true },
-        dob: { required: true },
       };
 
       const isValid = validateForm(formData, validationRules, setErrMsg);
@@ -436,10 +427,6 @@ const CreateMemberForm = () => {
                           value={formData.member_type}
                           onChange={(e) => handleChange(e)}
                           options={[
-                            {
-                              label: "Faculty",
-                              value: "faculty",
-                            },
                             {
                               label: "Alumni",
                               value: "alumni",
@@ -649,10 +636,6 @@ const CreateMemberForm = () => {
                           value={formData.member_type}
                           onChange={(e) => handleChange(e)}
                           options={[
-                            {
-                              label: "Faculty",
-                              value: "faculty",
-                            },
                             {
                               label: "Alumni",
                               value: "alumni",

@@ -4,7 +4,7 @@ import { instance } from "@/utils/axios.utils";
 const gallery = {
   albumList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `albums/?page=${page}`;
+      let url = `albums/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -24,7 +24,7 @@ const gallery = {
 
   memoriesList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `memories/?page=${page}`;
+      let url = `memories/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
@@ -104,7 +104,7 @@ const gallery = {
 
   photoList: (id, page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `photos/${id}/?page=${page}`;
+      let url = `photos/${id}/?page=${page}&pagesize=100`;
       instance()
         .get(url)
         .then((res) => {
