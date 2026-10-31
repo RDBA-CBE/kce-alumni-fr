@@ -884,12 +884,12 @@ const JobBoardMain = () => {
                                             </h5>
                                           )}
 
-                                          {(isAlumni == 'true' ||
+                                          {/* {(isAlumni == 'true' ||
                                             isFatulty == 'true') && (
                                             <h5 className='mb--5'>
                                               {listOfPosts.length} records found
                                             </h5>
-                                          )}
+                                          )} */}
                                           {/* <p className="b3">Create Announcement</p> */}
                                         </div>
                                       </div>
@@ -1054,7 +1054,7 @@ const JobBoardMain = () => {
                                 </div>
                               )}
 
-                              {(isAlumni == 'true' || isFatulty == 'true') && (
+                              {( (isAdmin !== 'true' && isAlumni == 'true') || isFatulty == 'true' ) && (
                                 <div className='rbt-dashboard-table table-responsive mobile-table-750'>
                                   <div className='row g-5 m-0'>
                                     {listOfPosts.length > 0 ? (
