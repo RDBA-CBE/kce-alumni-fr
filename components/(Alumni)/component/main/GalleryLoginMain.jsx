@@ -17,6 +17,26 @@ import { message, Modal } from "antd";
 import FormField from "@/commonComponents/FormFields";
 import Pagination from "@/commonComponents/Pagination";
 
+const PAGE_SIZE = 10;
+
+const fetchAllPages = async (fetchPage) => {
+  const results = [];
+  let response = await fetchPage(1);
+  let total = Number(response?.count ?? 0);
+  let pageCount = 0;
+
+  while (response) {
+    results.push(...(response.results || []));
+    pageCount += 1;
+
+    if (!response.next) break;
+
+    response = await fetchPage(pageCount + 1);
+  }
+
+  return { results, total, maxPage: pageCount };
+};
+
 const GalleryLoginMain = () => {
   const [discountPercentage, setDiscountPercentage] = useState({});
   const [totalReviews, setTotalReviews] = useState({});
@@ -71,7 +91,7 @@ const GalleryLoginMain = () => {
     activeTab: 0,
     memoriesList: [],
     memoriescurrentPage: 1,
-    memoriesnext: null,
+    memoriesnext: undefined,
     memoriesprevious: null,
     memoriestotal: null,
     isMemoriesOpen: false,
@@ -93,13 +113,15 @@ const GalleryLoginMain = () => {
 
   const albumList = async (page) => {
     try {
-      const res = await Models.gallery.albumList(page);
+      const { results, total, maxPage } = await fetchAllPages((pageNumber) =>
+        Models.gallery.albumList(pageNumber)
+      );
       setState({
-        albumList: res?.results,
+        albumList: results,
         currentPage: page,
-        next: res?.next,
-        previous: res?.previous,
-        total: res?.count,
+        next: undefined,
+        total,
+        maxPage,
       });
     } catch (error) {
       if (error?.data?.code === "token_not_valid") {
@@ -112,13 +134,15 @@ const GalleryLoginMain = () => {
 
   const memoriesList = async (page) => {
     try {
-      const res = await Models.gallery.memoriesList(page);
+      const { results, total, maxPage } = await fetchAllPages((pageNumber) =>
+        Models.gallery.memoriesList(pageNumber)
+      );
       setState({
-        memoriesList: res?.results,
+        memoriesList: results,
         memoriescurrentPage: page,
-        memoriesnext: res?.next,
-        memoriesprevious: res?.previous,
-        memoriestotal: res?.count,
+        memoriesnext: undefined,
+        memoriestotal: total,
+        memoriesMaxPage: maxPage,
       });
     } catch (error) {
       if (error?.data?.code === "token_not_valid") {
@@ -199,7 +223,6 @@ const GalleryLoginMain = () => {
   };
 
   const handlePageChange = (number) => {
-    albumList(number);
     setState({ currentPage: number });
     window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -207,7 +230,6 @@ const GalleryLoginMain = () => {
   };
 
   const handleMPageChange = (number) => {
-    memoriesList(number);
     setState({ memoriescurrentPage: number });
     window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -360,7 +382,12 @@ const GalleryLoginMain = () => {
                         role="tabpanel"
                       >
                         <div className="row g-3 parent-gallery-container">
-                          {state.albumList?.map((data, index) => (
+                          {state.albumList
+                            ?.slice(
+                              (state.currentPage - 1) * PAGE_SIZE,
+                              state.currentPage * PAGE_SIZE
+                            )
+                            .map((data, index) => (
                             <div
                               className="col-lg-3 col-md-4 col-sm-6 col-6"
                               key={`gallery-enrolled-${index}`}
@@ -401,13 +428,14 @@ const GalleryLoginMain = () => {
                           ))}
                         </div>
                         {/* ALBUM PAGINATION */}
-                        {state.albumList?.length > 0 && (
+                        {Number(state.total) > 0 && (
                           <div className="d-flex justify-content-center mt-4">
                             <Pagination
                               activeNumber={handlePageChange}
                               totalPage={state.total}
                               currentPages={state.currentPage}
                               next={state.next}
+                              maxPage={state.maxPage}
                             />
                           </div>
                         )}
@@ -420,7 +448,12 @@ const GalleryLoginMain = () => {
                         role="tabpanel"
                       >
                         <div className="row g-3 parent-gallery-container">
-                          {state.memoriesList?.map((data, index) => (
+                          {state.memoriesList
+                            ?.slice(
+                              (state.memoriescurrentPage - 1) * PAGE_SIZE,
+                              state.memoriescurrentPage * PAGE_SIZE
+                            )
+                            .map((data, index) => (
                             <div
                               className="col-lg-3 col-md-4 col-sm-6 col-6"
                               key={`gallery-active-${index}`}
@@ -462,13 +495,14 @@ const GalleryLoginMain = () => {
                               </div>
                             </div>
                           ))}
-                          {state.memoriesList?.length > 0 && (
+                          {Number(state.memoriestotal) > 0 && (
                             <div className="d-flex justify-content-center mt-4">
                               <Pagination
                                 activeNumber={handleMPageChange}
                                 totalPage={state.memoriestotal}
                                 currentPages={state.memoriescurrentPage}
                                 next={state.memoriesnext}
+                                maxPage={state.memoriesMaxPage}
                               />
                             </div>
                           )}

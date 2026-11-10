@@ -18,6 +18,26 @@ import UpCommingEvents from '../KITEvents/UpCommingEvents';
 import Pagination from '@/commonComponents/Pagination';
 import Loader from '../../Loader';
 
+const PAGE_SIZE = 10;
+
+const fetchAllPages = async (fetchPage) => {
+  const results = [];
+  let response = await fetchPage(1);
+  let total = Number(response?.count ?? 0);
+  let pageCount = 0;
+
+  while (response) {
+    results.push(...(response.results || []));
+    pageCount += 1;
+
+    if (!response.next) break;
+
+    response = await fetchPage(pageCount + 1);
+  }
+
+  return { results, total, maxPage: pageCount };
+};
+
 const EventsLoginMain = () => {
   let getAllCourse = EventDetails;
 
@@ -35,7 +55,7 @@ const EventsLoginMain = () => {
     activeTab: 0,
     currentPage: 1,
     total: 0,
-    next: null,
+    next: undefined,
     pageLoading: false,
   });
 
@@ -66,31 +86,31 @@ const EventsLoginMain = () => {
   }, []);
 
   useEffect(() => {
-    // if (state?.isAdmin == "true" || state?.isAlumniManager == "true") {
+    if (!state.token) return;
     const body = bodyData();
-    console.log('✌️body --->', body);
     if (Object.keys(body).length > 0) {
       filterData(1);
     } else {
       GetAllEventsAdmin(1);
     }
   }, [
-    state?.isAdmin || state?.isAlumniManager,
+    state.token,
     state.activeTab,
     state.filterCategory,
   ]);
 
   const GetAllEventsAdmin = async (page) => {
     setState({ pageLoading: true });
-    console.log('✌️page --->', page);
     try {
-      const res = await Models?.event?.GetAllEventsAdminData(page);
+      const { results, total, maxPage } = await fetchAllPages((pageNumber) =>
+        Models?.event?.GetAllEventsAdminData(pageNumber)
+      );
       setState({
-        allEventsAdmin: res?.results,
+        allEventsAdmin: results,
         currentPage: page,
-        next: res?.next,
-        previous: res?.previous,
-        total: res?.count,
+        next: undefined,
+        total,
+        maxPage,
         pageLoading: false,
       });
     } catch (error) {
@@ -104,17 +124,19 @@ const EventsLoginMain = () => {
   };
 
   const filterData = async (page) => {
-    console.log('filterData --->', page);
+    setState({ pageLoading: true });
     try {
       const body = bodyData();
-
-      const res = await Models?.event?.filterEvent(page, body);
+      const { results, total, maxPage } = await fetchAllPages((pageNumber) =>
+        Models?.event?.filterEvent(pageNumber, body)
+      );
       setState({
-        allEventsAdmin: res?.results,
+        allEventsAdmin: results,
         currentPage: page,
-        next: res?.next,
-        previous: res?.previous,
-        total: res?.count,
+        next: undefined,
+        total,
+        maxPage,
+        pageLoading: false,
       });
     } catch (error) {
       if (error?.code === 'token_not_valid') {
@@ -122,6 +144,7 @@ const EventsLoginMain = () => {
         router.push('/login');
       }
       console.log(error);
+      setState({ pageLoading: false });
     }
   };
 
@@ -242,13 +265,6 @@ const EventsLoginMain = () => {
   ];
 
   const handlePageChange = (number) => {
-    const body = bodyData();
-    if (Object.keys(body).length > 0) {
-      filterData(number);
-    } else {
-      GetAllEventsAdmin(number);
-    }
-
     setState({ currentPage: number });
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -419,7 +435,10 @@ const EventsLoginMain = () => {
                           <div className='container'>
                             <UpCommingEvents
                               isAdmin={state.isAdmin}
-                              data={state.allEventsAdmin} // Use the data fetched for upcoming events
+                              data={state.allEventsAdmin?.slice(
+                                (state.currentPage - 1) * PAGE_SIZE,
+                                state.currentPage * PAGE_SIZE
+                              )}
                               // onClick={(id) => {
                               //   router.push(`edit-event/${id}`);
                               // }}
@@ -430,7 +449,7 @@ const EventsLoginMain = () => {
                               }
                             />
 
-                            {state.allEventsAdmin?.length > 0 && (
+                            {Number(state.total) > 0 && (
                               <div>
                                 <div className='mb-20 '>
                                   <Pagination
@@ -438,6 +457,7 @@ const EventsLoginMain = () => {
                                     totalPage={state.total}
                                     currentPages={state.currentPage}
                                     next={state.next}
+                                    maxPage={state.maxPage}
                                   />
                                 </div>
                               </div>
