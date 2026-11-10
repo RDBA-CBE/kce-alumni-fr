@@ -45,11 +45,9 @@ const BasicContactMain = () => {
   }, [id]);
 
   useEffect(() => {
-    if (isAlumniContact !== null) {
-      const AlumniContact = localStorage.getItem('isAlumniContact');
-      setIsAlumniContact(AlumniContact);
-    }
-  }, [isAlumniContact]);
+    const AlumniContact = localStorage.getItem('isAlumniContact');
+    setIsAlumniContact(AlumniContact);
+  }, []);
 
   useEffect(() => {
     GetSkills();
@@ -85,9 +83,7 @@ const BasicContactMain = () => {
   };
 
   const getMemberSkills = () => {
-    setState({
-      pageLoading: true,
-    });
+    setState({ pageLoading: true });
     axios
       .get(`${BaseURL}/retrieve_alumni/${id}/`, {
         headers: {
@@ -96,31 +92,24 @@ const BasicContactMain = () => {
       })
       .then((response) => {
         console.log('res :', response);
+        const data = response.data.data;
         setFormData({
-          website: response.data.data.website,
-          linked_in: response.data.data.linked_in,
-          location: {
-            value: response.data.data.location_detail.id,
-            label: response.data.data.location_detail.location,
-          },
-          twitter_handle: response.data.data.twitter_handle,
-          address: response.data.data.address,
-          postal_code: response.data.data.postal_code,
+          website: data?.website || '',
+          linked_in: data?.linked_in || '',
+          location: data?.location_detail?.id
+            ? { value: data.location_detail.id, label: data.location_detail.location }
+            : null,
+          twitter_handle: data?.twitter_handle || '',
+          address: data?.address || '',
+          postal_code: data?.postal_code || '',
         });
-        const AlumniContact = localStorage.setItem(
-          'isAlumniContact',
-          response.data?.modules?.module4
-        );
-        setIsAlumniContact(AlumniContact);
-        setState({
-          pageLoading: false,
-        });
-      })      
+        localStorage.setItem('isAlumniContact', response.data?.modules?.module4);
+        setIsAlumniContact(response.data?.modules?.module4);
+        setState({ pageLoading: false });
+      })
       .catch((err) => {
         console.log(err);
-        setState({
-          pageLoading: false,
-        });
+        setState({ pageLoading: false });
       });
   };
 

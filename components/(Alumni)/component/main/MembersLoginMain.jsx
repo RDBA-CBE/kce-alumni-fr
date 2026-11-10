@@ -333,14 +333,14 @@ const MembersLoginMain = () => {
     if (state.member_type) {
       body.member_type = state.member_type.label;
     }
-    if (state.member_type == "Alumni") {
+    // if (state.member_type == "Alumni") {
       if (state.batch) {
         body.batch = state.batch.value;
       }
       if (state.course) {
         body.course = state.course.value;
       }
-    }
+    // }
     if (state.role) {
       body.role = state.role.value;
     }
@@ -674,7 +674,7 @@ const MembersLoginMain = () => {
                                     </a>
                                   </li>
 
-                                 {state.member_type == "Alumni" &&
+                                 {/* {state.member_type == "Alumni" && */}
                                  <>
                                   <li className="nav-item" role="presentation">
                                     <a
@@ -696,7 +696,7 @@ const MembersLoginMain = () => {
                                     </a>
                                   </li>
 
-                                  <li className="nav-item" role="presentation">
+                                  {/* <li className="nav-item" role="presentation">
                                     <a
                                       className={`w-100 ${
                                         pathname === "#" ? "active" : ""
@@ -721,8 +721,9 @@ const MembersLoginMain = () => {
                                         loadMore={() => courseListLoadMore()}
                                       />
                                     </a>
-                                  </li>
-                                 </>}
+                                  </li> */}
+                                 </>
+                                {/* } */}
 
                                  
 
@@ -1106,6 +1107,7 @@ const MembersLoginMain = () => {
                                       activeNumber={handlePageChange}
                                       totalPage={state.total}
                                       currentPages={state.currentPage}
+                                      next={state.next}
                                     />
                                   </div>
                                 </div>

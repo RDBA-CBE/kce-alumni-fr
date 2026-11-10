@@ -49,16 +49,18 @@ const ProfileExperienceMain = () => {
         hasIndustryLoadMore: null,
         currenLocationPage: 1,
         hasLocationLoadMore: null,
+        btnLoading: false,
     });
 
     useEffect(() => {
         const MemberId = localStorage.getItem("member_id");
         setMemberId(MemberId);
-    }, [memberId]);
+    }, []);
 
     useEffect(() => {
         if (memberId !== null) {
             getMemberSkills();
+            getExistingExperience();
         }
     }, [memberId]);
 
@@ -67,7 +69,7 @@ const ProfileExperienceMain = () => {
             const AlumniContact = localStorage.getItem("isAlumniContact");
             setIsAlumniContact(AlumniContact);
         }
-    }, [isAlumniContact]);
+    }, []);
 
     // useEffect(() => {
     //   const AlumniExperience = localStorage.getItem("isAlumniExperience");
@@ -101,14 +103,11 @@ const ProfileExperienceMain = () => {
             if (state.hasMoreLead) {
                 const res = await Models.masters.roleList(state.currentRolePage + 1);
                 const dropdown = setDropdownData(res?.results, "role");
+                const updated = [...role, ...dropdown];
+                setRole(updated);
                 setState({
-                    roleList: [...state.roleList, ...dropdown],
                     hasMoreLead: res.next,
                     currentRolePage: state.currentRolePage + 1,
-                });
-            } else {
-                setState({
-                    roleList: state.roleList,
                 });
             }
         } catch (error) {
@@ -158,12 +157,37 @@ const ProfileExperienceMain = () => {
             });
     };
 
+    const getExistingExperience = async () => {
+        try {
+            const res = await Models.member.member_experience(memberId);
+            const latest = res?.results?.[0];
+            if (!latest) return;
+            // Use detail endpoint (same as edit page) to get nested objects for selects
+            const detail = await axios.get(
+                `${BaseURL}/update_member_experience/${latest.id}/`,
+                { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+            );
+            const d = detail.data;
+            setFormData({
+                industry: d.industry ? { value: d.industry.id, label: d.industry.title } : "",
+                role: d.role ? { value: d.role.id, label: d.role.role } : "",
+                location: d.location ? { value: d.location.id, label: d.location.location } : "",
+                start_date: d.start_date || "",
+                end_date: d.end_date || null,
+                is_currently_working: d.is_currently_working || false,
+            });
+        } catch (error) {
+            console.log("✌️error --->", error);
+        }
+    };
+
     const handleChange = (event) => {
         const { name, value, type, checked } = event.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: type === "checkbox" ? checked : value, // Set to checked for checkboxes
+            [name]: type === "checkbox" ? checked : value,
         }));
+        if (value) setErrMsg((prev) => ({ ...prev, [name]: "" }));
     };
 
     const handleEducationSubmit = async (e) => {
@@ -198,6 +222,7 @@ const ProfileExperienceMain = () => {
         };
 
         try {
+            setState({ btnLoading: true });
             const res = await axios.post(
                 `${BaseURL}/create_member_experience/`,
                 body,
@@ -212,6 +237,7 @@ const ProfileExperienceMain = () => {
                 type: "success",
                 content: res.data.message,
             });
+            setState({ btnLoading: false });
 
             setFormData({
                 industry: "",
@@ -229,6 +255,7 @@ const ProfileExperienceMain = () => {
             }
         } catch (error) {
             console.log("error :", error);
+            setState({ btnLoading: false });
             messageApi.open({
                 type: "error",
                 content: error.response.data.message,
@@ -368,12 +395,10 @@ const ProfileExperienceMain = () => {
                                                                     name="industry"
                                                                     label="Industry"
                                                                     // className={"applicant-input "}
-                                                                    onChange={(value) =>
-                                                                        setFormData({
-                                                                            ...formData,
-                                                                            industry: value,
-                                                                        })
-                                                                    }
+                                                                    onChange={(value) => {
+                                                                        setFormData({ ...formData, industry: value });
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, industry: "" }));
+                                                                    }}
                                                                     value={formData.industry}
                                                                     options={industry}
                                                                     error={errMsg?.industry}
@@ -387,12 +412,10 @@ const ProfileExperienceMain = () => {
                                                                     name="role"
                                                                     label="Role"
                                                                     // className={"applicant-input"}
-                                                                    onChange={(value) =>
-                                                                        setFormData({
-                                                                            ...formData,
-                                                                            role: value,
-                                                                        })
-                                                                    }
+                                                                    onChange={(value) => {
+                                                                        setFormData({ ...formData, role: value });
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, role: "" }));
+                                                                    }}
                                                                     value={formData.role}
                                                                     error={errMsg?.role}
                                                                     options={role}
@@ -466,12 +489,10 @@ const ProfileExperienceMain = () => {
                                                                     name="location"
                                                                     label="Location"
                                                                     // className={"applicant-input"}
-                                                                    onChange={(value) =>
-                                                                        setFormData({
-                                                                            ...formData,
-                                                                            location: value,
-                                                                        })
-                                                                    }
+                                                                    onChange={(value) => {
+                                                                        setFormData({ ...formData, location: value });
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, location: "" }));
+                                                                    }}
                                                                     value={formData.location}
                                                                     options={location}
                                                                     error={errMsg?.location}
@@ -509,11 +530,12 @@ const ProfileExperienceMain = () => {
                                                                     name="submit"
                                                                     type="submit"
                                                                     id="submit"
-                                                                    className="rbt-btn btn-md btn-gradient hover-icon-reverse ms-2"
+                                                                    disabled={state.btnLoading}
+                                                                    className={`rbt-btn btn-md btn-gradient hover-icon-reverse ms-2 ${state.btnLoading ? "loading" : ""}`}
                                                                 >
                                                                     <span className="icon-reverse-wrapper">
                                                                         <span className="btn-text">
-                                                                            Save and Continue
+                                                                            {state.btnLoading ? "Saving..." : "Save and Continue"}
                                                                         </span>
                                                                         <span className="btn-icon">
                                                                             <i className="feather-arrow-right"></i>

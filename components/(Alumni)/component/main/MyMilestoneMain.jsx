@@ -103,8 +103,9 @@ const MyMilestoneMain = () => {
     const { name, value, type, checked } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox" ? checked : value, // Set to checked for checkboxes
+      [name]: type === "checkbox" ? checked : value,
     }));
+    if (value) setErrMsg((prev) => ({ ...prev, [name]: "" }));
   };
   const success = (success) => {
     messageApi.open({

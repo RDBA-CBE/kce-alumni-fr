@@ -30,109 +30,21 @@ const ProfileMilestoneMain = () => {
     });
     const [errMsg, setErrMsg] = useState({});
     const [messageApi, contextHolder] = message.useMessage();
-    const [skills, setSkills] = useState([]);
     const [memberId, setMemberId] = useState(null);
     const [memberSkills, setMemberSkills] = useState([]);
-    const [industry, setIndustry] = useState([]);
-    const [location, setLocation] = useState([]);
-    const [role, setRole] = useState([]);
     const [isAlumniContact, setIsAlumniContact] = useState(false);
+    const [btnLoading, setBtnLoading] = useState(false);
     useEffect(() => {
         const MemberId = localStorage.getItem("member_id");
         setMemberId(MemberId);
-    }, [memberId]);
+    }, []);
 
     useEffect(() => {
         if (memberId !== null) {
             getMemberSkills();
+            getExistingMilestone();
         }
     }, [memberId]);
-
-    // useEffect(() => {
-    //     const MileStone = localStorage.getItem("isMilestone");
-    //     console.log("MileStone", MileStone)
-    //     if (MileStone == true || MileStone == "true") {
-    //         router.push("/edit-basic-profile");
-
-    //     }
-    // }, []);
-
-    // useEffect(() => {
-    //     const AlumniExperience = localStorage.getItem("isAlumniExperience");
-    //     (AlumniExperience == true || AlumniExperience == "true") &&
-    //         router.push("/profile-alumni");
-    //     console.log("✌️AlumniExperience --->", AlumniExperience);
-    // }, []);
-
-    useEffect(() => {
-        GetSkills();
-        GetIndustry();
-        GetLocation();
-        GetRole();
-    }, []);
-
-    const GetRole = () => {
-        axios
-            ?.get(`${BaseURL}/retrieve_role/`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            })
-            .then((res) => {
-                console.log("res :", res);
-                setRole(res.data?.results);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
-
-    const GetSkills = () => {
-        axios
-            .get(`${BaseURL}/retrieve_skills/`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            })
-            .then((res) => {
-                setSkills(res.data?.results);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
-
-    const GetIndustry = () => {
-        axios
-            .get(`${BaseURL}/retrieve_industries/`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            })
-            .then((res) => {
-                console.log("res :", res);
-                setIndustry(res.data?.results);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
-
-    const GetLocation = () => {
-        axios
-            .get(`${BaseURL}/retrieve_locations/`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            })
-            .then((res) => {
-                console.log("res :", res);
-                setLocation(res.data?.results);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    };
 
     const getMemberSkills = () => {
         axios
@@ -142,7 +54,6 @@ const ProfileMilestoneMain = () => {
                 },
             })
             .then((res) => {
-                console.log("res :", res);
                 setMemberSkills(res.data?.results);
             })
             .catch((err) => {
@@ -150,12 +61,28 @@ const ProfileMilestoneMain = () => {
             });
     };
 
+    const getExistingMilestone = async () => {
+        try {
+            const res = await Models.masters.milestone(memberId);
+            const latest = res?.results?.[0];
+            if (!latest) return;
+            setFormData({
+                title: latest.title || "",
+                description: latest.description || "",
+                year: latest.year || "",
+            });
+        } catch (error) {
+            console.log("✌️error --->", error);
+        }
+    };
+
     const handleChange = (event) => {
         const { name, value, type, checked } = event.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: type === "checkbox" ? checked : value, // Set to checked for checkboxes
+            [name]: type === "checkbox" ? checked : value,
         }));
+        if (value) setErrMsg((prev) => ({ ...prev, [name]: "" }));
     };
 
     const handleEducationSubmit = async (e) => {
@@ -183,6 +110,7 @@ const ProfileMilestoneMain = () => {
             year: formData.year,
         };
         try {
+            setBtnLoading(true);
             const res = await axios.post(
                 `${BaseURL}/milestones/`,
                 body,
@@ -197,6 +125,7 @@ const ProfileMilestoneMain = () => {
                 type: "success",
                 content: res.data.message,
             });
+            setBtnLoading(false);
 
             setFormData({
                 title: "",
@@ -211,6 +140,7 @@ const ProfileMilestoneMain = () => {
             }
         } catch (error) {
             console.log("error :", error);
+            setBtnLoading(false);
             messageApi.open({
                 type: "error",
                 content: error.response.data.message,
@@ -338,24 +268,10 @@ const ProfileMilestoneMain = () => {
                                                                      type="text"
                                                                 name="year"
                                                                 label="Year"
-                                                                // className={"applicant-input"}
                                                                 onChange={handleChange}
                                                                 value={formData.year}
                                                                 error={errMsg?.year}
                                                                 required={true}
-                                                                />
-                                                            </div>
-
-
-                                                            <div className="w-100 ">
-                                                                <FormField
-                                                                    type="textarea"
-                                                                    name="address"
-                                                                    label="Address"
-                                                                    // className={"applicant-input"}
-                                                                    onChange={handleChange}
-                                                                    value={formData.address}
-                                                                // error={errMsg?.address}
                                                                 />
                                                             </div>
 
@@ -392,11 +308,12 @@ const ProfileMilestoneMain = () => {
                                                                     name="submit"
                                                                     type="submit"
                                                                     id="submit"
-                                                                    className="rbt-btn btn-md btn-gradient hover-icon-reverse ms-2"
+                                                                    disabled={btnLoading}
+                                                                    className={`rbt-btn btn-md btn-gradient hover-icon-reverse ms-2 ${btnLoading ? "loading" : ""}`}
                                                                 >
                                                                     <span className="icon-reverse-wrapper">
                                                                         <span className="btn-text">
-                                                                            Save and Continue
+                                                                            {btnLoading ? "Saving..." : "Save and Continue"}
                                                                         </span>
                                                                         <span className="btn-icon">
                                                                             <i className="feather-arrow-right"></i>

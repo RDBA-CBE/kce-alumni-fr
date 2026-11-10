@@ -5,25 +5,33 @@ const Pagination = ({
   totalPage,
   currentPages,
   pageSize = 10,
+  next,
 }) => {
   const totalItems = Number(totalPage);
   const itemsPerPage = Number(pageSize);
   const resolvedPageSize =
     Number.isFinite(itemsPerPage) && itemsPerPage > 0 ? itemsPerPage : 10;
-  const totalPages = Number.isFinite(totalItems)
+  const calculatedPages = Number.isFinite(totalItems)
     ? Math.max(0, Math.ceil(totalItems / resolvedPageSize))
     : 0;
   const requestedPage = Number(currentPages);
   const currentPage =
-    totalPages > 0
+    calculatedPages > 0
       ? Math.min(
-          totalPages,
+          calculatedPages,
           Math.max(
             1,
             Number.isFinite(requestedPage) ? Math.floor(requestedPage) : 1
           )
         )
       : 0;
+  // If next is explicitly null (API signals no more pages after this page),
+  // cap totalPages to currentPage to hide phantom pages.
+  // If next is undefined, the prop wasn't passed — fall back to count-based calculation.
+  const totalPages =
+    next === null
+      ? Math.min(calculatedPages, currentPage || calculatedPages)
+      : calculatedPages;
 
   if (totalPages <= 1) {
     return null;

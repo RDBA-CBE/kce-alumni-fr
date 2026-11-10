@@ -24,6 +24,7 @@ const userInfo = (props) => {
     confrmModelOpen: false,
     proofModelOpen: false,
     dob: "",
+    btnLoading: false,
   });
   console.log("✌️dob --->", state.dob);
 
@@ -84,8 +85,10 @@ const userInfo = (props) => {
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    setState({ btnLoading: true });
+
     try {
-      e.preventDefault();
       const member_id = localStorage.getItem("memberId");
       const body = {
         member_id: member_id,
@@ -99,9 +102,19 @@ const userInfo = (props) => {
       router.push("/login");
     } catch (error) {
       console.log("✌️errorsddsf --->", error);
-      if (error?.data?.error) {
-        message.error(error?.data?.error);
-      }
+      const errorMessage =
+        error?.data?.error ||
+        error?.response?.data?.error ||
+        error?.error ||
+        error?.message ||
+        "Something went wrong. Please try again.";
+      message.error(
+        typeof errorMessage === "string"
+          ? errorMessage
+          : "Something went wrong. Please try again."
+      );
+    } finally {
+      setState({ btnLoading: false });
     }
   };
 
@@ -173,8 +186,13 @@ const userInfo = (props) => {
               <button
                 className="rbt-btn btn-md btn-gradient radius-round sm-btn w-50  "
                 type="submit"
+                disabled={state.btnLoading}
               >
-                Submit
+                {state.btnLoading ? (
+                  <span className="btn-loader"></span>
+                ) : (
+                  "Submit"
+                )}
               </button>
               <button
                 className="rbt-btn btn-md btn-gradient radius-round sm-btn w-50  "

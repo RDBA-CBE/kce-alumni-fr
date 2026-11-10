@@ -5,7 +5,7 @@ import { modelError } from "@/utils/commonFunction.utils";
 const job = {
   jobList: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_job_post/?page=${page}&pagesize=100`;
+      let url = `retrieve_job_post/?page=${page}&pagesize=10`;
       instance()
         .get(url)
         .then(res => {
@@ -56,7 +56,7 @@ const job = {
 
   myJobList: (page, body) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `my_job_post/?page=${page}&pagesize=100`;
+      let url = `my_job_post/?page=${page}&pagesize=10`;
       // if (body?.search) {
       //   url += `&search=${encodeURIComponent(body.search)}`;
       // }
@@ -182,7 +182,7 @@ const job = {
 
   skillList: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_skills/?page=${page}&pagesize=100`;
+      let url = `retrieve_skills/?page=${page}&pagesize=10`;
       instance()
         .get(url)
         .then(res => {
@@ -198,7 +198,7 @@ const job = {
 
   locationList: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_locations/?page=${page}&pagesize=100`;
+      let url = `retrieve_locations/?page=${page}&pagesize=10`;
       instance()
         .get(url)
         .then(res => {
@@ -214,7 +214,7 @@ const job = {
 
   roleList: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_role?page=${page}&pagesize=100`;
+      let url = `retrieve_role?page=${page}&pagesize=10`;
       instance()
         .get(url)
         .then(res => {
@@ -230,7 +230,7 @@ const job = {
 
   industryList: (page = 1) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `retrieve_industries/?page=${page}&pagesize=100`;
+      let url = `retrieve_industries/?page=${page}&pagesize=10`;
       instance()
         .get(url)
         .then(res => {

@@ -12,6 +12,7 @@ import { BaseURL } from '@/utils/BaseUrl';
 import Models from '@/imports/models.import';
 import Image from 'next/image';
 import Loader from '../../Loader';
+import Pagination from '@/commonComponents/Pagination';
 
 const BusinessDirectoryMain = () => {
   const { confirm } = Modal;
@@ -22,8 +23,6 @@ const BusinessDirectoryMain = () => {
   const [normelUserFilter, setNormelUserFilter] = useState([]);
   const [AdminDataLists, setAdminDataLists] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const itemsPerPage = 20;
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     business_name: '',
@@ -48,6 +47,10 @@ const BusinessDirectoryMain = () => {
     currenIndustryPage: 1,
     hasIndustryLoadMore: null,
     pageLoading: false,
+    total: 0,
+    next: null,
+    currentPage: 1,
+    isFiltered: false,
   });
 
   useEffect(() => {
@@ -83,7 +86,7 @@ const BusinessDirectoryMain = () => {
 
   useEffect(() => {
     if (token) {
-      getJobsAdmin();
+      getJobsAdmin(1);
       GetDepartmentList();
       MyBusinessDirectory();
     }
@@ -113,29 +116,26 @@ const BusinessDirectoryMain = () => {
 
   console.log('myBusinessDirCount', myBusinessDirCount);
 
-  const getJobsAdmin = () => {
-    setState({
-      pageLoading: true,
-    });
+  const getJobsAdmin = (page = 1) => {
+    setState({ pageLoading: true });
     axios
-      .get(`${BaseURL}/retrieve_business_directory/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      .get(`${BaseURL}/retrieve_business_directory/?page=${page}&pagesize=10`, {
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         setAdminDataLists(response.data?.results);
         setFilteredData(response.data?.results);
-        console.log('✌️response --->', response);
         setState({
           pageLoading: false,
+          total: response.data?.count,
+          next: response.data?.next,
+          currentPage: page,
+          isFiltered: false,
         });
       })
       .catch((error) => {
         console.log('❌error --->', error);
-        setState({
-          pageLoading: false,
-        });
+        setState({ pageLoading: false });
         if (error?.response?.data?.code === 'token_not_valid') {
           localStorage.removeItem('token');
           router.push('/login');
@@ -163,24 +163,35 @@ const BusinessDirectoryMain = () => {
     router.push(`/edit-a-directory/${id}/`);
   };
 
-  // Pagination Logic
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    if (state.isFiltered) {
+      const body = bodyData();
+      setState({ pageLoading: true });
+      axios
+        .post(`${BaseURL}/filter_business_directory/?page=${pageNumber}&pagesize=10`, body, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          setAdminDataLists(response.data?.results);
+          setFilteredData(response.data?.results);
+          setState({
+            total: response.data?.count,
+            next: response.data?.next,
+            currentPage: pageNumber,
+            pageLoading: false,
+          });
+        })
+        .catch((error) => {
+          console.log('❌error --->', error);
+          setState({ pageLoading: false });
+        });
+    } else {
+      getJobsAdmin(pageNumber);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const totalPagesForAdmin = Math.ceil(filteredData.length / itemsPerPage);
-  const startIndexForAdmin = (currentPage - 1) * itemsPerPage;
-  const currentDataForAdmin = filteredData.slice(
-    startIndexForAdmin,
-    startIndexForAdmin + itemsPerPage
-  );
-
-  const totalPagesForUser = Math.ceil(normelUserFilter.length / itemsPerPage);
-  const startIndexForUser = (currentPage - 1) * itemsPerPage;
-  const currentDataForUser = normelUserFilter.slice(
-    startIndexForUser,
-    startIndexForUser + itemsPerPage
-  );
+  const currentDataForAdmin = filteredData;
 
   const success = (successMsg) => {
     messageApi.open({
@@ -305,83 +316,35 @@ const BusinessDirectoryMain = () => {
   };
 
   const handleFiltersSubmit = (e) => {
-    setState({
-      pageLoading: true,
-    });
+    setState({ pageLoading: true });
     const body = bodyData();
-
-    console.log(body);
-
     e.preventDefault();
-    console.log('handleFiltersSubmit', formData);
-
     axios
-      .post(`${BaseURL}/filter_business_directory/`, body, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      .post(`${BaseURL}/filter_business_directory/?page=1&pagesize=10`, body, {
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        console.log('✌️response --->', response);
         setAdminDataLists(response.data?.results);
         setFilteredData(response.data?.results);
-        setListOfPosts(response.data?.results);
-        setNormelUserFilter(response.data?.results);
         setAllUserFilterFinalDataList(formData);
         setState({
           pageLoading: false,
+          total: response.data?.count,
+          next: response.data?.next,
+          currentPage: 1,
+          isFiltered: true,
         });
-        // setFormData({
-        //   business_name: "",
-        //   industry: "",
-        //   location: "",
-        // });
       })
       .catch((error) => {
         console.log('❌error --->', error);
-        setState({
-          pageLoading: false,
-        });
+        setState({ pageLoading: false });
       });
   };
 
   const handleClearFilter = () => {
-    setState({
-      pageLoading: true,
-    });
-    const Body = {
-      business_name: '',
-      industry: '',
-      location: '',
-    };
-    axios
-      .post(`${BaseURL}/filter_business_directory/`, Body, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        console.log('✌️response --->', response);
-        setAdminDataLists(response.data?.results);
-        setFilteredData(response.data?.results);
-        setListOfPosts(response.data?.results);
-        setNormelUserFilter(response.data?.results);
-        setAllUserFilterFinalDataList(Body);
-        setFormData({
-          business_name: '',
-          industry: '',
-          location: '',
-        });
-        setState({
-          pageLoading: false,
-        });
-      })
-      .catch((error) => {
-        console.log('❌error --->', error);
-        setState({
-          pageLoading: false,
-        });
-      });
+    setFormData({ business_name: '', industry: '', location: '' });
+    setAllUserFilterFinalDataList({});
+    getJobsAdmin(1);
   };
 
   const industryListLoadMore = async () => {
@@ -695,6 +658,16 @@ const BusinessDirectoryMain = () => {
                               </div>
                             )}
                           </div>
+                          {Number(state.total) > 0 && (
+                            <div className='d-flex justify-content-center mt-4'>
+                              <Pagination
+                                activeNumber={handlePageChange}
+                                totalPage={state.total}
+                                currentPages={state.currentPage}
+                                next={state.next}
+                              />
+                            </div>
+                          )}
                         </>
                       )}
                     </div>

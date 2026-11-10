@@ -15,18 +15,14 @@ import { BaseURL } from "@/utils/BaseUrl";
 import Models from "@/imports/models.import";
 import { jobTypeOption } from "@/utils/constant.utils";
 import Loader from "../../Loader";
+import Pagination from "@/commonComponents/Pagination";
 
 const MyJobListMain = () => {
   const { confirm } = Modal;
   const router = useRouter();
   const [openSubMenuId, setOpenSubMenuId] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
-  const [listOfPosts, setListOfPosts] = useState([]);
-  const [normelUserFilter, setNormelUserFilter] = useState([]);
   const [AdminDataLists, setAdminDataLists] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const itemsPerPage = 20;
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     job_title: "",
@@ -47,6 +43,9 @@ const MyJobListMain = () => {
 
   const [state, setState] = useSetState({
     pageLoading: false,
+    total: 0,
+    next: null,
+    currentPage: 1,
   });
 
   useEffect(() => {
@@ -87,7 +86,7 @@ const MyJobListMain = () => {
         isAlumni == "true" ||
         isFatulty == "true")
     ) {
-      getJobsAdmin();
+      getJobsAdmin(1);
       GetDepartmentList();
       GetRoleList();
       getLocation();
@@ -112,31 +111,21 @@ const MyJobListMain = () => {
   //       });
   //   };
 
-  console.log("accessToken", token);
-  const getJobsAdmin = () => {
-    setState({
-      pageLoading: true,
-    });
-    axios
-      .get(`${BaseURL}/my_job_post/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setAdminDataLists(response.data?.results);
-        setFilteredData(response.data?.results);
-        console.log("✌️response --->", response);
-        setState({
-          pageLoading: false,
-        });
-      })
-      .catch((error) => {
-        console.log("❌error --->", error);
-        setState({
-          pageLoading: false,
-        });
+  const getJobsAdmin = async (page = 1) => {
+    setState({ pageLoading: true });
+    try {
+      const res = await Models.job.myJobList(page);
+      setAdminDataLists(res?.results);
+      setState({
+        pageLoading: false,
+        total: res?.count,
+        next: res?.next,
+        currentPage: page,
       });
+    } catch (error) {
+      console.log("❌error --->", error);
+      setState({ pageLoading: false });
+    }
   };
 
   const GetDepartmentList = () => {
@@ -185,32 +174,16 @@ const MyJobListMain = () => {
       });
   };
 
-  const handleSubMenuClick = (id) => {
-    setOpenSubMenuId(openSubMenuId === id ? null : id);
-  };
-
   const handleEditClick = (id) => {
     router.push(`/edit-a-job/${id}/`);
   };
 
-  // Pagination Logic
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    getJobsAdmin(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const totalPagesForAdmin = Math.ceil(filteredData.length / itemsPerPage);
-  const startIndexForAdmin = (currentPage - 1) * itemsPerPage;
-  const currentDataForAdmin = filteredData.slice(
-    startIndexForAdmin,
-    startIndexForAdmin + itemsPerPage
-  );
-
-  const totalPagesForUser = Math.ceil(normelUserFilter.length / itemsPerPage);
-  const startIndexForUser = (currentPage - 1) * itemsPerPage;
-  const currentDataForUser = normelUserFilter.slice(
-    startIndexForUser,
-    startIndexForUser + itemsPerPage
-  );
+  const currentDataForAdmin = AdminDataLists;
 
   const success = (successMsg) => {
     messageApi.open({
@@ -251,7 +224,7 @@ const MyJobListMain = () => {
           )
           .then((response) => {
             success(response.data.message || "Operation successful!");
-            getJobsAdmin(); // Refresh the job list
+            getJobsAdmin(state.currentPage); // Refresh the job list
             setLoading(false);
           })
           .catch((error) => {
@@ -338,8 +311,6 @@ const MyJobListMain = () => {
         console.log("❌error --->", error);
       });
   };
-
-  console.log("currentDataForUser", currentDataForUser);
 
   console.log("isAdmin", isAdmin);
   console.log("isAlumniManager", isAlumniManager);
@@ -535,6 +506,16 @@ const MyJobListMain = () => {
                               <div>No Data</div>
                             )}
                           </div>
+                          {Number(state.total) > 0 && (
+                            <div className="d-flex justify-content-center mt-4">
+                              <Pagination
+                                activeNumber={handlePageChange}
+                                totalPage={state.total}
+                                currentPages={state.currentPage}
+                                next={state.next}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}

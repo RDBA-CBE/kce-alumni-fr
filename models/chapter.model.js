@@ -3,7 +3,7 @@ import { instance } from "@/utils/axios.utils";
 const chapter = {
   list: (page = 1, body) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `chapters?page=${page}&pagesize=100`;
+      let url = `chapters?page=${page}&pagesize=10`;
       if (body?.name) {
         url += `&name=${encodeURIComponent(body?.name)}`;
       }
@@ -141,7 +141,7 @@ const chapter = {
 
   getUserByChapterId: (page=1,id) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `chapter-memberships?chapter=${id}&page=${page}&pagesize=100`;
+      let url = `chapter-memberships?chapter=${id}&page=${page}&pagesize=10`;
       instance()
         .get(url)
         .then((res) => {

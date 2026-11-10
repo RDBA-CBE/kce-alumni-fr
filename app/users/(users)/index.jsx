@@ -210,6 +210,7 @@ const Users = () => {
                               updateUser={(item) => updateUser(item)}
                               loading={state.loading || state.btnLoading}
                               total={state.total}
+                              next={state.next}
                               currentPage={state.currentPage}
                               handlePageChange={(number) => {
                                 setState({ currentPage: number });

@@ -11,6 +11,7 @@ import { BaseURL } from '@/utils/BaseUrl';
 import Models from '@/imports/models.import';
 import Image from 'next/image';
 import Loader from '../../Loader';
+import Pagination from '@/commonComponents/Pagination';
 
 const MyBusinessListing = () => {
   const { confirm } = Modal;
@@ -18,11 +19,8 @@ const MyBusinessListing = () => {
   const [openSubMenuId, setOpenSubMenuId] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [listOfPosts, setListOfPosts] = useState([]);
-  const [normelUserFilter, setNormelUserFilter] = useState([]);
   const [AdminDataLists, setAdminDataLists] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const itemsPerPage = 20;
-  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     business_name: '',
@@ -40,9 +38,10 @@ const MyBusinessListing = () => {
     []
   );
    const [state, setState] = useSetState({
-      // currenIndustryPage: 1,
-      // hasIndustryLoadMore: null,
       pageLoading: false,
+      total: 0,
+      next: null,
+      currentPage: 1,
     });
 
   useEffect(() => {
@@ -78,7 +77,7 @@ const MyBusinessListing = () => {
 
   useEffect(() => {
     if (token) {
-      getJobsAdmin();
+      getJobsAdmin(1);
       GetDepartmentList();
     }
   }, [token]);
@@ -102,30 +101,26 @@ const MyBusinessListing = () => {
   // };
 
   console.log('accessToken', token);
-  const getJobsAdmin = () => {
-    setState({
-      pageLoading: true,
-    });
+  const getJobsAdmin = (page = 1) => {
+    setState({ pageLoading: true });
     axios
-      .get(`${BaseURL}/my_business_directory/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      .get(`${BaseURL}/my_business_directory/?page=${page}&pagesize=10`, {
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         setAdminDataLists(response.data.results);
         setFilteredData(response.data.results);
-        console.log('✌️response --->', response);
         setState({
           pageLoading: false,
+          total: response.data?.count,
+          next: response.data?.next,
+          currentPage: page,
         });
       })
       .catch((error) => {
         console.log('❌error --->', error);
+        setState({ pageLoading: false });
       });
-      setState({
-          pageLoading: false,
-        });
   };
 
   const GetDepartmentList = () => {
@@ -150,24 +145,12 @@ const MyBusinessListing = () => {
     router.push(`/edit-a-directory/${id}/`);
   };
 
-  // Pagination Logic
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    getJobsAdmin(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const totalPagesForAdmin = Math.ceil(filteredData.length / itemsPerPage);
-  const startIndexForAdmin = (currentPage - 1) * itemsPerPage;
-  const currentDataForAdmin = filteredData.slice(
-    startIndexForAdmin,
-    startIndexForAdmin + itemsPerPage
-  );
-
-  const totalPagesForUser = Math.ceil(normelUserFilter.length / itemsPerPage);
-  const startIndexForUser = (currentPage - 1) * itemsPerPage;
-  const currentDataForUser = normelUserFilter.slice(
-    startIndexForUser,
-    startIndexForUser + itemsPerPage
-  );
+  const currentDataForAdmin = filteredData;
 
   const success = (successMsg) => {
     messageApi.open({
@@ -332,8 +315,6 @@ const MyBusinessListing = () => {
       });
   };
 
-  console.log('currentDataForUser', currentDataForUser);
-
   console.log('isAdmin', isAdmin);
   console.log('isAlumniManager', isAlumniManager);
   console.log('isAlumni', isAlumni);
@@ -448,7 +429,7 @@ const MyBusinessListing = () => {
 
                           <div className='rbt-dashboard-content  mt-5 p-0'>
                             <div className='content'>
-                              <div className='rbt-dashboard-table table-responsive mobile-table-750'>
+                                <div className='rbt-dashboard-table table-responsive mobile-table-750'>
                                 <div className='row g-5 m-0'>
                                   {currentDataForAdmin.map((item, index) => (
                                     <div
@@ -520,6 +501,16 @@ const MyBusinessListing = () => {
                               </div>
                             </div>
                           </div>
+                          {Number(state.total) > 0 && (
+                            <div className='d-flex justify-content-center mt-4'>
+                              <Pagination
+                                activeNumber={handlePageChange}
+                                totalPage={state.total}
+                                currentPages={state.currentPage}
+                                next={state.next}
+                              />
+                            </div>
+                          )}
                         </>
                       )}
                     </div>

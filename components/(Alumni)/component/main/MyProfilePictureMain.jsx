@@ -82,6 +82,7 @@ const MyProfilePictureMain = () => {
       ...prevState,
       [name]: files[0],
     }));
+    setErrMsg((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
@@ -121,7 +122,6 @@ const MyProfilePictureMain = () => {
 
       // Clear form data
       setFormData({ profile_picture: null });
-      setPreviewImage(null);
       
 
       // setTimeout(() => {

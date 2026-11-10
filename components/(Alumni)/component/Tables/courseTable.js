@@ -19,6 +19,7 @@ const CourseTable = (props) => {
     loading,
     total,
     currentPage,
+    next,
     handlePageChange,
     subtitile_1,
     subtitile_2,
@@ -152,6 +153,7 @@ const CourseTable = (props) => {
                 activeNumber={handlePageChange}
                 totalPage={total}
                 currentPages={currentPage}
+                next={next}
               />
             </div>
           </div>

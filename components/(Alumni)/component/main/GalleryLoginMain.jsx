@@ -407,6 +407,7 @@ const GalleryLoginMain = () => {
                               activeNumber={handlePageChange}
                               totalPage={state.total}
                               currentPages={state.currentPage}
+                              next={state.next}
                             />
                           </div>
                         )}
@@ -467,6 +468,7 @@ const GalleryLoginMain = () => {
                                 activeNumber={handleMPageChange}
                                 totalPage={state.memoriestotal}
                                 currentPages={state.memoriescurrentPage}
+                                next={state.memoriesnext}
                               />
                             </div>
                           )}

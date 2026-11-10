@@ -31,7 +31,7 @@ const PublishPostMain = () => {
   const [isAlumniManager, setIsAlumniManager] = useState(false);
   const [isFatulty, setIsFatulty] = useState(false);
 
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {

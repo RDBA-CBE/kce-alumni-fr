@@ -18,6 +18,7 @@ const UserTable = (props) => {
     loading,
     total,
     currentPage,
+    next,
     handlePageChange,
     subtitile_1,
     subtitile_2,
@@ -178,6 +179,7 @@ const UserTable = (props) => {
                 activeNumber={handlePageChange}
                 totalPage={total}
                 currentPages={currentPage}
+                next={next}
               />
             </div>
           </div>

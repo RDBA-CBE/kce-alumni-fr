@@ -176,8 +176,9 @@ const MyProfileExperienceMain = () => {
     const { name, value, type, checked } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value, // Set to checked for checkboxes
+      [name]: type === 'checkbox' ? checked : value,
     }));
+    if (value) setErrMsg((prev) => ({ ...prev, [name]: '' }));
   };
   const success = (success) => {
     messageApi.open({
@@ -642,12 +643,10 @@ const MyProfileExperienceMain = () => {
               name='industry'
               label='Industry'
               // className={"applicant-input "}
-              onChange={(value) =>
-                setFormData({
-                  ...formData,
-                  industry: value,
-                })
-              }
+              onChange={(value) => {
+                setFormData({ ...formData, industry: value });
+                if (value) setErrMsg((prev) => ({ ...prev, industry: '' }));
+              }}
               value={formData.industry}
               options={institute}
               error={errMsg?.industry}
@@ -662,12 +661,10 @@ const MyProfileExperienceMain = () => {
               name='role'
               label='Role'
               // className={"applicant-input"}
-              onChange={(value) =>
-                setFormData({
-                  ...formData,
-                  role: value,
-                })
-              }
+              onChange={(value) => {
+                setFormData({ ...formData, role: value });
+                if (value) setErrMsg((prev) => ({ ...prev, role: '' }));
+              }}
               value={formData.role}
               error={errMsg?.role}
               options={role}
@@ -726,13 +723,10 @@ const MyProfileExperienceMain = () => {
               type='loadMoreSelect'
               name='location'
               label='Location'
-              // className={"applicant-input"}
-              onChange={(value) =>
-                setFormData({
-                  ...formData,
-                  location: value,
-                })
-              }
+              onChange={(value) => {
+                setFormData({ ...formData, location: value });
+                if (value) setErrMsg((prev) => ({ ...prev, location: '' }));
+              }}
               value={formData.location}
               options={location}
               error={errMsg?.location}

@@ -131,6 +131,7 @@ const ChapterMembers = () => {
                         activeNumber={handlePageChange}
                         totalPage={state.total}
                         currentPages={state.currentPage}
+                        next={state.next}
                       />
                     </div>
                   </div>

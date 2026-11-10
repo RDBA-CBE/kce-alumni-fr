@@ -104,7 +104,7 @@ const AdminDepartmentMain = () => {
   };
 
   // Handle form submission
-  const handleDepartmentSubmit = (e) => {
+  const handleDepartmentSubmit = async (e) => {
     e.preventDefault();
 
     const validationRules = {
@@ -114,60 +114,28 @@ const AdminDepartmentMain = () => {
     const isValid = validateForm(formData, validationRules, setErrMsg);
     if (!isValid) return;
 
-    if (isEditing) {
-      console.log("Updating department:", formData);
-      // Perform update logic here
-
-      axios
-        .post(`${BaseURL}/update_department/${formData.id}/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("✌️response --->", response);
-          success(response.data.message);
-          setLoading(true);
-          GetDepartment(state.currentPage);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("❌error --->", error);
-          errorNotification(error.response.data.error);
-          setLoading(false);
+    try {
+      if (isEditing) {
+        const response = await axios.post(`${BaseURL}/update_department/${formData.id}/`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-    } else {
-      console.log("Creating department:", formData);
-      // Perform create logic here
-
-      axios
-        .post(`${BaseURL}/create_department/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("✌️response --->", response);
-          success(response.data.message);
-          setLoading(true);
-          GetDepartment(1);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("❌error --->", error);
-          errorNotification(error.response.data.error);
-          setLoading(false);
+        success(response.data.message);
+        GetDepartment(state.currentPage);
+      } else {
+        const response = await axios.post(`${BaseURL}/create_department/`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        success(response.data.message);
+        GetDepartment(1);
+      }
+      setIsModalOpen(false);
+      setFormData({ short_name: "", full_name: "" });
+      setIsEditing(false);
+    } catch (error) {
+      console.log("❌error --->", error);
+      errorNotification(error.response.data.error);
+      setLoading(false);
     }
-
-    setIsModalOpen(false);
-
-    // Reset form
-    setFormData({
-      short_name: "",
-      full_name: "",
-    });
-    setIsEditing(false); // Reset to create mode
   };
 
   // Open modal with department data for editing
@@ -344,6 +312,7 @@ const AdminDepartmentMain = () => {
                         totalPage={state.total}
                         currentPages={state.currentPage}
                         pageSize={state.pageSize}
+                        next={state.next}
                       />
                     </div>
                   </div>

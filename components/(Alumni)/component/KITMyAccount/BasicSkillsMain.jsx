@@ -127,8 +127,9 @@ const BasicSkillsMain = () => {
     const { name, value, type, checked } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox" ? checked : value, // Set to checked for checkboxes
+      [name]: type === "checkbox" ? checked : value,
     }));
+    if (value) setErrMsg((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleEducationSubmit = async (e) => {
@@ -444,12 +445,10 @@ setState({ btnLoading: false });
                 name="skill_id"
                 label="Skill"
                 // className={"applicant-input "}
-                  onChange={(value) =>
-                  setFormData({
-                    ...formData,
-                    skill_id: value,
-                  })
-                }
+                  onChange={(value) => {
+                  setFormData({ ...formData, skill_id: value });
+                  if (value) setErrMsg((prev) => ({ ...prev, skill_id: "" }));
+                }}
                 value={formData.skill_id}
                 options={institute}
                 error={errMsg?.skill_id}

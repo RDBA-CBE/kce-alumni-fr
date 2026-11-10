@@ -102,74 +102,37 @@ const AdminLocationsMain = () => {
   };
 
   // Handle form submission
-  const handleDepartmentSubmit = (e) => {
+  const handleDepartmentSubmit = async (e) => {
     e.preventDefault();
 
     const validationRules = {
       location: { required: true },
-      //   description: { required: true },
-      //   website: { required: true },
-      // end_year: { required: true },
     };
     const isValid = validateForm(formData, validationRules, setErrMsg);
     if (!isValid) return;
 
-    if (isEditing) {
-      console.log("Updating Batch:", formData);
-      // Perform update logic here
-
-      axios
-        .post(`${BaseURL}/update_location/${formData.id}/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("✌️response --->", response);
-          success(response.data.message);
-          setLoading(true);
-          GetLocation(state.currentPage);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("❌error --->", error);
-          errorNotification(error.response.data.error);
-          setLoading(false);
+    try {
+      if (isEditing) {
+        const response = await axios.post(`${BaseURL}/update_location/${formData.id}/`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-    } else {
-      console.log("Creating Location:", formData);
-      // Perform create logic here
-
-      axios
-        .post(`${BaseURL}/create_location/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("✌️response --->", response);
-          success(response.data.message);
-          setLoading(true);
-          GetLocation(1);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("❌error --->", error);
-          errorNotification(error.response.data.error);
-          setLoading(false);
+        success(response.data.message);
+        GetLocation(state.currentPage);
+      } else {
+        const response = await axios.post(`${BaseURL}/create_location/`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        success(response.data.message);
+        GetLocation(1);
+      }
+      setIsModalOpen(false);
+      setFormData({ location: "" });
+      setIsEditing(false);
+    } catch (error) {
+      console.log("❌error --->", error);
+      errorNotification(error.response.data.error);
+      setLoading(false);
     }
-
-    setIsModalOpen(false);
-
-    // Reset form
-    setFormData({
-      location: "",
-      //   description: "",
-      //   website: "",
-      // end_year: "",
-    });
-    setIsEditing(false); // Reset to create mode
   };
 
   // Open modal with department data for editing
@@ -282,6 +245,7 @@ const AdminLocationsMain = () => {
                         activeNumber={handlePageChange}
                         totalPage={state.total}
                         currentPages={state.currentPage}
+                        next={state.next}
                       />
                     </div>
                   </div>

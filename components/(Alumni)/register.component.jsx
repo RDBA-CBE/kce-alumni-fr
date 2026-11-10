@@ -455,7 +455,7 @@ const Register = (props) => {
 
               <div className="form-group mt-3">
                 <FormField
-                  placeholder="Register No"
+                  placeholder="Register No *"
                   type="text"
                   name="register_no"
                   onChange={handleChange}

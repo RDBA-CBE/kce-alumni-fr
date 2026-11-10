@@ -128,20 +128,22 @@ const MyBasicDetailsMain = () => {
       const response = await Models.member.memberData(memberId);
       const res = response?.member_data;
       setFormData({
-        first_name: res.first_name || "",
-        last_name: res.last_name || "",
-        salutation: res.salutation || "",
-        dob: res.dob || "",
-        gender: res.gender || "",
-        blood_group: res.blood_group || "",
-        mobile_no: res.mobile_no || "",
-        batch:
-          { value: res.batch_detail.id, label: res.batch_detail.title } || "",
-        course:
-          { value: res.course_detail.id, label: res.course_detail.title } || "",
-        about_me: res.about_me || "",
+        first_name: res?.first_name || "",
+        last_name: res?.last_name || "",
+        salutation: res?.salutation || "",
+        dob: res?.dob || "",
+        gender: res?.gender || "",
+        blood_group: res?.blood_group || "",
+        mobile_no: res?.mobile_no || "",
+        batch: res?.batch_detail?.id
+          ? { value: res.batch_detail.id, label: res.batch_detail.title }
+          : "",
+        course: res?.course_detail?.id
+          ? { value: res.course_detail.id, label: res.course_detail.title }
+          : "",
+        about_me: res?.about_me || "",
       });
-      getBatch(1, res?.course_detail?.id);
+      if (res?.course_detail?.id) getBatch(1, res.course_detail.id);
       setState({ pageLoading: false });
     } catch (error) {
       console.log("✌️error --->", error);
@@ -175,6 +177,7 @@ const MyBasicDetailsMain = () => {
       ...prevState,
       [name]: value,
     }));
+    if (value) setErrMsg((prev) => ({ ...prev, [name]: "" }));
   };
 
   const success = (success) => {
@@ -232,16 +235,7 @@ const MyBasicDetailsMain = () => {
       .then((res) => {
         success(res?.data?.message);
         console.log("response:", res.data);
-        setFormData({
-          salutation: "",
-          dob: "",
-          gender: "",
-          blood_group: "",
-          mobile_no: "",
-          batch: "",
-          course: "",
-          about_me: "",
-        });
+        GetMemberData();
         setState({btnLoading:false})
       })
       .catch((error) => {
@@ -453,6 +447,7 @@ const MyBasicDetailsMain = () => {
                                           batch: "",
                                         }));
                                         getBatch(1, value?.value);
+                                        if (value) setErrMsg((prev) => ({ ...prev, course: "" }));
                                       }}
                                       error={errMsg.course}
                                       options={course}
@@ -468,12 +463,13 @@ const MyBasicDetailsMain = () => {
                                       type="loadMoreSelect"
                                       name="batch"
                                       value={formData.batch}
-                                      onChange={(value) =>
+                                      onChange={(value) => {
                                         setFormData({
                                           ...formData,
                                           batch: value,
-                                        })
-                                      }
+                                        });
+                                        if (value) setErrMsg((prev) => ({ ...prev, batch: "" }));
+                                      }}
                                       error={errMsg.batch}
                                       // className="applicant-input"
                                       options={batch}

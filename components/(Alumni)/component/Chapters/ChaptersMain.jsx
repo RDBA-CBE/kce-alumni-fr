@@ -34,7 +34,7 @@ const ChaptersMain = () => {
   const [normelUserFilter, setNormelUserFilter] = useState([]);
   const [AdminDataLists, setAdminDataLists] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -348,6 +348,7 @@ const ChaptersMain = () => {
         chapterList: res?.results,
         pageLoading: false,
         total: res?.count,
+        next: res?.next,
         currentPage: page,
       });
       setFilteredData(res?.results);
@@ -851,6 +852,7 @@ const ChaptersMain = () => {
               activeNumber={handlePageChange}
               totalPage={state.total}
               currentPages={state.currentPage}
+              next={state.next}
             />
           </div>
         </div>

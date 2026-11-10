@@ -160,8 +160,9 @@ const MyProfileEducationMain = () => {
     const { name, value, type, checked } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox" ? checked : value, // Set to checked for checkboxes
+      [name]: type === "checkbox" ? checked : value,
     }));
+    if (value) setErrMsg((prev) => ({ ...prev, [name]: "" }));
   };
   const success = (success) => {
     messageApi.open({
@@ -606,12 +607,10 @@ const MyProfileEducationMain = () => {
               name="institute"
               label="Institute"
               // className={"applicant-input "}
-              onChange={(value) =>
-                setFormData({
-                  ...formData,
-                  institute: value,
-                })
-              }
+              onChange={(value) => {
+                setFormData({ ...formData, institute: value });
+                if (value) setErrMsg((prev) => ({ ...prev, institute: "" }));
+              }}
               value={formData.institute}
               options={institute}
               error={errMsg?.institute}

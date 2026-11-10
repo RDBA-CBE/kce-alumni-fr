@@ -267,6 +267,7 @@ const Course = () => {
                               tableData={state.courseList}
                               loading={state.loading || state.btnLoading}
                               total={state.total}
+                              next={state.next}
                               currentPage={state.currentPage}
                               updateUser={(item) => update(item)}
                               handlePageChange={(number) => {

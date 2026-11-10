@@ -75,6 +75,7 @@ const BasicProfilePic = () => {
       ...prevState,
       [name]: files[0],
     }));
+    if (files[0]) setErrMsg((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {

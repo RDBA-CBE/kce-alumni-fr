@@ -104,80 +104,42 @@ const AdminRoleMain = () => {
   };
 
   // Handle form submission
-  const handleDepartmentSubmit = (e) => {
+  const handleDepartmentSubmit = async (e) => {
     e.preventDefault();
 
     const validationRules = {
       role: { required: true },
       description: { required: true },
-      // end_year: { required: true },
     };
     const isValid = validateForm(formData, validationRules, setErrMsg);
     if (!isValid) return;
 
-    if (isEditing) {
-      console.log("Updating Role:", formData);
-      // Perform update logic here
-
-      axios
-        .post(`${BaseURL}/update_role/${formData.id}/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("✌️response --->", response);
-          success(response.data.message);
-          setLoading(true);
-          GetRole(state.currentPage);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("❌error --->", error);
-          errorNotification(error.response.data.error);
-          if (error?.response?.data?.code === "token_not_valid") {
-            localStorage.removeItem("token");
-            router.push("/login");
-          }
-          setLoading(false);
+    try {
+      if (isEditing) {
+        const response = await axios.post(`${BaseURL}/update_role/${formData.id}/`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-    } else {
-      console.log("Creating Role:", formData);
-      // Perform create logic here
-
-      axios
-        .post(`${BaseURL}/create_role/`, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          console.log("✌️response --->", response);
-          success(response.data.message);
-          setLoading(true);
-          GetRole(1);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log("❌error --->", error);
-          errorNotification(error.response.data.error);
-          if (error?.response?.data?.code === "token_not_valid") {
-            localStorage.removeItem("token");
-            router.push("/login");
-          }
-          setLoading(false);
+        success(response.data.message);
+        GetRole(state.currentPage);
+      } else {
+        const response = await axios.post(`${BaseURL}/create_role/`, formData, {
+          headers: { Authorization: `Bearer ${token}` },
         });
+        success(response.data.message);
+        GetRole(1);
+      }
+      setIsModalOpen(false);
+      setFormData({ role: "", description: "" });
+      setIsEditing(false);
+    } catch (error) {
+      console.log("❌error --->", error);
+      errorNotification(error.response.data.error);
+      if (error?.response?.data?.code === "token_not_valid") {
+        localStorage.removeItem("token");
+        router.push("/login");
+      }
+      setLoading(false);
     }
-
-    setIsModalOpen(false);
-
-    // Reset form
-    setFormData({
-      role: "",
-      description: "",
-      // end_year: "",
-    });
-    setIsEditing(false); // Reset to create mode
   };
 
   // Open modal with department data for editing
@@ -292,6 +254,7 @@ const AdminRoleMain = () => {
                         activeNumber={handlePageChange}
                         totalPage={state.total}
                         currentPages={state.currentPage}
+                        next={state.next}
                       />
                     </div>
                   </div>

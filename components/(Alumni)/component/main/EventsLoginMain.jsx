@@ -33,6 +33,9 @@ const EventsLoginMain = () => {
     isFaculty: false,
     token: '',
     activeTab: 0,
+    currentPage: 1,
+    total: 0,
+    next: null,
     pageLoading: false,
   });
 
@@ -434,6 +437,7 @@ const EventsLoginMain = () => {
                                     activeNumber={handlePageChange}
                                     totalPage={state.total}
                                     currentPages={state.currentPage}
+                                    next={state.next}
                                   />
                                 </div>
                               </div>

@@ -15,6 +15,7 @@ import { BaseURL } from '@/utils/BaseUrl';
 import Models from '@/imports/models.import';
 import { jobTypeOption } from '@/utils/constant.utils';
 import Loader from '../../Loader';
+import Pagination from '@/commonComponents/Pagination';
 
 const JobBoardMain = () => {
   const { confirm } = Modal;
@@ -25,7 +26,6 @@ const JobBoardMain = () => {
   const [normelUserFilter, setNormelUserFilter] = useState([]);
   const [AdminDataLists, setAdminDataLists] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const itemsPerPage = 20;
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -67,6 +67,9 @@ const JobBoardMain = () => {
     currenLocationPage: 1,
     hasLocationLoadMore: null,
     pageLoading: false,
+    total: 0,
+    next: null,
+    isFiltered: false,
   });
 
   const pathname = usePathname();
@@ -97,7 +100,7 @@ const JobBoardMain = () => {
 
   useEffect(() => {
     if (token && (isAlumni == 'true' || isFatulty == 'true')) {
-      GetJobs();
+      GetJobs(1);
       GetDepartmentList();
       GetRoleList();
       getLocation();
@@ -107,7 +110,7 @@ const JobBoardMain = () => {
 
   useEffect(() => {
     if (token && (isAdmin == 'true' || isAlumniManager == 'true')) {
-      getJobsAdmin();
+      getJobsAdmin(1);
       GetDepartmentList();
       GetRoleList();
       getLocation();
@@ -115,9 +118,10 @@ const JobBoardMain = () => {
     }
   }, [token, isAdmin, isAlumniManager]);
 
-  const GetJobs = () => {
+  const GetJobs = (page = 1) => {
+    setState({ pageLoading: true });
     axios
-      .get(`${BaseURL}/retrieve_job_post/`, {
+      .get(`${BaseURL}/retrieve_job_post/?page=${page}&pagesize=10`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -125,9 +129,17 @@ const JobBoardMain = () => {
       .then((response) => {
         setListOfPosts(response.data?.results);
         setNormelUserFilter(response.data?.results);
+        setState({
+          total: response.data?.count,
+          next: response.data?.next,
+          currentPage: page,
+          pageLoading: false,
+          isFiltered: false,
+        });
       })
       .catch((error) => {
         console.log('❌error --->', error);
+        setState({ pageLoading: false });
         if (error?.response?.data?.code === 'token_not_valid') {
           localStorage.removeItem('token');
           router.push('/login');
@@ -135,9 +147,10 @@ const JobBoardMain = () => {
       });
   };
 
-  const getJobsAdmin = () => {
+  const getJobsAdmin = (page = 1) => {
+    setState({ pageLoading: true });
     axios
-      .get(`${BaseURL}/retrieve_main_job_post/`, {
+      .get(`${BaseURL}/retrieve_main_job_post/?page=${page}&pagesize=10`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -145,9 +158,17 @@ const JobBoardMain = () => {
       .then((response) => {
         setAdminDataLists(response.data?.results);
         setFilteredData(response.data?.results);
+        setState({
+          total: response.data?.count,
+          next: response.data?.next,
+          currentPage: page,
+          pageLoading: false,
+          isFiltered: false,
+        });
       })
       .catch((error) => {
         console.log('❌error --->', error);
+        setState({ pageLoading: false });
         if (error?.response?.data?.code === 'token_not_valid') {
           localStorage.removeItem('token');
           router.push('/login');
@@ -232,23 +253,39 @@ const JobBoardMain = () => {
 
   // Pagination Logic
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    if (state.isFiltered) {
+      const body = bodyData();
+      const url = (isAdmin == 'true' || isAlumniManager == 'true')
+        ? `${BaseURL}/main_filter_job/?page=${pageNumber}`
+        : `${BaseURL}/filter_job/?page=${pageNumber}`;
+      setState({ pageLoading: true });
+      axios
+        .post(url, body, { headers: { Authorization: `Bearer ${token}` } })
+        .then((response) => {
+          setAdminDataLists(response.data?.results);
+          setFilteredData(response.data?.results);
+          setListOfPosts(response.data?.results);
+          setNormelUserFilter(response.data?.results);
+          setState({
+            total: response.data?.count,
+            next: response.data?.next,
+            currentPage: pageNumber,
+            pageLoading: false,
+          });
+        })
+        .catch((error) => {
+          console.log('❌error --->', error);
+          setState({ pageLoading: false });
+        });
+    } else if (isAdmin == 'true' || isAlumniManager == 'true') {
+      getJobsAdmin(pageNumber);
+    } else {
+      GetJobs(pageNumber);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const totalPagesForAdmin = Math.ceil(filteredData.length / itemsPerPage);
-  const startIndexForAdmin = (currentPage - 1) * itemsPerPage;
-  const currentDataForAdmin = filteredData.slice(
-    startIndexForAdmin,
-    startIndexForAdmin + itemsPerPage
-  );
-
-  const totalPagesForUser = Math.ceil(normelUserFilter.length / itemsPerPage);
-  const startIndexForUser = (currentPage - 1) * itemsPerPage;
-  const currentDataForUser = [];
-  // normelUserFilter.slice(
-  //   startIndexForUser,
-  //   startIndexForUser + itemsPerPage
-  // );
+  const currentDataForAdmin = filteredData;
 
   const success = (successMsg) => {
     messageApi.open({
@@ -289,7 +326,7 @@ const JobBoardMain = () => {
           )
           .then((response) => {
             success(response.data.message || 'Operation successful!');
-            getJobsAdmin(); // Refresh the job list
+            getJobsAdmin(state.currentPage || 1); // Refresh the job list
             setLoading(false);
           })
           .catch((error) => {
@@ -411,19 +448,13 @@ const JobBoardMain = () => {
 
   const handleFiltersSubmit = (e) => {
     setState({ pageLoading: true });
-
     const body = bodyData();
-
-    console.log('bodyData', body);
-
     e.preventDefault();
 
     if (isAdmin == 'true' || isAlumniManager == 'true') {
       axios
         .post(`${BaseURL}/main_filter_job/`, body, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
           setAdminDataLists(response.data?.results);
@@ -431,26 +462,22 @@ const JobBoardMain = () => {
           setListOfPosts(response.data?.results);
           setNormelUserFilter(response.data?.results);
           setAllUserFilterFinalDataList(formData);
-          setState({ pageLoading: false });
-          // setFormData({
-          //   job_title: "",
-          //   industry: "",
-          //   role: "",
-          //   location: "",
-          //   post_type: "",
-          // });
+          setState({
+            total: response.data?.count,
+            next: response.data?.next,
+            currentPage: 1,
+            pageLoading: false,
+            isFiltered: true,
+          });
         })
         .catch((error) => {
           console.log('❌error --->', error);
           setState({ pageLoading: false });
         });
     } else if (isAlumni == 'true' || isFatulty == 'true') {
-      setState({ pageLoading: true });
       axios
         .post(`${BaseURL}/filter_job/`, body, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
           setAllUserFilterFinalDataList(formData);
@@ -458,14 +485,13 @@ const JobBoardMain = () => {
           setFilteredData(response.data?.results);
           setListOfPosts(response.data?.results);
           setNormelUserFilter(response.data?.results);
-          setState({ pageLoading: false });
-          // setFormData({
-          //   job_title: "",
-          //   industry: "",
-          //   role: "",
-          //   location: "",
-          //   post_type: "",
-          // });
+          setState({
+            total: response.data?.count,
+            next: response.data?.next,
+            currentPage: 1,
+            pageLoading: false,
+            isFiltered: true,
+          });
         })
         .catch((error) => {
           setState({ pageLoading: false });
@@ -484,56 +510,13 @@ const JobBoardMain = () => {
       location: '',
       post_type: '',
     };
+    setFormData(Body);
+    setAllUserFilterFinalDataList(Body);
 
     if (isAdmin == 'true' || isAlumniManager == 'true') {
-      axios
-        .post(`${BaseURL}/main_filter_job/`, Body, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setAdminDataLists(response.data?.results);
-          setFilteredData(response.data?.results);
-          setListOfPosts(response.data?.results);
-          setNormelUserFilter(response.data?.results);
-
-          setFormData({
-            job_title: '',
-            industry: '',
-            role: '',
-            location: '',
-            post_type: '',
-          });
-          setAllUserFilterFinalDataList(Body);
-        })
-        .catch((error) => {
-          console.log('❌error --->', error);
-        });
-    } else if (isAlumni == 'true' || isFatulty == 'true') {
-      axios
-        .post(`${BaseURL}/filter_job/`, Body, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setAdminDataLists(response.data?.results);
-          setFilteredData(response.data?.results);
-          setListOfPosts(response.data?.results);
-          setNormelUserFilter(response.data?.results);
-          setFormData({
-            job_title: '',
-            industry: '',
-            role: '',
-            location: '',
-            post_type: '',
-          });
-          setAllUserFilterFinalDataList(Body);
-        })
-        .catch((error) => {
-          console.log('❌error --->', error);
-        });
+      getJobsAdmin(1);
+    } else {
+      GetJobs(1);
     }
   };
 
@@ -1067,25 +1050,6 @@ const JobBoardMain = () => {
                                             className='rbt-card  event-list-card variation-01 rbt-hover relative'
                                             style={{ position: 'relative' }}
                                           >
-                                            {/* Edit Icon in Top Right
-                                    <div
-                                      className="rbt-button-group"
-                                      style={{
-                                        position: "absolute",
-                                        top: "15px",
-                                        right: "15px",
-                                        zIndex: 10,
-                                      }}
-                                    >
-                                      <a
-                                        className="rbt-btn btn-xs bg-primary-opacity radius-round"
-                                        href={`/edit-a-directory/${item.id}/`}
-                                        title="Edit"
-                                      >
-                                        <i className="feather-edit pl--0" />
-                                      </a>
-                                    </div> */}
-
                                             <div className='rbt-card-body pt-0'>
                                               <ul className='rbt-meta'>
                                                 <li>
@@ -1134,6 +1098,18 @@ const JobBoardMain = () => {
                                       <div> No Jobs Found</div>
                                     )}
                                   </div>
+                                </div>
+                              )}
+
+                              {/* Pagination — shown for both admin and alumni views */}
+                              {Number(state.total) > 0 && (
+                                <div className='d-flex justify-content-center mt-4'>
+                                  <Pagination
+                                    activeNumber={handlePageChange}
+                                    totalPage={state.total}
+                                    currentPages={state.currentPage}
+                                    next={state.next}
+                                  />
                                 </div>
                               )}
                             </div>

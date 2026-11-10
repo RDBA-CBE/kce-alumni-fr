@@ -43,19 +43,18 @@ const ProfileAlumniMain = () => {
 
         currenLocationPage: 1,
         hasLocationLoadMore: null,
+        btnLoading: false,
     });
 
     useEffect(() => {
         const MemberId = localStorage.getItem("member_id");
         setMemberId(MemberId);
-    }, [memberId]);
+    }, []);
 
     useEffect(() => {
-        if (isAlumniContact !== null) {
-            const AlumniContact = localStorage.getItem("isAlumniContact");
-            setIsAlumniContact(AlumniContact);
-        }
-    }, [isAlumniContact]);
+        const AlumniContact = localStorage.getItem("isAlumniContact");
+        setIsAlumniContact(AlumniContact);
+    }, []);
 
     useEffect(() => {
         if (memberId !== null) {
@@ -87,29 +86,20 @@ const ProfileAlumniMain = () => {
     const getDetails = async () => {
         try {
             const res = await Models.member.member_contact(memberId);
+            const data = res?.data;
             setFormData({
-                website: res?.data?.website,
-                linked_in: res?.data?.linked_in,
-                location: res?.data?.location_detail,
-                twitter_handle: res?.data?.twitter_handle,
-                address: res?.data?.address,
-                postal_code: res?.data?.postal_code,
+                website: data?.website || "",
+                linked_in: data?.linked_in || "",
+                location: data?.location_detail?.id
+                    ? { value: data.location_detail.id, label: data.location_detail.location }
+                    : null,
+                twitter_handle: data?.twitter_handle || "",
+                address: data?.address || "",
+                postal_code: data?.postal_code || "",
             });
         } catch (error) {
             console.log("✌️error --->", error);
         }
-        axios
-            .get(`${BaseURL}/retrieve_skills/`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            })
-            .then((res) => {
-                setSkills(res.data?.results);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
     };
 
     const GetLocation = async () => {
@@ -145,8 +135,9 @@ const ProfileAlumniMain = () => {
         const { name, value, type, checked } = event.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: type === "checkbox" ? checked : value, // Set to checked for checkboxes
+            [name]: type === "checkbox" ? checked : value,
         }));
+        if (value) setErrMsg((prev) => ({ ...prev, [name]: "" }));
     };
 
     const handleEducationSubmit = async (e) => {
@@ -171,13 +162,14 @@ const ProfileAlumniMain = () => {
             member: memberId,
             website: formData.website,
             linked_in: formData.linked_in,
-            location: formData.location.value,
+            location: formData.location?.value || null,
             twitter_handle: formData.twitter_handle,
             address: formData.address,
             postal_code: formData.postal_code,
         };
 
         try {
+            setState({ btnLoading: true });
             const res = await axios.post(`${BaseURL}/create_alumni/`, body, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -188,19 +180,14 @@ const ProfileAlumniMain = () => {
                 type: "success",
                 content: res.data.message,
             });
+            setState({ btnLoading: false });
 
-            setFormData({
-                website: "",
-                linked_in: "",
-                location: "",
-                twitter_handle: "",
-                address: "",
-                postal_code: "",
-            });
+            getDetails();
 
             router.push("/edit-basic-profile");
         } catch (error) {
             console.log("error :", error);
+            setState({ btnLoading: false });
             messageApi.open({
                 type: "error",
                 content: error.response.data.linked_in
@@ -442,11 +429,12 @@ const ProfileAlumniMain = () => {
                                                                     name="submit"
                                                                     type="submit"
                                                                     id="submit"
-                                                                    className="rbt-btn btn-md btn-gradient hover-icon-reverse ms-2"
+                                                                    disabled={state.btnLoading}
+                                                                    className={`rbt-btn btn-md btn-gradient hover-icon-reverse ms-2 ${state.btnLoading ? "loading" : ""}`}
                                                                 >
                                                                     <span className="icon-reverse-wrapper">
                                                                         <span className="btn-text">
-                                                                            Save and Continue
+                                                                            {state.btnLoading ? "Saving..." : "Save and Continue"}
                                                                         </span>
                                                                         <span className="btn-icon">
                                                                             <i className="feather-arrow-right"></i>
