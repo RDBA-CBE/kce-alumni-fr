@@ -20,7 +20,7 @@ const CallToActionFour = ({ btnClass }) => {
                       Alumni Strength, United Forever.
                     </h2>
                     <div className="call-to-btn text-start mt--30">
-                      <Link className={btnClass} href="#">
+                      <Link className={btnClass} href="/signin">
                         <span className="icon-reverse-wrapper">
                           <span className="btn-text">Register Now</span>
                           <span className="btn-icon">

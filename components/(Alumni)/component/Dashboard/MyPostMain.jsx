@@ -20,6 +20,18 @@ import Loader from '../../Loader';
 import DashboardListCom from './DashboardListCom';
 import Pagination from '@/commonComponents/Pagination';
 
+const getMaxPage = async (fetchPage, firstResponse) => {
+  let response = firstResponse;
+  let maxPage = 1;
+
+  while (response?.next) {
+    response = await fetchPage(maxPage + 1);
+    maxPage += 1;
+  }
+
+  return maxPage;
+};
+
 const MyPostMain = () => {
   const imgInputRef = useRef(null);
 
@@ -51,6 +63,7 @@ const MyPostMain = () => {
     filterShowList: {},
     currentPage: 1,
     preview: null,
+    next: null,
   });
 
   useEffect(() => {
@@ -65,12 +78,15 @@ const MyPostMain = () => {
     try {
       const res = await Models.post.GetPostData(page);
       console.log('✌️res --->', res);
+      const maxPage =
+        page === 1 ? await getMaxPage(Models.post.GetPostData, res) : state.maxPage;
       setState({
         postList: res?.results,
         currentPage: page,
         next: res?.next,
         previous: res?.previous,
         total: res?.count,
+        maxPage,
       });
     } catch (error) {
       if (error?.messages?.length > 0) {
@@ -130,6 +146,12 @@ const MyPostMain = () => {
     try {
       const res = await Models.post.FilterPostData(Body, page);
       console.log('✌️res --->', res);
+      const maxPage =
+        page === 1
+          ? await getMaxPage((pageNumber) =>
+              Models.post.FilterPostData(Body, pageNumber),
+            res)
+          : state.maxPage;
       setState({
         postList: res?.results,
         currentPage: page,
@@ -137,6 +159,7 @@ const MyPostMain = () => {
         previous: res?.previous,
         total: res?.count,
         filterShowList: Body,
+        maxPage,
       });
     } catch (error) {
       console.log('error: ', error);
@@ -167,6 +190,7 @@ const MyPostMain = () => {
         next: res?.next,
         previous: res?.previous,
         total: res?.count,
+        maxPage: await getMaxPage(Models.post.GetPostData, res),
       });
     } catch (error) {
       console.log('error: ', error);
@@ -199,42 +223,30 @@ const MyPostMain = () => {
     // }
   };
 
-  const createPost = async () => {
+  const createPost = async (e) => {
+    e.preventDefault();
     const body = {
-      featured_image: state.imageFile,
-      // attach: state.attachmentFile,
+      imageFile: state.imageFile,
       title: state.title,
       blog: state.blog,
       content: state.content,
-      post_category: state.newPostCategory,
-      visible_to_public: state.visibility,
+      newPostCategory: state.newPostCategory,
+      visibility: state.visibility,
     };
 
     const validationRules = {
       title: { required: true },
       blog: { required: true },
-      featured_image: { required: true },
-      // attach: { required: true },
-      content: { required: true },
-      post_category: { required: true },
-      visible_to_public: { required: true },
+      imageFile: { required: true },
+      // content: { required: true },
+      newPostCategory: { required: true },
+      visibility: { required: true },
     };
     const isValid = validateForm(body, validationRules, errorFun);
+    if (!isValid) return;
 
-    if (!isValid) {
-      console.log('Validation errors:', state.error); // Log any validation errors
-      return;
-    }
-
-    console.log('body: ', body);
     const formData = new FormData();
-
-    if (state.imageFile) {
-      formData.append('featured_image', state.imageFile);
-    }
-    // if (state.attachmentFile) {
-    //   formData.append("attach", state.attachmentFile);
-    // }
+    if (state.imageFile) formData.append('featured_image', state.imageFile);
     formData.append('title', state.title || '');
     formData.append('blog', state.blog || '');
     formData.append('content', state.content || '');
@@ -248,57 +260,49 @@ const MyPostMain = () => {
 
     try {
       const res = await Models.post.CreatePostData(formData);
-      console.log('✌️res --->', res);
       GetPostData(1);
       setState({
         isOpenNewPost: false,
         imageFile: null,
-        // attachmentFile: null,
         title: '',
         blog: '',
         content: '',
         visibility: '',
         newPostCategory: [],
+        apiError: null,
       });
     } catch (error) {
-      console.log('error: ', error);
+      const msg = error?.response?.data
+        ? Object.values(error.response.data).flat().join(' ')
+        : error?.message || 'Something went wrong. Please try again.';
+      setState({ apiError: msg });
     }
   };
 
-  const updatePost = async () => {
+  const updatePost = async (e) => {
+    e.preventDefault();
     const body = {
-      featured_image: state.imageFile || state.preview,
-      // attach: state.attachmentFile,
+      imageFile: state.imageFile || state.preview,
       title: state.title,
       blog: state.blog,
       content: state.content,
-      post_category: state.newPostCategory,
-      visible_to_public: state.visibility,
+      newPostCategory: state.newPostCategory,
+      visibility: state.visibility,
     };
 
     const validationRules = {
       title: { required: true },
       blog: { required: true },
-      featured_image: { required: true },
-      // attach: { required: true },
-      content: { required: true },
-      post_category: { required: true },
-      visible_to_public: { required: true },
+      imageFile: { required: true },
+      // content: { required: true },
+      newPostCategory: { required: true },
+      visibility: { required: true },
     };
     const isValid = validateForm(body, validationRules, errorFun);
+    if (!isValid) return;
 
-    if (!isValid) {
-      console.log('Validation errors:', state.error); // Log any validation errors
-      return;
-    }
-
-    console.log('body: ', body);
     const formData = new FormData();
-
-    if (state.imageFile) {
-      formData.append('featured_image', state.imageFile);
-    }
-
+    if (state.imageFile) formData.append('featured_image', state.imageFile);
     formData.append('title', state.title || '');
     formData.append('blog', state.blog || '');
     formData.append('content', state.content || '');
@@ -315,9 +319,7 @@ const MyPostMain = () => {
         state?.singleData?.id,
         formData
       );
-      console.log('✌️res --->', res);
       GetPostData(state.currentPage);
-
       setState({
         isOpenNewPost: false,
         imageFile: null,
@@ -327,9 +329,13 @@ const MyPostMain = () => {
         visibility: '',
         newPostCategory: [],
         editPostId: null,
+        apiError: null,
       });
     } catch (error) {
-      console.log('error: ', error);
+      const msg = error?.response?.data
+        ? Object.values(error.response.data).flat().join(' ')
+        : error?.message || 'Something went wrong. Please try again.';
+      setState({ apiError: msg });
     }
   };
 
@@ -341,21 +347,11 @@ const MyPostMain = () => {
   const VisibilityDropDown = Dropdown(VisibilityPosts, 'name');
 
   const editPost = async (item) => {
-    console.log('✌️item --->', item);
     try {
       setState({ editPostId: item.id, isOpenNewPost: true });
       const res = await Models?.post?.GetSinglePostData(item.id);
-      console.log('✌️res --->', res);
-      setState({ title: res.title });
-      let file = null;
-      // if (res.featured_image) {
-      //   const url = new URL(res.featured_image);
-      //   const filename = url.pathname.split("/").pop();
-      //   file = await convertUrlToFile(res.featured_image, filename);
-      // }
-
       setState({
-        preview: res?.featured_image ? res?.featured_image : null,
+        preview: res?.featured_image || null,
         imageFile: null,
         title: res?.title,
         blog: res?.blog,
@@ -363,10 +359,11 @@ const MyPostMain = () => {
         visibility: res?.visible_to_public == true ? '1' : '2',
         newPostCategory: res?.post_category?.id,
         singleData: res,
+        error: {},
+        apiError: null,
       });
     } catch (error) {
       console.log('error: ', error);
-      setState({ isOpenNewPost: false });
     }
   };
 
@@ -390,19 +387,13 @@ const MyPostMain = () => {
   });
 
   const handlePageChange = (number) => {
-    const Body = {
-      title: state.filterTitle,
-      post_category: state.filterCategory,
-    };
-    const hasFilterValues = Object.values(Body).some((val) => val); // check if any value is truthy
+    const hasFilterValues = Object.values(state.filterShowList).some((val) => val);
     if (hasFilterValues) {
       handleFiltersSubmit(number);
     } else {
       GetPostData(number);
     }
-    setState({ currentPage: number });
-
-    return number;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -442,6 +433,15 @@ const MyPostMain = () => {
                                 setState({
                                   isOpenNewPost: true,
                                   editPostId: null,
+                                  title: '',
+                                  blog: '',
+                                  content: '',
+                                  visibility: '',
+                                  newPostCategory: [],
+                                  imageFile: null,
+                                  preview: null,
+                                  error: {},
+                                  apiError: null,
                                 })
                               }
                             >
@@ -650,6 +650,7 @@ const MyPostMain = () => {
                                         totalPage={state.total}
                                         currentPages={state.currentPage}
                                         next={state.next}
+                                        maxPage={state.maxPage}
                                       />
                                     </div>
                                   </div>
@@ -681,13 +682,13 @@ const MyPostMain = () => {
           setState({
             isOpenNewPost: false,
             imageFile: null,
-            // attachmentFile: null,
             title: '',
             blog: '',
             content: '',
             visibility: '',
             newPostCategory: [],
-            error: null,
+            error: {},
+            apiError: null,
           });
         }}
         footer={false}
@@ -766,6 +767,13 @@ const MyPostMain = () => {
               required={true}
               error={state.error?.imageFile}
             />
+            {state.editPostId && state.preview && !state.imageFile && (
+              <img
+                src={state.preview}
+                alt='Current'
+                style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px', marginTop: '6px' }}
+              />
+            )}
 
             <div
               className='uploaded-images mt_10'
@@ -826,7 +834,9 @@ const MyPostMain = () => {
             />
           </div>
 
-          {/* Action */}
+          {state.apiError && (
+            <p style={{ color: 'red', fontSize: '14px', marginTop: '10px' }}>{state.apiError}</p>
+          )}
           <div className='d-flex justify-content-end mt-3'>
             <button
               className='rbt-btn btn-gradient radius-round sm-btn'

@@ -86,7 +86,7 @@ const DashboardListCom = ({ data, GetData, editPost, postLikeDisLinke, page }) =
             >
               <div
                 className="rbt-btn btn-xs bg-primary-opacity radius-round"
-                onClick={() => editPost()}
+                onClick={(e) => { e.stopPropagation(); editPost(); }}
                 title="Edit"
               >
                 <i className="feather-edit pl--0" />

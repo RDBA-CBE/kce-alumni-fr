@@ -295,7 +295,7 @@ const Register = (props) => {
           </form>
         </div>
         <Modal
-          title="Email not found in our records"
+          title="Click the below button to continue with the registration process"
           open={state.confrmModelOpen}
           footer={false}
           onOk={() =>

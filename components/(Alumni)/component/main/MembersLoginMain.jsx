@@ -1001,67 +1001,36 @@ const MembersLoginMain = () => {
                                 {state.memberList ? (
                                   state.memberList.map((member, index) => (
                                     <div
-                                      className="col-xxl-3 col-lg-4 col-md-4 col-sm-6 col-12 "
+                                      className="col-xxl-3 col-lg-4 col-md-4 col-sm-6 col-12"
                                       key={index}
+                                      style={{ display: 'flex' }}
                                     >
                                       {/* {data.details.map((item, innerIndex) => ( */}
-                                      <div className="team">
-                                        {member?.profile_picture ? (
-                                          <Link
-                                            className="rbt-team-thumbnail w-100"
-                                            href="#"
-                                            data-bs-toggle="modal"
-                                            data-bs-target={`#exampleModal${index}`}
-                                          >
-                                            <div className="thumbnail">
-                                              <img
-                                                // src=
-                                                src={
-                                                  member?.profile_picture ??
-                                                  "/images/dummy-member.png"
-                                                }
-                                                width={415}
-                                                height={555}
-                                                          alt="Blog Images"
-                                              />
-                                            </div>
-                                          </Link>
-                                        ) : (
-                                          <Link
-                                            className="rbt-team-thumbnail w-100"
-                                            href="#"
-                                            data-bs-toggle="modal"
-                                            data-bs-target={`#exampleModal${index}`}
-                                          >
-                                            <div className="thumbnail">
-                                              <img
-                                                // src={member?.profile_picture}
-                                                src="/images/dummy-member.jpg"
-                                                width={415}
-                                                height={555}
-                                                          alt="Blog Images"
-                                              />
-                                            </div>
-                                          </Link>
-                                        )}
+                                      <div className="team" style={{ display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '400px', width:'100%' }}>
+                                        <Link
+                                          className="rbt-team-thumbnail w-100"
+                                          href={`/members/${member?.id}`}
+                                          style={{ flex: '0 0 260px', overflow: 'hidden' }}
+                                        >
+                                          <div className="thumbnail" style={{ height: '300px', overflow: 'hidden' }}>
+                                            <img
+                                              src={
+                                                member?.profile_picture ??
+                                                "/images/dummy-member.jpg"
+                                              }
+                                              width={415}
+                                              height={555}
+                                              alt="Blog Images"
+                                              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+                                            />
+                                          </div>
+                                        </Link>
 
-                                        <div className="content p-4">
+                                        <div className="content p-4" style={{ flex: 1 }}>
                                           <h4 className="title mb-3 font-18">
-                                            {member?.name == null ||
-                                            member?.name == " " ||
-                                            member?.name == "" ? (
-                                              <Link
-                                                href={`/members/${member?.id}`}
-                                              >
-                                                {member?.email}
-                                              </Link>
-                                            ) : (
-                                              <Link
-                                                href={`/members/${member?.id}`}
-                                              >
-                                                {member?.name}
-                                              </Link>
-                                            )}
+                                            <Link href={`/members/${member?.id}`}>
+                                              {member?.name?.trim() || member?.email}
+                                            </Link>
                                           </h4>
                                           <p className="designation">
                                             {member?.course}

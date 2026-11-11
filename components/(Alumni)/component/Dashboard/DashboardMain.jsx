@@ -221,40 +221,27 @@ const DashboardMain = () => {
   const createPost = async (e) => {
     e.preventDefault();
     const body = {
-      featured_image: state.imageFile,
-      // attach: state.attachmentFile,
+      imageFile: state.imageFile,
       title: state.title,
       blog: state.blog,
       content: state.content,
-      post_category: state.newPostCategory,
-      visible_to_public: state.visibility,
+      newPostCategory: state.newPostCategory,
+      visibility: state.visibility,
     };
 
     const validationRules = {
       title: { required: true },
       blog: { required: true },
-      featured_image: { required: true },
-      // attach: { required: true },
-      content: { required: true },
-      post_category: { required: true },
-      visible_to_public: { required: true },
+      imageFile: { required: true },
+      // content: { required: true },
+      newPostCategory: { required: true },
+      visibility: { required: true },
     };
     const isValid = validateForm(body, validationRules, errorFun);
+    if (!isValid) return;
 
-    if (!isValid) {
-      console.log('Validation errors:', state.error); // Log any validation errors
-      return;
-    }
-
-    console.log('body: ', body);
     const formData = new FormData();
-
-    if (state.imageFile) {
-      formData.append('featured_image', state.imageFile);
-    }
-    // if (state.attachmentFile) {
-    //   formData.append("attach", state.attachmentFile);
-    // }
+    if (state.imageFile) formData.append('featured_image', state.imageFile);
     formData.append('title', state.title || '');
     formData.append('blog', state.blog || '');
     formData.append('content', state.content || '');
@@ -268,61 +255,50 @@ const DashboardMain = () => {
 
     try {
       const res = await Models.post.CreatePostData(formData);
-      console.log('✌️res --->', res);
       GetPostData(1);
       GetMyPostData(1);
       setState({
         isOpenNewPost: false,
         imageFile: null,
-        // attachmentFile: null,
         title: '',
         blog: '',
         content: '',
         visibility: '',
         newPostCategory: [],
+        apiError: null,
       });
     } catch (error) {
-      console.log('error: ', error);
+      const msg = error?.response?.data
+        ? Object.values(error.response.data).flat().join(' ')
+        : error?.message || 'Something went wrong. Please try again.';
+      setState({ apiError: msg });
     }
   };
 
-  const updatePost = async () => {
+  const updatePost = async (e) => {
     e.preventDefault();
     const body = {
-      featured_image: state.imageFile,
-      // attach: state.attachmentFile,
+      imageFile: state.imageFile || state.preview,
       title: state.title,
       blog: state.blog,
       content: state.content,
-      post_category: state.newPostCategory,
-      visible_to_public: state.visibility,
+      newPostCategory: state.newPostCategory,
+      visibility: state.visibility,
     };
 
     const validationRules = {
       title: { required: true },
       blog: { required: true },
-      featured_image: { required: true },
-      // attach: { required: true },
-      content: { required: true },
-      post_category: { required: true },
-      visible_to_public: { required: true },
+      imageFile: { required: true },
+      // content: { required: true },
+      newPostCategory: { required: true },
+      visibility: { required: true },
     };
     const isValid = validateForm(body, validationRules, errorFun);
+    if (!isValid) return;
 
-    if (!isValid) {
-      console.log('Validation errors:', state.error); // Log any validation errors
-      return;
-    }
-
-    console.log('body: ', body);
     const formData = new FormData();
-
-    if (state.imageFile) {
-      formData.append('featured_image', state.imageFile);
-    }
-    // if (state.attachmentFile) {
-    //   formData.append("attach", state.attachmentFile);
-    // }
+    if (state.imageFile) formData.append('featured_image', state.imageFile);
     formData.append('title', state.title || '');
     formData.append('blog', state.blog || '');
     formData.append('content', state.content || '');
@@ -339,9 +315,7 @@ const DashboardMain = () => {
         state?.singleData?.id,
         formData
       );
-      console.log('✌️res --->', res);
       GetPostData(state.currentPage);
-
       setState({
         isOpenNewPost: false,
         imageFile: null,
@@ -351,9 +325,13 @@ const DashboardMain = () => {
         visibility: '',
         newPostCategory: [],
         editPostId: null,
+        apiError: null,
       });
     } catch (error) {
-      console.log('error: ', error);
+      const msg = error?.response?.data
+        ? Object.values(error.response.data).flat().join(' ')
+        : error?.message || 'Something went wrong. Please try again.';
+      setState({ apiError: msg });
     }
   };
 
@@ -367,26 +345,20 @@ const DashboardMain = () => {
     try {
       setState({ editPostId: item.id, isOpenNewPost: true });
       const res = await Models?.post?.GetSinglePostData(item.id);
-      setState({ title: res.title });
-      let file = null;
-      if (res.featured_image) {
-        const url = new URL(res.featured_image);
-        const filename = url.pathname.split('/').pop();
-        file = await convertUrlToFile(res.featured_image, filename);
-      }
-
       setState({
-        imageFile: file,
+        preview: res?.featured_image || null,
+        imageFile: null,
         title: res?.title,
         blog: res?.blog,
         content: res?.content,
         visibility: res?.visible_to_public == true ? '1' : '2',
         newPostCategory: res?.post_category?.id,
         singleData: res,
+        error: {},
+        apiError: null,
       });
     } catch (error) {
       console.log('error: ', error);
-      setState({ isOpenNewPost: false });
     }
   };
 
@@ -455,12 +427,14 @@ const DashboardMain = () => {
                             >
                               My Post
                             </div>
+                           {(state.AlumniManagerLogin && !state.AdminLogin ) && (
                             <div
                               className="rbt-btn btn-gradient radius-round sm-btn"
                               onClick={() => router?.push("/published-posts")}
                             >
-                              Publish Post
+                              Publish Post 
                             </div>
+                           )}
 
                             <div
                               className='rbt-btn btn-gradient radius-round sm-btn'
@@ -468,6 +442,15 @@ const DashboardMain = () => {
                                 setState({
                                   isOpenNewPost: true,
                                   editPostId: null,
+                                  title: '',
+                                  blog: '',
+                                  content: '',
+                                  visibility: '',
+                                  newPostCategory: [],
+                                  imageFile: null,
+                                  preview: null,
+                                  error: {},
+                                  apiError: null,
                                 })
                               }
                             >
@@ -706,13 +689,13 @@ const DashboardMain = () => {
           setState({
             isOpenNewPost: false,
             imageFile: null,
-            // attachmentFile: null,
             title: '',
             blog: '',
             content: '',
             visibility: '',
             newPostCategory: [],
-            error: null,
+            error: {},
+            apiError: null,
           });
         }}
         footer={false}
@@ -791,6 +774,13 @@ const DashboardMain = () => {
               required={true}
               error={state.error?.imageFile}
             />
+            {state.editPostId && state.preview && !state.imageFile && (
+              <img
+                src={state.preview}
+                alt='Current'
+                style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '5px', marginTop: '6px' }}
+              />
+            )}
 
             <div
               className='uploaded-images mt_10'
@@ -852,6 +842,9 @@ const DashboardMain = () => {
           </div>
 
           {/* Action */}
+          {state.apiError && (
+            <p style={{ color: 'red', fontSize: '14px', marginTop: '10px' }}>{state.apiError}</p>
+          )}
           <div className='d-flex justify-content-end mt-3'>
             <button
               className='rbt-btn btn-gradient radius-round sm-btn'
