@@ -591,7 +591,7 @@ const MembersLoginMain = () => {
 
         setState({
           locationList: [...state.locationList, ...LocationOption],
-          currenlocationPage: state.currenlocationPage + 1,
+          currenLocationPage: state.currenLocationPage + 1,
           hasLocationLoadMore: res.next,
         });
       } else {

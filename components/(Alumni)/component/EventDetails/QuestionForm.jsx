@@ -9,7 +9,15 @@ const QuestionForm = ({ data, responses, setResponses, otherInputs, setOtherInpu
   // const Colors = useTheme();
 
   const handleOptionSelect = (questionId, selectedOption) => {
-    setResponses((prev) => ({ ...prev, [questionId]: selectedOption }));
+    setResponses((prev) => {
+      // clicking the already-selected option deselects it
+      if (prev[questionId] === selectedOption) {
+        const next = { ...prev };
+        delete next[questionId];
+        return next;
+      }
+      return { ...prev, [questionId]: selectedOption };
+    });
     setOtherInputs((prev) => ({ ...prev, [questionId]: '' }));
   };
 

@@ -8,6 +8,7 @@ import Models from "@/imports/models.import";
 import DashUserCom from "./DashUserCom";
 import Image from "next/image";
 import LikedUserLIst from "./LikedUserLIst";
+import { RWebShare } from "react-web-share";
 
 const DashboardListCom = ({ data, GetData, editPost, postLikeDisLinke, page }) => {
 
@@ -178,10 +179,21 @@ const DashboardListCom = ({ data, GetData, editPost, postLikeDisLinke, page }) =
               </button>
 
               
+              
+                 <RWebShare
+                          data={{
+                            title: "Karpagam College Of Engineering",
+                            text: `Check this out!`,
+                            url: window.location.href,
+                          }}
+                          onClick={() => console.log("shared successfully!")}
+                        >
+                <button className="btn btn-ghost kit-memo-share">
+                  <i className="feather-share-2 me-1" style={{color:'#e53031'}}></i> 
+                </button>
+                </RWebShare>
 
-              <button className="btn btn-ghost kit-memo-share">
-                <i className="feather-share-2 me-1" style={{color:'#e53031'}}></i> 
-              </button>
+             
             </div>
 
             {/* Likes */}

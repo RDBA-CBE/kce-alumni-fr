@@ -17,7 +17,17 @@ const CustomSelect = (props) => {
     required,
     loadMore,
     menuOpen,
+    menuPosition = "fixed",
+    menuPlacement = "auto",
+    menuPortalTarget,
+    maxMenuHeight = 250,
   } = props;
+  const portalTarget =
+    menuPortalTarget !== undefined
+      ? menuPortalTarget
+      : typeof document !== "undefined"
+        ? document.body
+        : null;
 
   const customStyles = {
     control: (provided) => ({
@@ -60,6 +70,10 @@ const CustomSelect = (props) => {
           isSearchable={isSearchable}
           isMulti={isMulti}
           isClearable={true}
+          menuPlacement={menuPlacement}
+          menuPosition={menuPosition}
+          menuPortalTarget={portalTarget}
+          maxMenuHeight={maxMenuHeight}
           styles={customStyles}
           onMenuOpen={() => menuOpen && menuOpen(true)}
           onMenuClose={() => menuOpen && menuOpen(false)}
@@ -67,10 +81,6 @@ const CustomSelect = (props) => {
             error ? "border-red-500" : ""
           } ${isMulti ? "is-multi" : ""}`}
           onMenuScrollToBottom={loadMore}
-          // Add these two crucial props:
-          menuPortalTarget={
-            typeof document !== "undefined" ? document.body : null
-          }
           menuShouldBlockScroll={true}
         />
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}

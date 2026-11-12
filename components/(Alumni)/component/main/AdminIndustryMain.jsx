@@ -115,7 +115,7 @@ const AdminIndustryMain = () => {
     const validationRules = {
       title: { required: true },
       description: { required: true },
-      website: { required: true },
+      // website: { required: true },
     };
     const isValid = validateForm(formData, validationRules, setErrMsg);
     if (!isValid) return;
@@ -326,7 +326,7 @@ const AdminIndustryMain = () => {
               onChange={handleChange}
               value={formData.website}
               error={errMsg.website}
-              required={true}
+              // required={true}
             />
           </div>
 

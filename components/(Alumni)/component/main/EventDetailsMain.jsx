@@ -19,6 +19,7 @@ import { message, Modal } from 'antd';
 import QuestionForm from '../EventDetails/QuestionForm';
 import Pagination from '@/components/Common/Pagination';
 import Loader from '../../Loader';
+import { RWebShare } from 'react-web-share';
 
 const EventDetailsMain = ({ getMatchEvent, id }) => {
   const [state, setState] = useSetState({
@@ -273,7 +274,12 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
       onCancel(); // close modal
     } catch (error) {
       console.log(error);
-      failure(error?.data?.error || error || 'Something went wrong');
+      // error may be a plain string (from model reject), an object with .error, or an Error instance
+      const msg =
+        typeof error === 'string'
+          ? error
+          : error?.error || error?.data?.error || error?.message || 'Something went wrong';
+      failure(msg);
       setState({ btnLoading: false });
     }
   };
@@ -525,19 +531,28 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
                           <i className='feather-calendar'></i>
                         </Link>
                       </li>
-                      <li>
+                      <RWebShare
+                          data={{
+                            title: "Karpagam College Of Engineering",
+                            text: `Check this out!`,
+                            url: window.location.href,
+                          }}
+                          onClick={() => console.log("shared successfully!")}
+                        ><li>
+                        
                         <Link
-                          href={`${state?.eventData?.link}`}
+                          href={"#"}
                           title='View Link'
                         >
                           <i className='feather-link'></i>
                         </Link>
-                      </li>
+                        
+                      </li></RWebShare>
                     </ul>
                   </div>
                   <hr className='mt--20' />
                   <div className='contact-with-us text-center'>
-                    <p>Amet consectetur adipisicing elit</p>
+                    <p>Something exciting awaits.</p>
                     {/* <p className="rbt-badge-2 mt--10 justify-content-center w-100">
                 <i className="feather-phone mr--5"></i> Call Us:
                 <Link href="#">

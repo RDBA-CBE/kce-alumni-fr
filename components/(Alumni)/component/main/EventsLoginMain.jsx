@@ -52,7 +52,7 @@ const EventsLoginMain = () => {
     isAlumni: false,
     isFaculty: false,
     token: '',
-    activeTab: 0,
+    activeTab: '',
     currentPage: 1,
     total: 0,
     next: undefined,
@@ -249,21 +249,6 @@ const EventsLoginMain = () => {
     // Perform is_active logic here if needed
   };
 
-  const tabs = [
-    {
-      value: 'all',
-      label: 'All',
-    },
-    {
-      value: 2,
-      label: 'Reunions',
-    },
-    {
-      value: 1,
-      label: 'Webinars',
-    },
-  ];
-
   const handlePageChange = (number) => {
     setState({ currentPage: number });
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -272,28 +257,23 @@ const EventsLoginMain = () => {
   };
 
   const bodyData = () => {
-    let bodyData = {};
+    let body = {};
 
-    if (state?.activeTab != 0) {
-      bodyData.category_id = state?.activeTab;
-    }
-    if (state?.activeTab == 1) {
-      bodyData.category_id = 2;
-    }
-    if (state?.activeTab == 2) {
-      bodyData.category_id = 1;
+    // activeTab holds the category_id ('' means All)
+    if (state?.activeTab !== 0 && state?.activeTab !== '') {
+      body.category_id = state?.activeTab;
     }
 
     if (state.filterCategory) {
       if (state.filterCategory == 'upcoming') {
-        bodyData.is_past = 'false';
+        body.is_past = 'false';
       }
       if (state.filterCategory == 'completed') {
-        bodyData.is_past = 'true';
+        body.is_past = 'true';
       }
     }
 
-    return bodyData;
+    return body;
   };
 
   return (
@@ -337,23 +317,25 @@ const EventsLoginMain = () => {
                               <nav className='mainmenu-nav '>
                                 <h5 className='rbt-widget-title'>Categories</h5>
                                 <ul className='rbt-sidebar-list-wrapper categories-list-check has-show-more-inner-content'>
-                                  {tabs.map((tab, index) => (
+                                  {state.eventCategoryList.map((tab, index) => (
                                     <li className='rbt-check-group' key={index}>
                                       <input
-                                        key={tab?.value}
                                         id={`cat-list-${index}`}
                                         type='checkbox'
                                         name={`cat-list-${index}`}
-                                        checked={state.activeTab === index}
+                                        checked={state.activeTab === tab.category_id}
                                         onChange={() =>
-                                          setState({ activeTab: index })
+                                          setState({
+                                            activeTab:
+                                              state.activeTab === tab.category_id
+                                                ? ''
+                                                : tab.category_id,
+                                            currentPage: 1,
+                                          })
                                         }
                                       />
                                       <label htmlFor={`cat-list-${index}`}>
-                                        {tab?.label}
-                                        {/* <span className="rbt-lable count">
-                                          15
-                                        </span> */}
+                                        {tab?.title}
                                       </label>
                                     </li>
                                   ))}
@@ -432,7 +414,7 @@ const EventsLoginMain = () => {
                         <Loader /> // 👈 show loader
                       ) : (
                         <div className='rbt-rbt-card-area  bg-color-white '>
-                          <div className='container'>
+                          {state.allEventsAdmin.length > 0 ? <div className='container'>
                             <UpCommingEvents
                               isAdmin={state.isAdmin}
                               data={state.allEventsAdmin?.slice(
@@ -462,7 +444,7 @@ const EventsLoginMain = () => {
                                 </div>
                               </div>
                             )}
-                          </div>
+                          </div> : <div className='text-center d-flex justify-content-center align-items-center h-' style={{ minHeight: '300px' }}>No events found.</div>}
                         </div>
                       )}
                     </div>

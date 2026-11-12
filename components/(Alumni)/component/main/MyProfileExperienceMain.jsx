@@ -51,6 +51,7 @@ const MyProfileExperienceMain = () => {
   const [state, setState] = useSetState({
     currenRolePage: 1,
     hasRoleLoadMore: null,
+    currenIndustryPage: 1,
     hasIndustryLoadMore: null,
     currenInstitutionPage: 1,
     currenLocationPage: 1,
@@ -391,11 +392,7 @@ const MyProfileExperienceMain = () => {
   const industryListLoadMore = async () => {
     try {
       if (state.hasIndustryLoadMore) {
-        const res = await Models.job.industryList(state.currenIndustryPage + 1);
-        // const IndustryOption = res?.results?.map((item) => ({
-        //   value: item.skill_id,
-        //   label: item.skill,
-        // }));
+        const res = await Models.masters.industryList(state.currenIndustryPage + 1);
         const IndustryOption = setDropdownData(res?.results, 'title');
 
         setInstitute([...institute, ...IndustryOption]);
@@ -415,7 +412,7 @@ const MyProfileExperienceMain = () => {
   const roleListLoadMore = async () => {
     try {
       if (state.hasRoleLoadMore) {
-        const res = await Models.job.roleList(state.currenRolePage + 1);
+        const res = await Models.masters.roleList(state.currenRolePage + 1);
 
         const RoleOption = setDropdownData(res?.results, 'role');
 
@@ -434,18 +431,15 @@ const MyProfileExperienceMain = () => {
   };
 
   const locationListLoadMore = async () => {
-    console.log('state.hasLocationLoadMore)', state.hasLocationLoadMore);
-
     try {
       if (state.hasLocationLoadMore) {
-        const res = await Models.job.locationList(state.currenLocationPage + 1);
+        const res = await Models.masters.locationList(state.currenLocationPage + 1);
 
         const LocationOption = setDropdownData(res?.results, 'location');
-        console.log('loadmore location res', res);
 
         setLocation([...location, ...LocationOption]);
         setState({
-          currenlocationPage: state.currenlocationPage + 1,
+          currenLocationPage: state.currenLocationPage + 1,
           hasLocationLoadMore: res.next,
         });
       } else {

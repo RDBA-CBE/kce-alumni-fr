@@ -329,7 +329,8 @@ const ProfileMilestoneMain = () => {
                                                             <div className="rbt-card-bottom">
                                                                 <a
                                                                     className="rbt-btn-link color-primary"
-                                                                    href="/edit-basic-profile"
+                                                                    // href="/edit-basic-profile"
+                                                                    href="/dashboard"
                                                                 >
                                                                     {" "}
                                                                     Skip & Go to Next Step

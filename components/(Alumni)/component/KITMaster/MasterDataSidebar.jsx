@@ -43,7 +43,7 @@ const MasterDataSidebar = () => {
                       <li className="nav-item" key={index} role="presentation">
                         <Link
                           className={`${
-                            pathname === data.link ? "active" : ""
+                            pathname === data.href ? "active" : ""
                           }`}
                           href={data.href}
                         >

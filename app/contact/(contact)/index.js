@@ -35,7 +35,7 @@ const Contact = () => {
                       <span className='text-white'>Contact Us</span>
                     </h6>
                     <h2 className='title text-white'>
-                      Lorem ipsum dolor sit <br /> adipiscing elit
+                      We're Here to Connect, <br />Support and Guide You
                     </h2>
                   </div>
                 </div>

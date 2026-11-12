@@ -641,18 +641,17 @@ const router = useRouter();
                     <div className="form-group">
                       <FormField
                         placeholder="Location"
-                        type="text"
+                        type="loadMoreSelect"
                         className="form-dd"
                         name="location"
                         value={formData.location}
-                        onChange={(e) => handleChange(e)}
-                        // onChange={(e) => {
-                        //   setFormData({ ...formData, location: e });
-                        // }}
+                        onChange={(e) => {
+                          setFormData({ ...formData, location: e });
+                        }}
                         options={location}
                         required={true}
                         error={errMsg.location}
-                        // loadMore={() => locationListLoadMore()}
+                        loadMore={() => locationListLoadMore()}
                       />
                       <span className="focus-border"></span>
                     </div>

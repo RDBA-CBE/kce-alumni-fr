@@ -6,7 +6,6 @@ const Pagination = ({
   currentPages,
   pageSize = 10,
   next,
-  maxPage,
 }) => {
   const totalItems = Number(totalPage);
   const itemsPerPage = Number(pageSize);
@@ -27,15 +26,13 @@ const Pagination = ({
         )
       : 0;
 
-  // maxPage overrides the calculated total when the real last page is known.
-  // next===null caps to currentPage only (works when you're on the last page).
-  // Otherwise fall back to count-based calculation.
-  let totalPages = calculatedPages;
-  if (maxPage != null && Number.isFinite(Number(maxPage))) {
-    totalPages = Math.min(calculatedPages, Number(maxPage));
-  } else if (next === null) {
-    totalPages = Math.min(calculatedPages, currentPage || calculatedPages);
-  }
+  // When next===null the API has no more pages — cap totalPages at currentPage
+  // so phantom page numbers beyond the last real page are never shown.
+  // next===undefined means the prop wasn't passed; fall back to count-based calc.
+  const totalPages =
+    next === null
+      ? currentPage
+      : calculatedPages;
 
   if (totalPages <= 1) {
     return null;

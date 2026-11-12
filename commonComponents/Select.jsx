@@ -17,7 +17,17 @@ const CustomSelect = (props) => {
     required,
     loadMore,
     menuOpen,
+    menuPosition = "fixed",
+    menuPlacement = "auto",
+    menuPortalTarget,
+    maxMenuHeight = 250,
   } = props;
+  const portalTarget =
+    menuPortalTarget !== undefined
+      ? menuPortalTarget
+      : typeof document !== "undefined"
+        ? document.body
+        : null;
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -54,6 +64,11 @@ const CustomSelect = (props) => {
           isSearchable={isSearchable}
           isMulti={isMulti}
           isClearable={true}
+          menuPlacement={menuPlacement}
+          menuPosition={menuPosition}
+          menuPortalTarget={portalTarget}
+          maxMenuHeight={maxMenuHeight}
+          menuShouldBlockScroll={true}
           styles={customStyles}
           onMenuOpen={() => menuOpen && menuOpen(true)}
           onMenuClose={() => menuOpen && menuOpen(false)}

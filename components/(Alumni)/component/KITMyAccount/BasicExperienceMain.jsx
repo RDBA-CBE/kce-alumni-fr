@@ -426,18 +426,15 @@ const BasicExperienceMain = () => {
   };
 
   const locationListLoadMore = async () => {
-    console.log('state.hasLocationLoadMore)', state.hasLocationLoadMore);
-
     try {
       if (state.hasLocationLoadMore) {
-        const res = await Models.job.locationList(state.currenLocationPage + 1);
+        const res = await Models.masters.locationList(state.currenLocationPage + 1);
 
         const LocationOption = setDropdownData(res?.results, 'location');
-        console.log('loadmore location res', res);
 
         setLocation([...location, ...LocationOption]);
         setState({
-          currenlocationPage: state.currenlocationPage + 1,
+          currenLocationPage: state.currenLocationPage + 1,
           hasLocationLoadMore: res.next,
         });
       } else {

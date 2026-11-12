@@ -19,6 +19,7 @@ import { VisibilityPosts } from "@/utils/constant.utils";
 import DashboardCommentBox from "./DashboardCommentBox";
 import DashUserCom from "./DashUserCom";
 import LikedUserLIst from "./LikedUserLIst";
+import { RWebShare } from "react-web-share";
 
 const PostDetailMain = () => {
   const params = useParams();
@@ -521,9 +522,20 @@ const PostDetailMain = () => {
                         {state?.postList?.post_comments_count} Comments
                       </button>
 
-                      <button className="btn btn-ghost kit-memo-share">
-                        <i className="feather-share-2 me-1"></i> Share
-                      </button>
+                      <RWebShare
+                          data={{
+                            title: "Karpagam College Of Engineering",
+                            text: `Check this out!`,
+                            url: window.location.href,
+                          }}
+                          onClick={() => console.log("shared successfully!")}
+                        >
+                <button className="btn btn-ghost kit-memo-share">
+                  <i className="feather-share-2 me-1" ></i> Share
+                </button>
+                </RWebShare>
+
+                      
                     </div>
 
                     {/* Likes Section */}

@@ -754,10 +754,10 @@ export const memberType = [
     id: 1,
     name: "Alumni",
   },
-  {
-    id: 2,
-    name: "Faculty",
-  },
+  // {
+  //   id: 2,
+  //   name: "Faculty",
+  // },
 ];
 
 export const IndustryTypeOption = [

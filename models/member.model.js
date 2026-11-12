@@ -5,7 +5,7 @@ import { modelError } from "@/utils/commonFunction.utils";
 const member = {
   list: (page) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `all_members/?page=${page}&pagesize=10`;
+      let url = `all_members/?page=${page}&pagesize=10&approved=true`;
       instance()
         .get(url)
         .then((res) => {

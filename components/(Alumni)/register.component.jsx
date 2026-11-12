@@ -429,10 +429,10 @@ const Register = (props) => {
                   placeholder="Email address *"
                   type="text"
                   name="email"
-                  onChange={handleChange}
                   value={state.email}
+                  onChange={() => {}}
+                  style={{ opacity: 1, backgroundColor: "#f5f5f5", cursor: "not-allowed", pointerEvents: "none" }}
                   error={state?.errors?.email}
-                  required={true}
                 />
                 <span className="focus-border"></span>
               </div>
