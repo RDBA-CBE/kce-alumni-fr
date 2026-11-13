@@ -28,9 +28,9 @@ const Banner = () => {
         <div className='swiper-wrapper'>
           <SwiperSlide className='swiper-slide'>
             <div
-              className='rbt-banner-area rbt-banner-6 variation-03 bg_image bg_image--17'
+              className='rbt-banner-area rbt-banner-6 variation-03 bg_image bg_image--17 home-alumni-banner'
               data-gradient-overlay='5'
-              style={{ backgroundImage: 'url("/images/banner-n1.webp")', height: '80vh', minHeight: 'unset' }}
+              style={{ backgroundImage: 'url("/images/banner-n1.webp")' }}
             >
               <div className='wrapper w-100'>
                 <div className='container'>

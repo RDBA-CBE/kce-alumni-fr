@@ -7,6 +7,7 @@ import MobileMenu from "@/components/Header/MobileMenu";
 import BreadCrumb from "@/components/Common/BreadCrumb";
 import KITHeader from "@/components/Header/KITHeader";
 import KITFooter from "@/components/Footer/KITFooter";
+import Link from "next/link";
 
 // ── Project theme tokens (from public/scss/default/_variables.scss) ──────────
 // --color-primary  : #192f59  (navy)
@@ -121,6 +122,25 @@ const AlumniAwards = () => {
                       <i className={b.icon} /> {b.label}
                     </span>
                   ))}
+                </div>
+
+                {/* apply CTA in hero */}
+                <div className="mt--40" >
+                  <Link
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSe779_Sfwag1d9uZEVgaCw9o6_c8YOL95kTdA3dI47ioXl-HA/viewform"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rbt-btn btn-gradient hover-icon-reverse radius-round"
+                    style={{ margin:"0 auto"}}
+                  >
+                    <span className="icon-reverse-wrapper">
+                      <span className="btn-text">
+                        <i className="feather-award me-2" />Apply for Alumni Awards
+                      </span>
+                      <span className="btn-icon"><i className="feather-arrow-right" /></span>
+                      <span className="btn-icon"><i className="feather-arrow-right" /></span>
+                    </span>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -265,6 +285,48 @@ const AlumniAwards = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ══ APPLY CTA STRIP ═════════════════════════════════════════════ */}
+        <div className="row justify-content-center mt--60">
+          <div className="col-lg-10">
+            <div
+              className="rbt-radius"
+              style={{
+                background: "linear-gradient(218deg, #0091ff 0%, #192f59 100%)",
+                padding: "40px 48px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 24,
+              }}
+            >
+              <div>
+                <h4 style={{ color: "#fff", fontWeight: 800, fontSize: 22, marginBottom: 8 }}>
+                  🏆 Ready to Apply?
+                </h4>
+                <p className="b2 mb-0" style={{ color: "rgba(255,255,255,0.8)" }}>
+                  Nominate yourself or a deserving alumnus for Alumni Awards 2026.
+                </p>
+              </div>
+              <Link
+                href="https://docs.google.com/forms/d/e/1FAIpQLSe779_Sfwag1d9uZEVgaCw9o6_c8YOL95kTdA3dI47ioXl-HA/viewform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rbt-btn hover-icon-reverse radius-round"
+                style={{ background: "#cc7539", color: "#fff", flexShrink: 0 }}
+              >
+                <span className="icon-reverse-wrapper">
+                  <span className="btn-text">
+                    <i className="feather-external-link me-2" />Apply Now
+                  </span>
+                  <span className="btn-icon"><i className="feather-arrow-right" /></span>
+                  <span className="btn-icon"><i className="feather-arrow-right" /></span>
+                </span>
+              </Link>
             </div>
           </div>
         </div>

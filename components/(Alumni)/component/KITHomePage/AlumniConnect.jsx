@@ -34,7 +34,7 @@ export default function AlumniConnect() {
   return (
     <section className="py-4 overflow-hidden bg-blue w-100">
       <motion.div
-        className="d-flex align-items-center gap-4 text-white fw-semibold fs-10 text-orange whitespace-nowrap"
+        className="d-lg-flex align-items-center gap-4 text-white fw-semibold fs-10 text-orange whitespace-nowrap px-lg-0 px-4"
         style={{ x }}
       >
         <span className="text-white scroll-connect">

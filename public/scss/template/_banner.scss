@@ -1124,11 +1124,11 @@
         align-items: center;
 
         @media #{$smlg-device} {
-            height: 750px;
+            height: auto;
         }
 
         @media (max-width:770px) {
-            height: 500px;
+            height: auto;
         }
 
         .wrapper {
@@ -1154,6 +1154,23 @@
         }
     }
 
+}
+
+.rbt-banner-6.variation-03.home-alumni-banner {
+    height: 80vh;
+    min-height: unset;
+
+    @media (max-width: 1199px) {
+        height: 39.37vw;
+        min-height: 0;
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+
+        .wrapper {
+            padding: 0;
+        }
+    }
 }
 
 /*-----------------------
