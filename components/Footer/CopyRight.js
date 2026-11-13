@@ -23,17 +23,16 @@ const CopyRight = () => {
             <div className='col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12'>
               <ul className='copyright-link rbt-link-hover justify-content-center text-white justify-content-lg-end mt_sm--10 mt_md--10'>
                 <li>
-                  <Link className='text-white' href='#'>Terms of Service</Link>
+                  <Link className='text-white' href='https://forms.gle/ZT2Q6BSUt6dTn6LK9' target='_blank' rel='noopener noreferrer'>
+                    Registration
+                  </Link>
                 </li>
                 <li>
-                  <Link  className='text-white' href='#'>Privacy Policy</Link>
+                  <Link  className='text-white' href='https://forms.gle/XkarubU2btPbvumHA' target='_blank' rel='noopener noreferrer'>
+                    Alumni Awards application
+                  </Link>
                 </li>
-                <li>
-                  <Link  className='text-white' href='#'>Subscription</Link>
-                </li>
-                <li>
-                  <Link  className='text-white' href='/login'>Login</Link>
-                </li>
+               
               </ul>
             </div>
           </div>

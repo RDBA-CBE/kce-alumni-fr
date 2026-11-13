@@ -1,0 +1,135 @@
+.section {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 60px 0 0px 0;
+  background: #ffffff;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.heading {
+  margin-bottom: 50px;
+  color: #1a365d;
+}
+
+/* SWIPER */
+.swiper {
+  padding-bottom: 80px;
+}
+
+.slide {
+  width: 350px;
+}
+
+/* CARD */
+.card {
+  text-align: center;
+  transition: all 0.4s ease;
+}
+
+.card img {
+  width: 100%; height: auto;
+  object-fit: cover;
+  border-radius: 24px;
+  filter: grayscale(100%);
+  transition: all 0.4s ease;
+}
+
+/* TEXT */
+.card h5 {
+  margin-top: 18px;
+  color: #c34f00; margin-bottom: 0px; 
+}
+
+.card p {
+  color: #9a9a9a;
+}
+/* ACTIVE (CENTER) SLIDE — CSS MODULE SAFE */
+:global(.swiper-slide-active) .card img,
+:global(.swiper-slide-duplicate-active) .card img {
+  filter: grayscale(0%);
+}
+
+:global(.swiper-slide-active) .card h4,
+:global(.swiper-slide-duplicate-active) .card h4 {
+  color: #1c2b36;
+}
+
+:global(.swiper-slide-active) .card p,
+:global(.swiper-slide-duplicate-active) .card p {
+  color: #555; font-size:18px;
+}
+/* ACTIVE (CENTER) SLIDE */
+.swiper-slide-active .card img {
+  filter: grayscale(0%);
+}
+
+.swiper-slide-active .card h4 {
+  color: #1a365d;
+}
+
+.swiper-slide-active .card p {
+  color: #555;
+}
+
+/* CURVED BOTTOM */
+.section::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 160px;
+  background: #ffffff;
+  border-top-left-radius: 100% 120px;
+  border-top-right-radius: 100% 120px;
+}
+
+/* EDGE FADE MASK */
+.swiper::before,
+.swiper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 120px;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.swiper::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.7) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.swiper::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.7) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+
+/* MOBILE STACK VIEW */
+@media (max-width: 768px) {
+  .slide {
+    width: 220px;
+  }
+
+  .card img {
+    height: 280px;
+  }
+
+  .heading {
+    font-size: 22px;
+  }
+}

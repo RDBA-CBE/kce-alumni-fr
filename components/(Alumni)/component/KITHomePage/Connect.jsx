@@ -37,9 +37,9 @@ const Connect = () => {
 
           return (
             <div className="col-lg-3 col-md-6 col-sm-6 col-12 " key={innerIndex} >
-              <Link
+              <div
                 className="rbt-cat-box rbt-cat-box-1 image-overlaping-content on-hover-content-visible"
-                href={`/`}
+                href={`#`}
                 // course-filter-one-toggle/${item.category}
               >
                 <div className="inner">
@@ -62,7 +62,7 @@ const Connect = () => {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
 
               
             </div>

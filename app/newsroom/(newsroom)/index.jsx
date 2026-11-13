@@ -29,15 +29,15 @@ const NewsRoom = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <div className="row g-5">
-                    <div className="col-lg-3">
+                  <div className="row g-5 justify-content-center">
+                    {/* <div className="col-lg-3">
                       <SideBar
                         selectedYear={selectedYear}
                         setSelectedYear={setSelectedYear}
                       />
-                    </div>
+                    </div> */}
 
-                    <div className="col-lg-9">
+                    <div className="col-lg-10">
                       <NewsRoomMain selectedYear={selectedYear} />
                     </div>
                   </div>

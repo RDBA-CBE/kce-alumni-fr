@@ -38,12 +38,14 @@ export default function AlumniConnect() {
         style={{ x }}
       >
         <span className="text-white scroll-connect">
-          CONNECT with your classmates on your Alumni Association
+          Connect with your classmates at the Alumni Meet on <span style={{color:"#fa9551"}}>19th December 2026.</span> 
         </span>
 
         <div className="call-to-btn text-start mt-0">
           <Link
-            href="#"
+            href="https://forms.gle/ZT2Q6BSUt6dTn6LK9"
+            target="_blank"
+            rel="noopener noreferrer"
             className="rbt-btn btn-gradient hover-icon-reverse radius-round d-flex align-items-center"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}

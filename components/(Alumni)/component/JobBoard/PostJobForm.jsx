@@ -131,6 +131,28 @@ const PostJobForm = () => {
     }
   };
 
+  const locationListLoadMore = async () => {
+    try {
+      if (!state.hasLocationLoadMore) return;
+
+      const res = await Models.job.locationList(state.currenLocationPage + 1);
+      const locationOptions = setDropdownData(res?.results, "location");
+      setLocation((currentLocations) => {
+        const optionsById = new Map(
+          currentLocations.map((option) => [option.value, option])
+        );
+        locationOptions.forEach((option) => optionsById.set(option.value, option));
+        return Array.from(optionsById.values());
+      });
+      setState({
+        currenLocationPage: state.currenLocationPage + 1,
+        hasLocationLoadMore: res?.next,
+      });
+    } catch (error) {
+      console.log("✌️error --->", error);
+    }
+  };
+
   const GetSkills = async () => {
     try {
       const res = await Models.job.skillList();
@@ -236,6 +258,8 @@ const PostJobForm = () => {
         formDataToSend.append("industry", formData.industry.value);
       } else if (key === "role") {
         formDataToSend.append("role", formData.role.value);
+      } else if (key === "location") {
+        formDataToSend.append("location", formData.location.value);
       } else {
         formDataToSend.append(key, formData[key]);
       }
@@ -547,18 +571,17 @@ const PostJobForm = () => {
                     <div className="form-group">
                       <FormField
                         placeholder="Location"
-                        type="text"
+                        type="loadMoreSelect"
                         className="form-dd"
                         name="location"
                         value={formData.location}
-                        onChange={(e) => handleChange(e)}
-                        // onChange={(e) => {
-                        //   setFormData({ ...formData, location: e });
-                        // }}
+                        onChange={(value) => {
+                          setFormData({ ...formData, location: value });
+                        }}
                         options={location}
                         required={true}
                         error={errMsg.location}
-                        // loadMore={() => locationListLoadMore()}
+                        loadMore={() => locationListLoadMore()}
                       />
                       <span className="focus-border"></span>
                     </div>

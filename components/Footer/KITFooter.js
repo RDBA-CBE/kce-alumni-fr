@@ -21,10 +21,10 @@ KITFooter = () => {
       { label: "Gallery", href: "/gallery" },
     ],
     quicklinks2: [
-      { label: "Disclaimer", href: "/#" },
-      { label: "Terms of Use", href: "/#" },
-      { label: "Privacy Policy", href: "/#" },
-      { label: "Alumni Directory", href: "/#" },
+      { label: "Coimbatore Chapters", href: "/coimbatore-chapter" },
+      { label: "Alumni Awards", href: "/alumni-awards" },
+      { label: "Registration", href: "https://forms.gle/ZT2Q6BSUt6dTn6LK9" , target: "_blank", rel: "noopener noreferrer" },
+      { label: "Alumni Awards application", href: "https://forms.gle/XkarubU2btPbvumHA" , target: "_blank", rel: "noopener noreferrer" },
     ],
     description:
       "To impart quality technical education emphasizing innovations and research with social and ethical values.",

@@ -28,6 +28,21 @@ const CustomSelect = (props) => {
       : typeof document !== "undefined"
         ? document.body
         : null;
+  const loadMoreInProgress = React.useRef(false);
+  const handleLoadMore = async () => {
+    if (!loadMore || loadMoreInProgress.current) return;
+
+    loadMoreInProgress.current = true;
+    try {
+      await loadMore();
+    } finally {
+      loadMoreInProgress.current = false;
+    }
+  };
+  const selectOptions =
+    loadMore && Array.isArray(options)
+      ? Array.from(new Map(options.map((option) => [option.value, option])).values())
+      : options;
 
   const customStyles = {
     control: (provided) => ({
@@ -64,7 +79,7 @@ const CustomSelect = (props) => {
         <Select
           isDisabled={disabled}
           placeholder={placeholder}
-          options={options}
+          options={selectOptions}
           value={value}
           onChange={onChange}
           isSearchable={isSearchable}
@@ -80,7 +95,7 @@ const CustomSelect = (props) => {
           className={`react-select ${className} ${
             error ? "border-red-500" : ""
           } ${isMulti ? "is-multi" : ""}`}
-          onMenuScrollToBottom={loadMore}
+          onMenuScrollToBottom={handleLoadMore}
           menuShouldBlockScroll={true}
         />
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}

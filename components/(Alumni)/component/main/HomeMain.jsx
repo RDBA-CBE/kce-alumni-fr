@@ -16,6 +16,8 @@ import EventList from "../KITHomePage/EventList";
 import Loader from "../../Loader";
 import AlumniConnect from "../KITHomePage/AlumniConnect";
 import HomeAbout from "../KITHomePage/about";
+import AlumniSlider from "../AlumniSlider";
+import SangamamBanner from "../KITHomePage/SangamamBanner";
 
 
 const HomeMain = ({ blogs }) => {
@@ -43,17 +45,24 @@ const HomeMain = ({ blogs }) => {
 
       {/* ----------banner end----------- */}
 
+     <div className="p-0 mt--40" style={{ borderRadius: "none" }}>
+          <AlumniConnect />
+          
+        </div>
+      
+      {/* ----------Sangamam start----------- */}
+      <SangamamBanner />
+      {/* ----------Sangamam end----------- */}
+
       {/* ----------Connect start----------- */}
 
       <div className="rbt-category-area bg-color-white rbt-section-gapTop home-connect success-story">
-        <div className="container">
+        {/* <div className="container">
           <div className="row g-5">
             <Connect />
           </div>
-        </div>
-        <div className="p-0 mt--60" style={{ borderRadius: "none" }}>
-          <AlumniConnect />
-        </div>
+        </div> */}
+       
 
        <HomeAbout />
       </div>
@@ -62,14 +71,12 @@ const HomeMain = ({ blogs }) => {
 
       {/* ----------testimonial start----------- */}
 
-      <div className="rbt-testimonial-area bg-color-white rbt-section-gapBottom overflow-hidden section-pad success-story">
+      {/* <div className="rbt-testimonial-area bg-color-white rbt-section-gapBottom overflow-hidden section-pad success-story">
         <div className="container-fluid">
           <div className="row g-5 align-items-center">
             <div className="col-xl-3">
               <div className="section-title pl--100 pl_md--30 pl_sm--0">
-                {/* <span className="subtitle bg-pink-opacity">
-                  Success Stories
-                </span> */}
+                
                 <h6 className="b2 mb--15">
                   <span className="theme-gradient">SUCCESS STORIES</span>
                 </h6>
@@ -98,7 +105,9 @@ const HomeMain = ({ blogs }) => {
             <SuccessStories />
           </div>
         </div>
-      </div>
+      </div> */}
+
+      <AlumniSlider />
 
       {/* ----------testimonial end----------- */}
 

@@ -216,7 +216,7 @@ const ProfileAlumniMain = () => {
 
                 setLocation([...location, ...LocationOption]);
                 setState({
-                    currenlocationPage: state.currenlocationPage + 1,
+                    currenLocationPage: state.currenLocationPage + 1,
                     hasLocationLoadMore: res.next,
                 });
             } else {
