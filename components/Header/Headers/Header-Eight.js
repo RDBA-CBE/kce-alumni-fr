@@ -114,7 +114,7 @@ const HeaderEight = ({
               </div> */}
             </div>
 
-            <div className="rbt-main-navigation d-none d-xl-block">
+            <div className="rbt-main-navigation d-none d-custom-block justify-content-center">
               <KITNav />
             </div>
 

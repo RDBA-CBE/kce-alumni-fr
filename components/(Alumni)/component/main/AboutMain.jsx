@@ -13,7 +13,7 @@ const officeBearers = [
     qualification: 'MECH (BATCH: 2001-05)',
     designation: 'FRANCHISE OWNER OF UNACADEMY & UPGRAD',
     industry:" ICUBE ACADEMICS PVT LTD",
-    image:"/images/alumnimem/abt-img-1.png"
+    image:"/images/alumnimem/img-8.jpeg"
   },
  
   {
@@ -22,7 +22,7 @@ const officeBearers = [
     qualification: 'CIVIL (BATCH: 2011-15)',
     designation: ' CIVIL AND STRUCTURAL ENGINEER',
     industry:"JAS ASSOCIATES",
-    image:"/images/alumnimem/abt-img-2.png"
+    image:"/images/alumnimem/img-7.jpeg"
   },
  
   {
@@ -31,7 +31,7 @@ const officeBearers = [
     qualification: 'CSE (BATCH: 2001-2005)',
     designation: ' FOUNDER & CEO',
     industry:"QUZERA WEB TECHNOLOGIES PVT LTD",
-    image:"/images/alumnimem/abt-img-3.png"
+    image:"/images/alumnimem/img-9.jpeg"
   },
 ];
 

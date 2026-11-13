@@ -50,7 +50,7 @@ const HeaderRightTwo = ({ btnClass, btnText, userType }) => {
           </Link>
         </li> */}
 
-        <li className="account-access rbt-user-wrapper d-none d-xl-block">
+        <li className="account-access rbt-user-wrapper d-none d-custom-block">
           <Link href="#">
             <i className="feather-user" style={{color:'#d76239'}}></i>
 
@@ -58,7 +58,7 @@ const HeaderRightTwo = ({ btnClass, btnText, userType }) => {
           <KITUser />
         </li>
 
-        <li className="access-icon rbt-user-wrapper d-block d-xl-none">
+        <li className="access-icon rbt-user-wrapper d-block d-custom-none">
           <Link className="rbt-round-btn" href="#">
             <i className="feather-user"></i>
           </Link>
@@ -67,7 +67,7 @@ const HeaderRightTwo = ({ btnClass, btnText, userType }) => {
       </ul>
 
       {!token &&
-      <div className="rbt-btn-wrapper d-none d-xl-block">
+      <div className="rbt-btn-wrapper d-none d-custom-block">
         <Link className={`rbt-btn ${btnClass}`} href="/signin">
           <span data-text={`${btnText}`}>{btnText}</span>
         </Link>
@@ -76,7 +76,7 @@ const HeaderRightTwo = ({ btnClass, btnText, userType }) => {
 
       
 
-      <div className="mobile-menu-bar d-block d-xl-none">
+      <div className="mobile-menu-bar d-block d-custom-none">
         <div className="hamberger">
           <button
             className="hamberger-button rbt-round-btn"

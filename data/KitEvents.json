@@ -1,6 +1,20 @@
 
 
 [
+
+  {
+    "id": "event-1",
+    "courseImg": "/images/event-2.jpeg",
+    "offPrice": 20,
+    "lesson": "2026",
+    "student": "Grand Alumni Meet",
+    "courseTitle": "Sangamam 2026: Grand Alumni Meet at Karpagam College of Engineering",
+    "desc": "Karpagam College of Engineering (KCE) welcomes its alumni to Sangamam 2026, a grand alumni meet celebrating friendships, shared experiences, and the lasting connection between graduates and their alma mater.",
+    "link": "https://learn.kce.ac.in/sangamam-2026-grand-alumni-meet-at-karpagam-college-of-engineering/",
+    "review": 45,
+    "price": 199
+  },
+
   {
     "id": "event-1",
     "courseImg": "/images/eve-1.webp",

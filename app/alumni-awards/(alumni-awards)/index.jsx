@@ -290,12 +290,12 @@ const AlumniAwards = () => {
         </div>
 
         {/* ══ APPLY CTA STRIP ═════════════════════════════════════════════ */}
-        <div className="row justify-content-center mt--60">
+        <div className="row justify-content-center mt--60 mb--60">
           <div className="col-lg-10">
             <div
               className="rbt-radius"
               style={{
-                background: "linear-gradient(218deg, #0091ff 0%, #192f59 100%)",
+                background: "#192f59",
                 padding: "40px 48px",
                 display: "flex",
                 alignItems: "center",
@@ -306,7 +306,7 @@ const AlumniAwards = () => {
             >
               <div>
                 <h4 style={{ color: "#fff", fontWeight: 800, fontSize: 22, marginBottom: 8 }}>
-                  🏆 Ready to Apply?
+                  Ready to Apply?
                 </h4>
                 <p className="b2 mb-0" style={{ color: "rgba(255,255,255,0.8)" }}>
                   Nominate yourself or a deserving alumnus for Alumni Awards 2026.

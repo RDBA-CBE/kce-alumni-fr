@@ -2,7 +2,7 @@ export const menus = {
   guest: [
     { label: "About Us", href: "/about" },
     { label: "Newsroom", href: "/newsroom" },
-    { label: "Members", href: "/members" },
+    // { label: "Members", href: "/members" },
     { label: "Coimbatore Chapter", href: "/coimbatore-chapter" },
     { label: "Alumni Awards", href: "/alumni-awards" },
     { label: "Events", href: "/events" },

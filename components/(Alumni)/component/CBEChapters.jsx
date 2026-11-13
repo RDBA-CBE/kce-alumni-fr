@@ -8,7 +8,7 @@ const initialData = [
     name: "SANTHOSH S",
     tenure: "MECH (BATCH: 2000-2004)",
     organization: "CHAMPS INDUSTRIES",
-    image: "/images/alumnimem/img-5.png",
+    image: "/images/alumnimem/img-5.jpeg",
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const initialData = [
     tenure: "ETE (BATCH: 2012 - 2016)",
     role: "LEAD - TECHNICAL WRITING",
     organization: "EXTERRO R&D",
-    image: "/images/alumnimem/img-4.png",
+    image: "/images/alumnimem/img-4.jpeg",
   },
   {
     id: 3,
@@ -26,7 +26,7 @@ const initialData = [
     tenure: "CT (2007 - 2010)",
     role: "Founder and Managing Director",
     organization: "Ze Bancairo School of Banking / Ze Bancairo iStudy Hub",
-    image: "/images/alumnimem/img-3.png",
+    image: "/images/alumnimem/img-3.jpeg",
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ const initialData = [
     tenure: "IT (2006-2010)",
     role: "SR. TEST ENGINEER",
     organization: "SIERRA DIGITAL",
-    image: "/images/alumnimem/img-2.png",
+    image: "/images/alumnimem/img-2.jpeg",
   },
   {
     id: 5,
@@ -44,7 +44,7 @@ const initialData = [
     tenure: "AD (2020-2024)",
     role: "ML ENGINEER",
     organization: "GOML Expertise",
-    image: "/images/alumnimem/img-6.png",
+    image: "/images/alumnimem/img-6.jpeg",
   },
   {
     id: 6,
@@ -53,7 +53,7 @@ const initialData = [
     tenure: "MBA (2008-2010)",
     role: "Business Associate",
     organization: "IDBI Capital Markets & Securities Limited",
-    image: "/images/alumnimem/img-1.png",
+    image: "/images/alumnimem/img-1.jpeg",
   },
 ];
 

@@ -327,3 +327,23 @@
         }
     }
 }
+
+
+/*-----------------------------------
+    Custom 1380px Navigation Breakpoint
+------------------------------------*/
+.d-custom-block {
+    display: none !important;
+}
+.d-custom-none {
+    display: block !important;
+}
+
+@media (min-width: 1380px) {
+    .d-custom-block {
+        display: flex !important;
+    }
+    .d-custom-none {
+        display: none !important;
+    }
+}

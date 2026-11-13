@@ -41,7 +41,7 @@ export default function AlumniConnect() {
           Connect with your classmates at the Alumni Meet on <span style={{color:"#fa9551"}}>19th December 2026.</span> 
         </span>
 
-        <div className="call-to-btn text-start mt-0">
+        <div className="call-to-btn text-start mt-4 mt-lg-0">
           <Link
             href="https://forms.gle/ZT2Q6BSUt6dTn6LK9"
             target="_blank"

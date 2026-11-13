@@ -41,7 +41,7 @@ const EventList = ({ isPagination, top, start, end }) => {
     <div className="rbt-course-area rbt-sec-cir-shadow-1 bg-liblue  section-pad home-events">
   
         <div className="container">
-          <div className="row mb--50">
+          <div className="row mb--50 ">
             <div className="col-lg-12">
               <div className="section-title text-center">
                 <h6 className="b2 mb--15">
@@ -56,7 +56,7 @@ const EventList = ({ isPagination, top, start, end }) => {
             </div>
           </div>
 
-          <div className="row g-5">
+          <div className="row g-5 justify-content-center">
             {getAllCourse?.map((data, index) => (
               <div className={`col-lg-4 col-md-6 col-12`} key={index}>
                 <div className="rbt-card variation-04 rbt-hover " style={{backgroundColor:'transparent', padding:0}}>
