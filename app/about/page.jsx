@@ -5,6 +5,7 @@ export const metadata = {
   description: 'Online Courses & Education NEXTJS14 Template',
 };
 
+
 const AboutPage = async () => {
   return (
     <>

@@ -68,25 +68,54 @@ const KITMblNav = () => {
   return (
     <nav className="mainmenu-nav">
       <ul className="mainmenu">
-        {state.userMenu.map((menu, index) => (
-          <li
-            key={index}
-            className={`${
-              menu.children ? "has-menu-child-item with-megamenu" : ""
-            }`}
-          >
-            <Link
-              href={menu.href || "#"}
-              className={`${activeMenuItem === menu.key ? "open" : ""}`}
-              onClick={() => toggleMenuItem(menu.key)}
-            >
-              {menu.label}
-              
-            </Link>
+        {state.userMenu.map((menu, index) => {
+          const menuKey = menu.key || menu.label || index;
+          const hasChildren = menu.children && menu.children.length > 0;
 
-           
-          </li>
-        ))}
+          if (hasChildren) {
+            return (
+              <li
+                key={index}
+                className="has-dropdown has-menu-child-item"
+              >
+                <Link
+                  href="#"
+                  className={`${activeMenuItem === menuKey ? "open" : ""}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleMenuItem(menuKey);
+                  }}
+                >
+                  {menu.label}
+                  <i className="feather-chevron-down"></i>
+                </Link>
+                <ul
+                  className={`submenu ${
+                    activeMenuItem === menuKey ? "active d-block" : ""
+                  }`}
+                >
+                  {menu.children.map((child, childIdx) => (
+                    <li key={childIdx}>
+                      <Link href={child.href}>{child.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          }
+
+          return (
+            <li key={index}>
+              <Link
+                href={menu.href || "#"}
+                className={`${activeMenuItem === menuKey ? "open" : ""}`}
+                onClick={() => toggleMenuItem(menuKey)}
+              >
+                {menu.label}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
