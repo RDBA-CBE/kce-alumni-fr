@@ -120,8 +120,13 @@ const JobBoardMain = () => {
 
   const GetJobs = (page = 1) => {
     setState({ pageLoading: true });
+    const params = { page, pagesize: 10 };
+    if (isAlumni == 'true') {
+      params.is_approved = true;
+    }
     axios
-      .get(`${BaseURL}/retrieve_job_post/?page=${page}&pagesize=10`, {
+      .get(`${BaseURL}/retrieve_job_post/`, {
+        params,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -255,6 +260,13 @@ const JobBoardMain = () => {
   const handlePageChange = (pageNumber) => {
     if (state.isFiltered) {
       const body = bodyData();
+      if (
+        isAlumni == 'true' &&
+        isAdmin != 'true' &&
+        isAlumniManager != 'true'
+      ) {
+        body.is_approved = true;
+      }
       const url = (isAdmin == 'true' || isAlumniManager == 'true')
         ? `${BaseURL}/main_filter_job/?page=${pageNumber}`
         : `${BaseURL}/filter_job/?page=${pageNumber}`;
@@ -339,6 +351,65 @@ const JobBoardMain = () => {
       },
       onCancel() {
         console.log('Cancel');
+      },
+    });
+  };
+
+  const showApprovalConfirm = (post) => {
+    const isApproved =
+      post.is_approved === true || post.is_approved === 'true';
+    const nextApproval = !isApproved;
+
+    confirm({
+      title: `Are you sure you want to ${
+        nextApproval ? 'approve' : 'unapprove'
+      } this job?`,
+      okText: nextApproval ? 'Approve' : 'Unapprove',
+      okType: nextApproval ? 'primary' : 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        const approvalData = new FormData();
+        approvalData.append('is_approved', String(nextApproval));
+        setLoading(true);
+
+        try {
+          const response = await axios.post(
+            `${BaseURL}/update_job_post/${post.id}/`,
+            approvalData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          success(
+            response.data?.message ||
+              `Job ${nextApproval ? 'approved' : 'unapproved'} successfully`
+          );
+          setAdminDataLists((posts) =>
+            posts.map((item) =>
+              item.id === post.id
+                ? { ...item, is_approved: nextApproval }
+                : item
+            )
+          );
+          setFilteredData((posts) =>
+            posts.map((item) =>
+              item.id === post.id
+                ? { ...item, is_approved: nextApproval }
+                : item
+            )
+          );
+        } catch (error) {
+          errorNotification(
+            error.response?.data?.error ||
+              error.response?.data?.message ||
+              'Unable to update job approval status.'
+          );
+        } finally {
+          setLoading(false);
+        }
       },
     });
   };
@@ -475,8 +546,12 @@ const JobBoardMain = () => {
           setState({ pageLoading: false });
         });
     } else if (isAlumni == 'true' || isFatulty == 'true') {
+      const userFilterBody = { ...body };
+      if (isAlumni == 'true') {
+        userFilterBody.is_approved = true;
+      }
       axios
-        .post(`${BaseURL}/filter_job/`, body, {
+        .post(`${BaseURL}/filter_job/`, userFilterBody, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -922,13 +997,15 @@ const JobBoardMain = () => {
                                           <td>
                                             <span className='b3'>
                                               <Link href='#'>
-                                                {item?.industry}
+                                                {item?.other_industry || item?.industry}
                                               </Link>
                                             </span>
                                           </td>
                                           <td>
                                             <span className='b3'>
-                                              <Link href='#'>{item?.role}</Link>
+                                              <Link href='#'>
+                                                {item?.other_role || item?.role}
+                                              </Link>
                                             </span>
                                           </td>
                                           <td>
@@ -1028,6 +1105,42 @@ const JobBoardMain = () => {
                                                   </Link>
                                                 )}
                                               </Tooltip>
+                                              {isAdmin == 'true' && (
+                                                <Tooltip
+                                                  title={
+                                                    item?.is_approved === true ||
+                                                    item?.is_approved === 'true'
+                                                      ? 'Unapprove job'
+                                                      : 'Approve job'
+                                                  }
+                                                >
+                                                  <button
+                                                    type='button'
+                                                    className={`rbt-btn btn-xs radius-round ${
+                                                      item?.is_approved ===
+                                                        true ||
+                                                      item?.is_approved ===
+                                                        'true'
+                                                        ? 'bg-color-success-opacity color-success'
+                                                        : 'bg-color-danger-opacity color-danger'
+                                                    }`}
+                                                    onClick={() =>
+                                                      showApprovalConfirm(item)
+                                                    }
+                                                  >
+                                                    <i
+                                                      className={`feather-${
+                                                        item?.is_approved ===
+                                                          true ||
+                                                        item?.is_approved ===
+                                                          'true'
+                                                          ? 'check-circle'
+                                                          : 'x-circle'
+                                                      } pl--0`}
+                                                    ></i>
+                                                  </button>
+                                                </Tooltip>
+                                              )}
                                             </div>
                                           </td>
                                         </tr>
@@ -1054,7 +1167,8 @@ const JobBoardMain = () => {
                                               <ul className='rbt-meta'>
                                                 <li>
                                                   <i className='feather-map-pin'></i>
-                                                  {value?.location}
+                                                  {value?.other_location ||
+                                                    value?.location}
                                                 </li>
                                                 <li>
                                                   <i className='feather-calendar'></i>

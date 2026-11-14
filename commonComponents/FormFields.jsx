@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CustomSelect from "./Select";
+import CustomSelect from "./Select.jsx";
 
 const FormField = ({
   label,
@@ -20,6 +20,10 @@ const FormField = ({
   disabled,
   loadMore,
   isMulti,
+  othersValue,
+  onOthersChange,
+  othersError,
+  othersPlaceholder,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -57,7 +61,6 @@ const FormField = ({
           <CustomSelect
             name={name}
             value={value}
-            // className="applicant-input"
             onChange={onChange}
             placeholder={`Select ${placeholder ? placeholder : label}`}
             options={options}
@@ -65,9 +68,10 @@ const FormField = ({
             menuPosition="fixed"
             isMulti={isMulti ? isMulti : false}
             className={className}
-            // className={`${className} ${
-            //   value && !placeholder ? "input-has-value" : ""
-            // }`}
+            othersValue={othersValue}
+            onOthersChange={onOthersChange}
+            othersError={othersError}
+            othersPlaceholder={othersPlaceholder}
           />
         ) : type === "selectbyname" ? (
           <select

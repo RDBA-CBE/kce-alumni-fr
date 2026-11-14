@@ -17,6 +17,13 @@ import { getFileFormatFromUrl, jobTypeOption, YearOfExperience } from "@/utils/c
 import axios from "axios";
 import Models from "@/imports/models.import";
 
+const hasOthersOption = (selection) =>
+  (Array.isArray(selection) ? selection : [selection]).some(
+    (option) =>
+      typeof option?.label === "string" &&
+      ["other", "others"].includes(option.label.trim().toLowerCase())
+  );
+
 const EditJobForm = () => {
 const router = useRouter();
   const { Option } = Select;
@@ -26,13 +33,17 @@ const router = useRouter();
   const [formData, setFormData] = useState({
     job_title: "",
     industry: "",
+    other_industry: "",
     contact_email: "",
     contact_link: "",
     role: "",
+    other_role: "",
     experience_level_from: null,
     experience_level_to: null,
     location: "",
+    other_location: "",
     skills: [],
+    other_skill: "",
     salary_package: "",
     dead_line: "",
     file: null,
@@ -103,6 +114,21 @@ const router = useRouter();
     }
   }, [token]);
 
+  useEffect(() => {
+    if (typeof formData.location !== "string" || !formData.location) return;
+    const locationOption = location.find(
+      (option) =>
+        option.label === formData.location ||
+        String(option.value) === formData.location
+    ) ||
+      (formData.other_location?.trim()
+        ? location.find(hasOthersOption)
+        : undefined);
+    if (locationOption) {
+      setFormData((prev) => ({ ...prev, location: locationOption }));
+    }
+  }, [location, formData.location]);
+
   const getEditData = async () => {
     try {
       setLoading(true);
@@ -126,10 +152,13 @@ const router = useRouter();
         contact_link: data.contact_link || "",
         post_type: data.post_type || "",
         industry: { value: data.industry.id, label: data.industry.title } || "",
+        other_industry: data.other_industry || "",
         role: { value: data.role.id, label: data.role.role } || "",
+        other_role: data.other_role || "",
         experience_level_from: data.experience_level_from || null,
         experience_level_to: data.experience_level_to || null,
         location: data.location || "",
+        other_location: data.other_location || "",
         salary_package: data.salary_package || "",
         dead_line: data.dead_line || "",
         file: data?.file, // Set the converted file
@@ -138,6 +167,7 @@ const router = useRouter();
         skills: data.skills.map((item) => (
   { value: item.id, label: item.skill }
 )),
+        other_skill: data.other_skill || "",
       });
 
       if (data.file) {
@@ -307,6 +337,24 @@ const router = useRouter();
       setBtnLoading(false);
       return;
     }
+    const otherFieldErrors = {};
+    if (hasOthersOption(formData.industry) && !formData.other_industry.trim()) {
+      otherFieldErrors.other_industry = "Enter This Field";
+    }
+    if (hasOthersOption(formData.role) && !formData.other_role.trim()) {
+      otherFieldErrors.other_role = "Enter This Field";
+    }
+    if (hasOthersOption(formData.location) && !formData.other_location.trim()) {
+      otherFieldErrors.other_location = "Enter This Field";
+    }
+    if (hasOthersOption(formData.skills) && !formData.other_skill.trim()) {
+      otherFieldErrors.other_skill = "Enter This Field";
+    }
+    if (Object.keys(otherFieldErrors).length) {
+      setErrMsg((prev) => ({ ...prev, ...otherFieldErrors }));
+      setBtnLoading(false);
+      return;
+    }
 
     const formDataToSend = new FormData();
     for (const key in formData) {
@@ -314,6 +362,8 @@ const router = useRouter();
         formData.skills.forEach((skill) =>
           formDataToSend.append("skills", skill.value)
         );
+      } else if (key.startsWith("other_")) {
+        formDataToSend.append(key, formData[key] || "");
       } else if (key === "file") {
         if (typeof formData.file === "string" && isUrl(formData.file)) {
           console.log("File is a URL, skipping append");
@@ -324,11 +374,13 @@ const router = useRouter();
         formDataToSend.append("industry", formData.industry.value);
       } else if (key === "role") {
         formDataToSend.append("role", formData.role.value);
-      } 
-      // else if (key === "location") {
-      //   formDataToSend.append("location", formData.location.value);
-      // }
-       else {
+      } else if (key === "location") {
+        const locationValue =
+          typeof formData.location === "object"
+            ? formData.location?.value
+            : formData.location;
+        if (locationValue) formDataToSend.append("location", locationValue);
+      } else {
         formDataToSend.append(key, formData[key]);
       }
     }
@@ -344,13 +396,17 @@ const router = useRouter();
         setFormData({
           job_title: "",
           industry: "",
+          other_industry: "",
           contact_email: "",
           contact_link: "",
           role: "",
+          other_role: "",
           skills: [],
+          other_skill: "",
           experience_level_from: null,
           experience_level_to: null,
           location: "",
+          other_location: "",
           salary_package: "",
           dead_line: "",
           file: null,
@@ -551,9 +607,28 @@ const router = useRouter();
                         name="industry"
                         value={formData.industry}
                         onChange={(e) =>
-                          setFormData({ ...formData, industry: e })
+                          setFormData((prev) => ({
+                            ...prev,
+                            industry: e,
+                            other_industry: hasOthersOption(e)
+                              ? prev.other_industry
+                              : "",
+                          }))
                         }
                         error={errMsg.industry}
+                        othersValue={formData.other_industry}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_industry: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({
+                              ...prev,
+                              other_industry: "",
+                            }));
+                        }}
+                        othersError={errMsg.other_industry}
                         options={industry}
                         required={true}
                         loadMore={() => industryListLoadMore()}
@@ -568,8 +643,24 @@ const router = useRouter();
                         className="form-dd"
                         name="role"
                         value={formData.role}
-                        onChange={(e) => setFormData({ ...formData, role: e })}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            role: e,
+                            other_role: hasOthersOption(e) ? prev.other_role : "",
+                          }))
+                        }
                         error={errMsg.role}
+                        othersValue={formData.other_role}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_role: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({ ...prev, other_role: "" }));
+                        }}
+                        othersError={errMsg.other_role}
                         options={roleList}
                         required={true}
                         loadMore={() => roleListLoadMore()}
@@ -585,10 +676,24 @@ const router = useRouter();
                         name="skills"
                         value={formData.skills}
                         onChange={(e) => {
-                          setFormData({ ...formData, skills: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            skills: e,
+                            other_skill: hasOthersOption(e) ? prev.other_skill : "",
+                          }));
                           console.log("skill after select", e);
                         }}
                         error={errMsg.skills}
+                        othersValue={formData.other_skill}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_skill: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({ ...prev, other_skill: "" }));
+                        }}
+                        othersError={errMsg.other_skill}
                         options={skills}
                         required={true}
                         loadMore={() => skillListLoadMore()}
@@ -646,8 +751,27 @@ const router = useRouter();
                         name="location"
                         value={formData.location}
                         onChange={(e) => {
-                          setFormData({ ...formData, location: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            location: e,
+                            other_location: hasOthersOption(e)
+                              ? prev.other_location
+                              : "",
+                          }));
                         }}
+                        othersValue={formData.other_location}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_location: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({
+                              ...prev,
+                              other_location: "",
+                            }));
+                        }}
+                        othersError={errMsg.other_location}
                         options={location}
                         required={true}
                         error={errMsg.location}

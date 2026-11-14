@@ -30,6 +30,9 @@ const ProfileExperienceMain = () => {
         start_date: "",
         end_date: null,
         is_currently_working: false,
+        other_industry: "",
+        other_role: "",
+        other_location: "",
     });
 
     const [errMsg, setErrMsg] = useState({});
@@ -175,6 +178,9 @@ const ProfileExperienceMain = () => {
                 start_date: d.start_date || "",
                 end_date: d.end_date || null,
                 is_currently_working: d.is_currently_working || false,
+                other_industry: d.other_industry || "",
+                other_role: d.other_role || "",
+                other_location: d.other_location || "",
             });
         } catch (error) {
             console.log("✌️error --->", error);
@@ -211,6 +217,27 @@ const ProfileExperienceMain = () => {
 
         const isValid = validateForm(formData, validationRules, setErrMsg);
         if (!isValid) return;
+
+        const isOthersIndustry =
+            formData.industry?.label?.trim().toLowerCase() === "others";
+        const isOthersRole =
+            formData.role?.label?.trim().toLowerCase() === "others";
+        const isOthersLocation =
+            formData.location?.label?.trim().toLowerCase() === "others";
+
+        if (isOthersIndustry && !formData.other_industry) {
+            setErrMsg((prev) => ({ ...prev, other_industry: "Enter This Field" }));
+            return;
+        }
+        if (isOthersRole && !formData.other_role) {
+            setErrMsg((prev) => ({ ...prev, other_role: "Enter This Field" }));
+            return;
+        }
+        if (isOthersLocation && !formData.other_location) {
+            setErrMsg((prev) => ({ ...prev, other_location: "Enter This Field" }));
+            return;
+        }
+
         const body = {
             member: memberId,
             industry: formData.industry.value,
@@ -219,6 +246,9 @@ const ProfileExperienceMain = () => {
             start_date: formData.start_date,
             end_date: formData.end_date,
             is_currently_working: formData.is_currently_working,
+            other_industry: isOthersIndustry ? formData.other_industry : "",
+            other_role: isOthersRole ? formData.other_role : "",
+            other_location: isOthersLocation ? formData.other_location : "",
         };
 
         try {
@@ -246,6 +276,9 @@ const ProfileExperienceMain = () => {
                 start_date: "",
                 end_date: null,
                 is_currently_working: false,
+                other_industry: "",
+                other_role: "",
+                other_location: "",
             });
 
             if (isAlumniContact == true || isAlumniContact == "true") {
@@ -396,14 +429,21 @@ const ProfileExperienceMain = () => {
                                                                     label="Industry"
                                                                     // className={"applicant-input "}
                                                                     onChange={(value) => {
-                                                                        setFormData({ ...formData, industry: value });
-                                                                        if (value) setErrMsg((prev) => ({ ...prev, industry: "" }));
+                                                                        setFormData({ ...formData, industry: value, other_industry: "" });
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, industry: "", other_industry: "" }));
                                                                     }}
                                                                     value={formData.industry}
                                                                     options={industry}
                                                                     error={errMsg?.industry}
                                                                     required
                                                                     loadMore={() => industryListLoadMore()}
+                                                                    othersValue={formData.other_industry}
+                                                                    onOthersChange={(value) => {
+                                                                        setFormData((prev) => ({ ...prev, other_industry: value }));
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, other_industry: "" }));
+                                                                    }}
+                                                                    othersError={errMsg?.other_industry}
+                                                                    othersPlaceholder="Specify Industry"
                                                                 />
                                                             </div>
                                                             <div className="">
@@ -413,14 +453,21 @@ const ProfileExperienceMain = () => {
                                                                     label="Role"
                                                                     // className={"applicant-input"}
                                                                     onChange={(value) => {
-                                                                        setFormData({ ...formData, role: value });
-                                                                        if (value) setErrMsg((prev) => ({ ...prev, role: "" }));
+                                                                        setFormData({ ...formData, role: value, other_role: "" });
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, role: "", other_role: "" }));
                                                                     }}
                                                                     value={formData.role}
                                                                     error={errMsg?.role}
                                                                     options={role}
                                                                     required
                                                                     loadMore={() => roleListLoadMore()}
+                                                                    othersValue={formData.other_role}
+                                                                    onOthersChange={(value) => {
+                                                                        setFormData((prev) => ({ ...prev, other_role: value }));
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, other_role: "" }));
+                                                                    }}
+                                                                    othersError={errMsg?.other_role}
+                                                                    othersPlaceholder="Specify Role"
                                                                 />
                                                             </div>
 
@@ -490,14 +537,21 @@ const ProfileExperienceMain = () => {
                                                                     label="Location"
                                                                     // className={"applicant-input"}
                                                                     onChange={(value) => {
-                                                                        setFormData({ ...formData, location: value });
-                                                                        if (value) setErrMsg((prev) => ({ ...prev, location: "" }));
+                                                                        setFormData({ ...formData, location: value, other_location: "" });
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, location: "", other_location: "" }));
                                                                     }}
                                                                     value={formData.location}
                                                                     options={location}
                                                                     error={errMsg?.location}
                                                                     required={true}
                                                                     loadMore={() => locationListLoadMore()}
+                                                                    othersValue={formData.other_location}
+                                                                    onOthersChange={(value) => {
+                                                                        setFormData((prev) => ({ ...prev, other_location: value }));
+                                                                        if (value) setErrMsg((prev) => ({ ...prev, other_location: "" }));
+                                                                    }}
+                                                                    othersError={errMsg?.other_location}
+                                                                    othersPlaceholder="Specify Location"
                                                                 />
                                                             </div>
 

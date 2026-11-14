@@ -86,11 +86,15 @@ const BusinessDirDetailMain = () => {
                       <h1 className="jd-title">{SingleData.business_name}</h1>
                       <div className="jd-company-line">
                         <span className="jd-company">
-                          {SingleData.industry_type}
+                          {SingleData.other_industry ||
+                            SingleData.industry_type}
                         </span>
                         <span className="jd-dot">—</span>
                         <span className="jd-location">
                           {SingleData.location}
+                          {SingleData.other_country
+                            ? `, ${SingleData.other_country}`
+                            : ""}
                         </span>
                         <div className="jd-posted">
                           Listed On : {formattedDate(SingleData.listed_on)}

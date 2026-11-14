@@ -21,7 +21,19 @@ const CustomSelect = (props) => {
     menuPlacement = "auto",
     menuPortalTarget,
     maxMenuHeight = 250,
+    othersValue,
+    onOthersChange,
+    othersError,
+    othersPlaceholder = "Please specify...",
   } = props;
+
+  const isOthersOption = (option) =>
+    typeof option?.label === "string" &&
+    ["other", "others"].includes(option.label.trim().toLowerCase());
+  const isOthersSelected = Array.isArray(value)
+    ? value.some(isOthersOption)
+    : isOthersOption(value);
+
   const portalTarget =
     menuPortalTarget !== undefined
       ? menuPortalTarget
@@ -31,7 +43,6 @@ const CustomSelect = (props) => {
   const loadMoreInProgress = React.useRef(false);
   const handleLoadMore = async () => {
     if (!loadMore || loadMoreInProgress.current) return;
-
     loadMoreInProgress.current = true;
     try {
       await loadMore();
@@ -39,24 +50,26 @@ const CustomSelect = (props) => {
       loadMoreInProgress.current = false;
     }
   };
-  const selectOptions =
-    loadMore && Array.isArray(options)
+  const selectOptions = (() => {
+    const opts = loadMore && Array.isArray(options)
       ? Array.from(new Map(options.map((option) => [option.value, option])).values())
-      : options;
+      : (options || []);
+    const others = opts.filter(isOthersOption);
+    const rest = opts.filter((option) => !isOthersOption(option));
+    return [...others, ...rest];
+  })();
   const customStyles = {
     control: (provided) => ({
       ...provided,
-
       borderRadius: borderRadius ? borderRadius : "0px",
       padding: "2px 10px",
-      fontSize: "16px", // Tailwind's text-sm
+      fontSize: "16px",
       fontWeight: "400",
-      zIndex:9999
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: "black", // Tailwind's gray-400
-      fontSize: "16px", // Tailwind's text-sm
+      color: "black",
+      fontSize: "16px",
       fontWeight: "400",
     }),
     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
@@ -69,7 +82,7 @@ const CustomSelect = (props) => {
           {title} {required && <span className="text-red-500">*</span>}
         </label>
       )}
-      <div className="">
+      <div>
         <Select
           isDisabled={disabled}
           placeholder={placeholder}
@@ -87,17 +100,29 @@ const CustomSelect = (props) => {
           styles={customStyles}
           onMenuOpen={() => menuOpen && menuOpen(true)}
           onMenuClose={() => menuOpen && menuOpen(false)}
-          className={`react-select   ${className} ${
-            error ? "border-red-500" : ""
-          } ${ isMulti ?  "is-multi" : ""}`} // Add conditional styling for error
-          // classNamePrefix="react-select" // Adds a prefix for custom styles
-          // styles={{
-          //     menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-          //     menu: (base) => ({ ...base, zIndex: 9999 }),
-          // }}
+          className={`react-select ${className} ${error ? "border-red-500" : ""} ${isMulti ? "is-multi" : ""}`}
           onMenuScrollToBottom={handleLoadMore}
         />
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {isOthersSelected && onOthersChange && (
+          <div style={{ marginTop: '8px' }}>
+            <input
+              type="text"
+              value={othersValue || ''}
+              onChange={(e) => onOthersChange(e.target.value)}
+              placeholder={othersPlaceholder}
+              style={{
+                width: '100%',
+                border: othersError ? '1px solid red' : '1px solid #e6e3f1',
+                borderRadius: '4px',
+                padding: '10px 14px',
+                fontSize: '16px',
+                outline: 'none',
+              }}
+            />
+            {othersError && <p className="mt-2 text-sm text-red-600">{othersError}</p>}
+          </div>
+        )}
       </div>
     </div>
   );

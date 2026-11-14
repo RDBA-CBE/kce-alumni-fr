@@ -60,9 +60,13 @@ const JobDescription = () => {
               <div>
                 <h1 className="jd-title">{SingleData.job_title}</h1>
                 <div className="jd-company-line">
-                  <span className="jd-company">{SingleData.industry}</span>
+                  <span className="jd-company">
+                    {SingleData.other_industry || SingleData.industry}
+                  </span>
                   <span className="jd-dot">—</span>
-                  <span className="jd-location">{SingleData.location}</span>
+                  <span className="jd-location">
+                    {SingleData.other_location || SingleData.location}
+                  </span>
                   <div className="jd-posted">
                     Posted on {formattedDate(SingleData.posted_on)}
                   </div>
@@ -129,7 +133,9 @@ const JobDescription = () => {
             <div className="jd-tags mt-3 ">
               {SingleData.skills?.map((t) => (
                 <span className="jd-tag" key={t}>
-                  {t}
+                  {t?.trim?.().toLowerCase() === "others"
+                    ? SingleData.other_skill || t
+                    : t}
                 </span>
               ))}
             </div>
@@ -140,7 +146,7 @@ const JobDescription = () => {
             <h4 className="jd-section-title">Role Description</h4>
             <p className="jd-text mb-2">
               <b>Role Name: </b>
-              {SingleData?.role}
+              {SingleData?.other_role || SingleData?.role}
             </p>
             <p className="jd-text">
               <b>Description: </b>

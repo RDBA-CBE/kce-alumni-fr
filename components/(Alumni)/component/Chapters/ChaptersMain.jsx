@@ -23,6 +23,9 @@ import chapter from "@/models/chapter.model";
 import useDebounce from "@/commonComponents/useDebounce";
 import Pagination from "@/commonComponents/Pagination";
 
+const isOthersOption = (option) =>
+  option?.label?.trim().toLowerCase() === "others";
+
 const ChaptersMain = () => {
   const { confirm } = Modal;
   const router = useRouter();
@@ -71,6 +74,7 @@ const ChaptersMain = () => {
     city: null,
     state: null,
     country: null,
+    other_country: "",
     users: null,
     chapter_image: null,
     country_code: [],
@@ -78,6 +82,7 @@ const ChaptersMain = () => {
     chapterList: [],
     currenLocationPage: 1,
     hasLocationLoadMore: null,
+    other_location: "",
     currenUserPage: null,
     hasUserLoadMore: null,
   });
@@ -289,10 +294,12 @@ const ChaptersMain = () => {
         value: item?.country?.id,
         label: item?.country?.country_name,
       },
+      other_country: item?.other_country || "",
       location_id: {
         value: item?.location?.id,
         label: item?.location?.location,
       },
+      other_location: item?.other_location || "",
       description: item?.description,
       chapter_id: item.id,
       preview: item?.image,
@@ -363,11 +370,30 @@ const ChaptersMain = () => {
   const createchapter = async (e) => {
     e.preventDefault();
     try {
+      const otherFieldErrors = {};
+      if (isOthersOption(state.country_id) && !state.other_country?.trim()) {
+        otherFieldErrors.other_country = "Enter This Field";
+      }
+      if (isOthersOption(state.location_id) && !state.other_location?.trim()) {
+        otherFieldErrors.other_location = "Enter This Field";
+      }
+      if (Object.keys(otherFieldErrors).length) {
+        setState({
+          errors: { ...state.errors, ...otherFieldErrors },
+        });
+        return;
+      }
       const body = {
         name: state.chapter_name,
         description: state.description,
         country_id: state.country_id.value,
+        other_country: isOthersOption(state.country_id)
+          ? state.other_country
+          : "",
         location_id: state.location_id.value,
+        other_location: isOthersOption(state.location_id)
+          ? state.other_location
+          : "",
         image: state.image,
       };
       const formdata = objectToFormData(body);
@@ -517,7 +543,9 @@ const ChaptersMain = () => {
                                 setState({
                                   chapter_name: "",
                                   country_id: "",
+                                  other_country: "",
                                   location_id: "",
+                                  other_location: "",
                                   description: "",
                                   chapter_id: "",
                                   preview: "",
@@ -798,7 +826,14 @@ const ChaptersMain = () => {
                                                 <ul className="rbt-meta">
                                                   <li>
                                                     <i className="feather-map-pin"></i>
-                                                    {item?.location?.location}
+                                                    {[
+                                                      item?.other_location ||
+                                                        item?.location?.location,
+                                                      item?.other_country ||
+                                                        item?.country?.country_name,
+                                                    ]
+                                                      .filter(Boolean)
+                                                      .join(", ")}
                                                   </li>
                                                 </ul>
                                                 <h4 className="rbt-card-title">
@@ -926,9 +961,22 @@ const ChaptersMain = () => {
             name="country_code"
             value={state.country_id}
             onChange={(e) => {
-              setState({ ...state, country_id: e });
+              setState({
+                ...state,
+                country_id: e,
+                other_country: isOthersOption(e) ? state.other_country : "",
+              });
             }}
             error={state.errors?.country_id}
+            othersValue={state.other_country}
+            onOthersChange={(value) =>
+              setState({
+                ...state,
+                other_country: value,
+                errors: { ...state.errors, other_country: "" },
+              })
+            }
+            othersError={state.errors?.other_country}
             className={"mb-3"}
             options={country}
             required={true}
@@ -941,9 +989,22 @@ const ChaptersMain = () => {
             name="location"
             value={state.location_id}
             onChange={(e) => {
-              setState({ ...state, location_id: e });
+              setState({
+                ...state,
+                location_id: e,
+                other_location: isOthersOption(e) ? state.other_location : "",
+              });
             }}
             error={state.errors?.location_id}
+            othersValue={state.other_location}
+            onOthersChange={(value) =>
+              setState({
+                ...state,
+                other_location: value,
+                errors: { ...state.errors, other_location: "" },
+              })
+            }
+            othersError={state.errors?.other_location}
             className={"mb-3"}
             options={location}
             required={true}

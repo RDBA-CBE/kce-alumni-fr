@@ -25,9 +25,12 @@ const ProfileEducationMain = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     skills: "",
+    other_skill: "",
+    other_skills: "",
     institute: "",
     degree: "",
     location: "",
+    other_location: "",
     start_year: "",
     end_year: null,
     is_currently_pursuing: false,
@@ -138,9 +141,12 @@ const ProfileEducationMain = () => {
       const d = detail.data;
       setFormData({
         skills: "",
+        other_skill: d.other_skill || d.other_skills || "",
+        other_skills: d.other_skills || d.other_skill || "",
         institute: d.institute ? { value: d.institute.id, label: d.institute.title } : "",
         degree: d.degree || "",
         location: d.location ? { value: d.location.id, label: d.location.location } : "",
+        other_location: d.other_location || "",
         start_year: d.start_year || "",
         end_year: d.end_year || null,
         is_currently_pursuing: d.is_currently_pursuing || false,
@@ -172,9 +178,17 @@ const ProfileEducationMain = () => {
     console.log("formData", formData);
 
     if (!isValid) return;
+    const isOthersSkill =
+      formData.skills?.label?.trim().toLowerCase() === "others";
+    if (isOthersSkill && !formData.other_skill?.trim()) {
+      setErrMsg((prev) => ({ ...prev, other_skill: "Enter This Field" }));
+      return;
+    }
+
     const body = {
       skill_id: formData.skills.value,
       member_id: memberId,
+      other_skill: isOthersSkill ? formData.other_skill : "",
     };
 
     console.log("body", body);
@@ -192,6 +206,7 @@ const ProfileEducationMain = () => {
         content: res.data.message,
       });
       getMemberSkills();
+      return true;
     } catch (error) {
       if (error.response && error.response.data) {
         messageApi.open({
@@ -204,14 +219,13 @@ const ProfileEducationMain = () => {
       //   type: "error",
       //   content: error.response.data.message,
       // });
+      return false;
     }
   };
 
   const handleEducationSubmit = async (e) => {
     e.preventDefault();
     console?.log("formDdata:", formData);
-
-    handleSubmit(e)
 
     const validationRules = {
       institute: {
@@ -227,15 +241,35 @@ const ProfileEducationMain = () => {
 
     const isValid = validateForm(formData, validationRules, setErrMsg);
     if (!isValid) return;
+    const isOthersSkill =
+      formData.skills?.label?.trim().toLowerCase() === "others";
+    const isOthersLocation =
+      formData.location?.label?.trim().toLowerCase() === "others";
+    if (isOthersSkill && !formData.other_skills?.trim()) {
+      setErrMsg((prev) => ({ ...prev, other_skill: "Enter This Field" }));
+      return;
+    }
+    if (isOthersLocation && !formData.other_location?.trim()) {
+      setErrMsg((prev) => ({ ...prev, other_location: "Enter This Field" }));
+      return;
+    }
+
     const body = {
       member: memberId,
       institute: formData.institute.value,
       degree: formData.degree,
-      location: formData.location.value,
+      location: formData.location?.value || null,
       start_year: formData.start_year,
       end_year: formData.end_year,
       is_currently_pursuing: formData.is_currently_pursuing,
+      other_skills: isOthersSkill
+        ? formData.other_skills || formData.other_skill
+        : "",
+      other_location: isOthersLocation ? formData.other_location : "",
     };
+
+    const skillSaved = await handleSubmit(e);
+    if (!skillSaved) return;
 
     try {
       setState({ btnLoading: true });
@@ -256,9 +290,13 @@ const ProfileEducationMain = () => {
       setState({ btnLoading: false });
 
       setFormData({
+        skills: "",
+        other_skill: "",
+        other_skills: "",
         institute: "",
         degree: "",
         location: "",
+        other_location: "",
         start_year: "",
         end_year: null,
         is_currently_pursuing: false,
@@ -512,13 +550,20 @@ const ProfileEducationMain = () => {
                                   label="Location"
                                   // className={"applicant-input"}
                                   onChange={(value) => {
-                                    setFormData({ ...formData, location: value });
-                                    if (value) setErrMsg((prev) => ({ ...prev, location: "" }));
+                                    setFormData({ ...formData, location: value, other_location: "" });
+                                    if (value) setErrMsg((prev) => ({ ...prev, location: "", other_location: "" }));
                                   }}
                                   value={formData.location}
                                   options={location}
                                   error={errMsg?.location}
                                   loadMore={() => locationListLoadMore()}
+                                  othersValue={formData.other_location}
+                                  onOthersChange={(value) => {
+                                    setFormData((prev) => ({ ...prev, other_location: value }));
+                                    if (value) setErrMsg((prev) => ({ ...prev, other_location: "" }));
+                                  }}
+                                  othersError={errMsg?.other_location}
+                                  othersPlaceholder="Specify Location"
                                 />
                               </div>
 
@@ -537,14 +582,21 @@ const ProfileEducationMain = () => {
                                   // className="applicant-input"
                                   placeholder="Enter Skills"
                                   onChange={(value) => {
-                                    setFormData({ ...formData, skills: value });
-                                    if (value) setErrMsg((prev) => ({ ...prev, skills: "" }));
+                                    setFormData({ ...formData, skills: value, other_skill: "", other_skills: "" });
+                                    if (value) setErrMsg((prev) => ({ ...prev, skills: "", other_skill: "", other_skills: "" }));
                                   }}
                                   options={skills}
                                   value={formData.skills}
                                   // isMulti={true}
                                   required
                                   loadMore={() => skillListLoadMore()}
+                                  othersValue={formData.other_skill}
+                                  onOthersChange={(value) => {
+                                    setFormData((prev) => ({ ...prev, other_skill: value, other_skills: value }));
+                                    if (value) setErrMsg((prev) => ({ ...prev, other_skill: "", other_skills: "" }));
+                                  }}
+                                  othersError={errMsg?.other_skill}
+                                  othersPlaceholder="Specify Skill"
                                 />
 
 
@@ -564,7 +616,7 @@ const ProfileEducationMain = () => {
                             <div className="jd-tags mt-3 mb-5 ">
                               {memberSkills?.map((item, index) => (
 
-                                <span key={index} className="jd-tag">{item?.skill_name}</span>
+                                <span key={index} className="jd-tag">{item?.other_skill || item?.other_skills || item?.skill_name}</span>
 
                               )
 

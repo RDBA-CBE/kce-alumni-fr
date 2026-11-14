@@ -632,6 +632,9 @@ const BusinessDirectoryMain = () => {
                                               <li>
                                                 <i className='feather-map-pin'></i>
                                                 {item?.location}
+                                                {item?.other_country
+                                                  ? `, ${item.other_country}`
+                                                  : ""}
                                               </li>
                                             </ul>
                                             <h4 className='rbt-card-title'>
@@ -646,7 +649,8 @@ const BusinessDirectoryMain = () => {
                                               style={{ fontSize: '16px' }}
                                             >
                                               <Link href={'#'}>
-                                                {item.industry_type}
+                                                {item.other_industry ||
+                                                  item.industry_type}
                                               </Link>
                                             </p>
                                           </div>

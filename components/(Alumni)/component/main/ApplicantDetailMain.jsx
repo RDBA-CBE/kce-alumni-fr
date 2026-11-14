@@ -206,11 +206,17 @@ const ApplicantDetailMain = () => {
                             </tr>
                             <tr>
                               <th>Role</th>
-                              <td>{profileDetailsData.current_role}</td>
+                              <td>
+                                {profileDetailsData.other_role ||
+                                  profileDetailsData.current_role}
+                              </td>
                             </tr>
                             <tr>
                               <th>Industry</th>
-                              <td>{profileDetailsData.current_industry}</td>
+                              <td>
+                                {profileDetailsData.other_industry ||
+                                  profileDetailsData.current_industry}
+                              </td>
                             </tr>
                             <tr>
                               <th>Total Experience</th>
@@ -223,7 +229,11 @@ const ApplicantDetailMain = () => {
                               <th>Skills</th>
                               <td>
                                 {profileDetailsData.skills
-                                  ?.map((skill) => skill)
+                                  ?.map((skill) =>
+                                    skill?.trim?.().toLowerCase() === "others"
+                                      ? profileDetailsData.other_skill || skill
+                                      : skill
+                                  )
                                   .join(", ")}
                               </td>
                             </tr>

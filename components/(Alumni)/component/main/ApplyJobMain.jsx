@@ -13,6 +13,11 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+const hasOthersOption = (selection) =>
+  (Array.isArray(selection) ? selection : [selection]).some(
+    (option) => option?.label?.trim().toLowerCase() === "others"
+  );
+
 const ApplyJobMain = () => {
   const { id } = useParams();
   const router = useRouter();
@@ -73,10 +78,13 @@ const ApplyJobMain = () => {
     email: "",
     mobile_number: "",
     current_industry: "",
+    other_industry: "",
     current_role: "",
+    other_role: "",
     resume: null,
     notes_to_recruiter: "",
     skills: [],
+    other_skill: "",
   });
 
   const GetDepartmentList = async () => {
@@ -180,6 +188,23 @@ const ApplyJobMain = () => {
     const isValid = validateForm(formData, validationRules, setErrMsg);
 
     if (!isValid) return;
+    const otherFieldErrors = {};
+    if (
+      hasOthersOption(formData.current_industry) &&
+      !formData.other_industry.trim()
+    ) {
+      otherFieldErrors.other_industry = "Enter This Field";
+    }
+    if (hasOthersOption(formData.current_role) && !formData.other_role.trim()) {
+      otherFieldErrors.other_role = "Enter This Field";
+    }
+    if (hasOthersOption(formData.skills) && !formData.other_skill.trim()) {
+      otherFieldErrors.other_skill = "Enter This Field";
+    }
+    if (Object.keys(otherFieldErrors).length) {
+      setErrMsg((prev) => ({ ...prev, ...otherFieldErrors }));
+      return;
+    }
 
     const formDataToSubmit = new FormData();
     formDataToSubmit.append("full_name", formData.full_name);
@@ -194,11 +219,20 @@ const ApplyJobMain = () => {
       formData.current_industry.value
     );
     formDataToSubmit.append("current_role", formData.current_role.value);
+    if (hasOthersOption(formData.current_industry)) {
+      formDataToSubmit.append("other_industry", formData.other_industry);
+    }
+    if (hasOthersOption(formData.current_role)) {
+      formDataToSubmit.append("other_role", formData.other_role);
+    }
     formDataToSubmit.append("resume", formData.resume); // File is appended here
     formDataToSubmit.append("notes_to_recruiter", formData.notes_to_recruiter);
     formData.skills.forEach((skillId) => {
       formDataToSubmit.append("skills", skillId.value); // Using 'skills[]' to indicate an array
     });
+    if (hasOthersOption(formData.skills)) {
+      formDataToSubmit.append("other_skill", formData.other_skill);
+    }
     formDataToSubmit.append("job_post", id);
 
     console.log("formDataToSubmit", formDataToSubmit);
@@ -227,10 +261,13 @@ const ApplyJobMain = () => {
           email: "",
           mobile_number: "",
           current_industry: "",
+          other_industry: "",
           current_role: "",
+          other_role: "",
           resume: null,
           notes_to_recruiter: "",
           skills: [],
+          other_skill: "",
         });
         setErrMsg({});
       })
@@ -420,9 +457,28 @@ const ApplyJobMain = () => {
                         name="current_industry"
                         value={formData.current_industry}
                         onChange={(e) => {
-                          setFormData({ ...formData, current_industry: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            current_industry: e,
+                            other_industry: hasOthersOption(e)
+                              ? prev.other_industry
+                              : "",
+                          }));
                         }}
                         error={errMsg.current_industry}
+                        othersValue={formData.other_industry}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_industry: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({
+                              ...prev,
+                              other_industry: "",
+                            }));
+                        }}
+                        othersError={errMsg.other_industry}
                         options={industry}
                         loadMore={() => industryListLoadMore()}
                       />
@@ -436,9 +492,23 @@ const ApplyJobMain = () => {
                         name="current_role"
                         value={formData.current_role}
                         onChange={(e) => {
-                          setFormData({ ...formData, current_role: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            current_role: e,
+                            other_role: hasOthersOption(e) ? prev.other_role : "",
+                          }));
                         }}
                         error={errMsg.current_role}
+                        othersValue={formData.other_role}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_role: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({ ...prev, other_role: "" }));
+                        }}
+                        othersError={errMsg.other_role}
                         className="form-dd"
                         options={roleList}
                         loadMore={() => roleListLoadMore()}
@@ -454,10 +524,24 @@ const ApplyJobMain = () => {
                         name="skills"
                         value={formData.skills}
                         onChange={(e) => {
-                          setFormData({ ...formData, skills: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            skills: e,
+                            other_skill: hasOthersOption(e) ? prev.other_skill : "",
+                          }));
                           console.log("skill after select", e);
                         }}
                         error={errMsg.skills}
+                        othersValue={formData.other_skill}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_skill: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({ ...prev, other_skill: "" }));
+                        }}
+                        othersError={errMsg.other_skill}
                         options={skills}
                         required={true}
                         loadMore={() => skillListLoadMore()}

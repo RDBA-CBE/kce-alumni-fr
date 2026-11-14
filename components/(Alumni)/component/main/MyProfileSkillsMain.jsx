@@ -32,6 +32,7 @@ const MyProfileSkillsMain = () => {
   const [formData, setFormData] = useState({
     skill_id: "",
     member_skill_id: "",
+    other_skill: "",
     // degree: "",
     // location: "",
     // start_year: "",
@@ -149,9 +150,17 @@ const MyProfileSkillsMain = () => {
     const isValid = validateForm(formData, validationRules, setErrMsg);
     if (!isValid) return;
 
+    const isOthersSkill =
+      formData.skill_id?.label?.trim().toLowerCase() === "others";
+    if (isOthersSkill && !formData.other_skill?.trim()) {
+      setErrMsg((prev) => ({ ...prev, other_skill: "Enter This Field" }));
+      return;
+    }
+
     const body = {
       member_id: memberId,
       skill_id: formData.skill_id.value,
+      other_skill: isOthersSkill ? formData.other_skill : "",
     };
 
     // Conditionally add end_year if not currently pursuing
@@ -180,6 +189,8 @@ setState({ btnLoading: false });
 
         setFormData({
           skill_id: "",
+          member_skill_id: "",
+          other_skill: "",
         });
 
         // router.push("/profile-photograph");
@@ -210,6 +221,8 @@ setState({ btnLoading: false });
 
         setFormData({
           skill_id: "",
+          member_skill_id: "",
+          other_skill: "",
         });
 
         // router.push("/profile-photograph");
@@ -228,12 +241,16 @@ setState({ btnLoading: false });
     setIsEditing(false);
     setFormData({
       skill_id: "",
+      member_skill_id: "",
+      other_skill: "",
     });
   };
 
   const showModal = () => {
     setFormData({
       skill_id: "",
+      member_skill_id: "",
+      other_skill: "",
     });
     setIsEditing(false);
     setIsModalOpen(true);
@@ -245,6 +262,7 @@ setState({ btnLoading: false });
     setFormData({
       skill_id: { value: department.skill_id, label: department.skill_name },
       member_skill_id: department.member_skill_id,
+      other_skill: department.other_skill || "",
     });
   };
 
@@ -363,7 +381,7 @@ setState({ btnLoading: false });
                                                 color: '#000',
                                               }}
                                             >
-                                              {edu?.skill_name}
+                                              {edu?.other_skill || edu?.skill_name}
                                             </Link>
                                           </h6>
 
@@ -450,14 +468,21 @@ setState({ btnLoading: false });
                 label="Skill"
                 // className={"applicant-input "}
                   onChange={(value) => {
-                  setFormData({ ...formData, skill_id: value });
-                  if (value) setErrMsg((prev) => ({ ...prev, skill_id: "" }));
+                  setFormData({ ...formData, skill_id: value, other_skill: "" });
+                  if (value) setErrMsg((prev) => ({ ...prev, skill_id: "", other_skill: "" }));
                 }}
                 value={formData.skill_id}
                 options={institute}
                 error={errMsg?.skill_id}
                 required
                 loadMore={() => skillListLoadMore()}
+                othersValue={formData.other_skill}
+                onOthersChange={(value) => {
+                  setFormData((prev) => ({ ...prev, other_skill: value }));
+                  if (value) setErrMsg((prev) => ({ ...prev, other_skill: "" }));
+                }}
+                othersError={errMsg?.other_skill}
+                othersPlaceholder="Specify Skill"
             />
           </div>
 

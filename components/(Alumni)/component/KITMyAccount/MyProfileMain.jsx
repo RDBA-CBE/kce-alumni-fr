@@ -6,6 +6,27 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { RWebShare } from "react-web-share";
 
+const getProfileSkillLabel = (skill, profile) => {
+  const skillName =
+    typeof skill === "string"
+      ? skill
+      : skill?.skill_name || skill?.skill || skill?.name || "";
+  const customSkill =
+    typeof skill === "object"
+      ? skill?.other_skill || skill?.other_skills
+      : "";
+  const isOthers = ["other", "others"].includes(
+    String(skillName).trim().toLowerCase()
+  );
+
+  return isOthers
+    ? customSkill ||
+        profile?.other_skill ||
+        profile?.other_skills ||
+        skillName
+    : skillName;
+};
+
 const MyProfileMain = () => {
   const { id } = useParams();
   console.log("✌️id --->", id);
@@ -292,13 +313,16 @@ const MyProfileMain = () => {
                     {SingleData && SingleData?.experiences
                       ? SingleData?.experiences?.map((item, index) => (
                           <div key={index}>
-                            <h6 className="title"> {item?.industry}</h6>
+                            <h6 className="title">
+                              {item?.other_industry || item?.industry}
+                            </h6>
                             <p>
-                              {item?.role} ({item?.start_date} {""}
+                              {item?.other_role || item?.role} (
+                              {item?.start_date} {""}
                               {item?.is_currently_working
                                 ? " Present"
                                 : `- ${item?.end_date}`}
-                              ) - {item?.location}
+                              ) - {item?.other_location || item?.location}
                             </p>
                           </div>
                         ))
@@ -374,15 +398,18 @@ const MyProfileMain = () => {
                         <div className="custom-info-row">
                           <span className="custom-info-label">Address :</span>
                           <span className="custom-info-value">
-                            {SingleData &&
-                              SingleData?.alumni &&
-                              SingleData?.alumni?.location &&
-                              SingleData?.alumni?.location}
+                            {SingleData?.alumni?.address || "-"}
                           </span>
                         </div>
                         <div className="custom-info-row">
                           <span className="custom-info-label">City :</span>
-                          <span className="custom-info-value">Bangalore</span>
+                          <span className="custom-info-value">
+                            {SingleData?.alumni?.other_location ||
+                              SingleData?.other_location ||
+                              SingleData?.alumni?.location?.location ||
+                              SingleData?.alumni?.location ||
+                              "-"}
+                          </span>
                         </div>
                         <div className="custom-info-row">
                           <span className="custom-info-label">
@@ -494,7 +521,7 @@ const MyProfileMain = () => {
                                 key={index}
                                 className="badge pro-skills px-3 py-2 "
                               >
-                                {data}
+                                {getProfileSkillLabel(data, SingleData)}
                               </span>
                             ))
                           : "No Skills"}

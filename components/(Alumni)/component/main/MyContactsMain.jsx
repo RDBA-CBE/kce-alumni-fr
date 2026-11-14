@@ -21,6 +21,7 @@ const MyContactsMain = () => {
     twitter_handle: '',
     address: '',
     postal_code: '',
+    other_location: '',
   });
   const [errMsg, setErrMsg] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
@@ -109,6 +110,7 @@ const MyContactsMain = () => {
           twitter_handle: data?.twitter_handle || '',
           address: data?.address || '',
           postal_code: data?.postal_code || '',
+          other_location: data?.other_location || '',
         });
         localStorage.setItem('isAlumniContact', response.data?.modules?.module4);
         setIsAlumniContact(response.data?.modules?.module4);
@@ -126,28 +128,19 @@ const MyContactsMain = () => {
     const { name, value, type, checked } = event.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'checkbox' ? checked : value, // Set to checked for checkboxes
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console?.log('formDdata:', formData);
 
-    // const validationRules = {
-    //   website: {
-    //     required: true,
-    //   },
-    //   linked_in: {
-    //     required: true,
-    //   },
-    //   twitter_handle: {
-    //     required: true,
-    //   },
-    // };
+    const isOthersLocation = formData.location?.label?.trim().toLowerCase() === 'others';
+    if (isOthersLocation && !formData.other_location) {
+      setErrMsg((prev) => ({ ...prev, other_location: 'Enter This Field' }));
+      return;
+    }
 
-    // const isValid = validateForm(formData);
-    // if (!isValid) return;
     const body = {
       member: Number(memberId),
       website: formData.website,
@@ -156,6 +149,7 @@ const MyContactsMain = () => {
       twitter_handle: formData.twitter_handle,
       address: formData.address,
       postal_code: formData.postal_code,
+      other_location: isOthersLocation ? formData.other_location : "",
     };
 
     if (isAlumniContact === true || isAlumniContact === 'true') {
@@ -337,17 +331,20 @@ const MyContactsMain = () => {
                                     type='loadMoreSelect'
                                     name='location'
                                     label='Location'
-                                    // className={"applicant-input"}
-                                    onChange={(value) =>
-                                      setFormData({
-                                        ...formData,
-                                        location: value,
-                                      })
-                                    }
+                                    onChange={(value) => {
+                                      setFormData({ ...formData, location: value, other_location: '' });
+                                      if (value) setErrMsg((prev) => ({ ...prev, location: '', other_location: '' }));
+                                    }}
                                     value={formData.location}
                                     options={location}
                                     loadMore={() => locationListLoadMore()}
-                                    // error={errMsg?.location}
+                                    othersValue={formData.other_location}
+                                    onOthersChange={(val) => {
+                                      setFormData((prev) => ({ ...prev, other_location: val }));
+                                      if (val) setErrMsg((prev) => ({ ...prev, other_location: '' }));
+                                    }}
+                                    othersError={errMsg?.other_location}
+                                    othersPlaceholder='Specify Location'
                                   />
                                   <span className='focus-border'></span>
                                 </div>

@@ -37,6 +37,9 @@ const BasicExperienceMain = () => {
     start_date: '',
     end_date: null,
     is_currently_working: false,
+    other_industry: '',
+    other_role: '',
+    other_location: '',
   });
   const [memberId, setMemberId] = useState('');
   const [getMemberEducation, setMemberEducation] = useState([]);
@@ -143,20 +146,23 @@ const BasicExperienceMain = () => {
         setFormData({
           member: response.data.id,
           industry: {
-            value: response.data.industry.id,
-            label: response.data.industry.title,
+            value: response.data.industry?.id,
+            label: response.data.industry?.title,
           },
           role: {
-            value: response.data.role.id,
-            label: response.data.role.role,
+            value: response.data.role?.id,
+            label: response.data.role?.role,
           },
           location: {
-            value: response.data.location.id,
-            label: response.data.location.location,
+            value: response.data.location?.id,
+            label: response.data.location?.location,
           },
           start_date: response.data.start_date,
           end_date: response.data.end_date,
           is_currently_working: response.data.is_currently_working,
+          other_industry: response.data.other_industry || '',
+          other_role: response.data.other_role || '',
+          other_location: response.data.other_location || '',
         });
       })
       .catch((error) => {
@@ -206,6 +212,23 @@ const BasicExperienceMain = () => {
     const isValid = validateForm(formData, validationRules, setErrMsg);
     if (!isValid) return;
 
+    const isOthersIndustry = formData.industry?.label?.toLowerCase() === 'others';
+    const isOthersRole = formData.role?.label?.toLowerCase() === 'others';
+    const isOthersLocation = formData.location?.label?.toLowerCase() === 'others';
+
+    if (isOthersIndustry && !formData.other_industry) {
+      setErrMsg((prev) => ({ ...prev, other_industry: 'Enter This Field' }));
+      return;
+    }
+    if (isOthersRole && !formData.other_role) {
+      setErrMsg((prev) => ({ ...prev, other_role: 'Enter This Field' }));
+      return;
+    }
+    if (isOthersLocation && !formData.other_location) {
+      setErrMsg((prev) => ({ ...prev, other_location: 'Enter This Field' }));
+      return;
+    }
+
     const body = {
       member: id,
       industry: formData.industry.value,
@@ -214,6 +237,9 @@ const BasicExperienceMain = () => {
       start_date: formData.start_date,
       is_currently_working: formData.is_currently_working,
       end_date: formData.end_date,
+      other_industry: isOthersIndustry ? formData.other_industry : "",
+      other_role: isOthersRole ? formData.other_role : "",
+      other_location: isOthersLocation ? formData.other_location : "",
     };
 
     console.log('body', body);
@@ -246,21 +272,12 @@ const BasicExperienceMain = () => {
 
         GetMemberEducation();
 
-        setFormData({
-          industry: '',
-          role: '',
-          location: '',
-          start_date: '',
-          end_date: null,
-          is_currently_working: false,
-        });
-
-        // router.push("/profile-photograph");
+        resetForm();
       } catch (error) {
         console.log('error :', error);
         messageApi.open({
           type: 'error',
-          content: error.response.data.message,
+          content: error.response?.data?.message,
         });
         setState({ btnLoading: false });
       }
@@ -282,43 +299,19 @@ const BasicExperienceMain = () => {
         });
 
         setIsModalOpen(false);
-
         GetMemberEducation();
-
-        setFormData({
-          industry: '',
-          role: '',
-          location: '',
-          start_date: '',
-          end_date: null,
-          is_currently_working: false,
-        });
-
-        // router.push("/profile-photograph");
+        resetForm();
       } catch (error) {
         console.log('error :', error);
         messageApi.open({
           type: 'error',
-          content: error.response.data.message,
+          content: error.response?.data?.message,
         });
       }
     }
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    setIsEditing(false);
-    setFormData({
-      industry: '',
-      role: '',
-      location: '',
-      start_date: '',
-      end_date: '',
-      is_currently_working: false,
-    });
-  };
-
-  const showModal = () => {
+  const resetForm = () => {
     setFormData({
       industry: '',
       role: '',
@@ -326,7 +319,21 @@ const BasicExperienceMain = () => {
       start_date: '',
       end_date: null,
       is_currently_working: false,
+      other_industry: '',
+      other_role: '',
+      other_location: '',
     });
+    setErrMsg({});
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setIsEditing(false);
+    resetForm();
+  };
+
+  const showModal = () => {
+    resetForm();
     setIsEditing(false);
     setIsModalOpen(true);
   };
@@ -519,7 +526,7 @@ const BasicExperienceMain = () => {
                                                 color: '#000',
                                               }}
                                             >
-                                              {edu?.industry}
+                                              {edu?.other_industry || edu?.industry}
                                             </Link>
                                           </h5>
 
@@ -531,7 +538,7 @@ const BasicExperienceMain = () => {
                                                 fontSize: '14px',
                                               }}
                                             >
-                                              {edu?.role}( {edu?.start_date} -{' '}
+                                              {edu?.other_role || edu?.role}( {edu?.start_date} -{' '}
                                               {edu?.end_date} )
                                             </span>
                                           )}
@@ -544,12 +551,23 @@ const BasicExperienceMain = () => {
                                                 fontSize: '14px',
                                               }}
                                             >
-                                              {edu?.role}( {edu?.start_date} -{' '}
+                                              {edu?.other_role || edu?.role}( {edu?.start_date} -{' '}
                                               {edu?.end_date
                                                 ? edu?.end_date
                                                 : 'Current'}{' '}
                                               )
                                             </span>
+                                          )}
+
+                                          {edu?.other_location && (
+                                            <div
+                                              style={{
+                                                color: '#000',
+                                                fontSize: '14px',
+                                              }}
+                                            >
+                                              Location: {edu.other_location}
+                                            </div>
                                           )}
 
                                           <div
@@ -631,16 +649,22 @@ const BasicExperienceMain = () => {
               type='loadMoreSelect'
               name='industry'
               label='Industry'
-              // className={"applicant-input "}
               onChange={(value) => {
-                setFormData({ ...formData, industry: value });
-                if (value) setErrMsg((prev) => ({ ...prev, industry: '' }));
+                setFormData({ ...formData, industry: value, other_industry: '' });
+                if (value) setErrMsg((prev) => ({ ...prev, industry: '', other_industry: '' }));
               }}
               value={formData.industry}
               options={institute}
               error={errMsg?.industry}
               required
               loadMore={() => industryListLoadMore()}
+              othersValue={formData.other_industry}
+              onOthersChange={(val) => {
+                setFormData((prev) => ({ ...prev, other_industry: val }));
+                if (val) setErrMsg((prev) => ({ ...prev, other_industry: '' }));
+              }}
+              othersError={errMsg?.other_industry}
+              othersPlaceholder='Specify Industry'
             />
           </div>
 
@@ -649,16 +673,22 @@ const BasicExperienceMain = () => {
               type='loadMoreSelect'
               name='role'
               label='Role'
-              // className={"applicant-input"}
               onChange={(value) => {
-                setFormData({ ...formData, role: value });
-                if (value) setErrMsg((prev) => ({ ...prev, role: '' }));
+                setFormData({ ...formData, role: value, other_role: '' });
+                if (value) setErrMsg((prev) => ({ ...prev, role: '', other_role: '' }));
               }}
               value={formData.role}
               error={errMsg?.role}
               options={role}
               required
               loadMore={() => roleListLoadMore()}
+              othersValue={formData.other_role}
+              onOthersChange={(val) => {
+                setFormData((prev) => ({ ...prev, other_role: val }));
+                if (val) setErrMsg((prev) => ({ ...prev, other_role: '' }));
+              }}
+              othersError={errMsg?.other_role}
+              othersPlaceholder='Specify Role'
             />
           </div>
 
@@ -712,16 +742,22 @@ const BasicExperienceMain = () => {
               type='loadMoreSelect'
               name='location'
               label='Location'
-              // className={"applicant-input"}
               onChange={(value) => {
-                setFormData({ ...formData, location: value });
-                if (value) setErrMsg((prev) => ({ ...prev, location: '' }));
+                setFormData({ ...formData, location: value, other_location: '' });
+                if (value) setErrMsg((prev) => ({ ...prev, location: '', other_location: '' }));
               }}
               value={formData.location}
               options={location}
               error={errMsg?.location}
               required={true}
               loadMore={() => locationListLoadMore()}
+              othersValue={formData.other_location}
+              onOthersChange={(val) => {
+                setFormData((prev) => ({ ...prev, other_location: val }));
+                if (val) setErrMsg((prev) => ({ ...prev, other_location: '' }));
+              }}
+              othersError={errMsg?.other_location}
+              othersPlaceholder='Specify Location'
             />
           </div>
 

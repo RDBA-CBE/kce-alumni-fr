@@ -30,6 +30,7 @@ const ProfileAlumniMain = () => {
         twitter_handle: "",
         address: "",
         postal_code: "",
+        other_location: "",
     });
     const [errMsg, setErrMsg] = useState({});
     const [messageApi, contextHolder] = message.useMessage();
@@ -96,6 +97,7 @@ const ProfileAlumniMain = () => {
                 twitter_handle: data?.twitter_handle || "",
                 address: data?.address || "",
                 postal_code: data?.postal_code || "",
+                other_location: data?.other_location || "",
             });
         } catch (error) {
             console.log("✌️error --->", error);
@@ -158,6 +160,12 @@ const ProfileAlumniMain = () => {
 
         // const isValid = validateForm(formData, validationRules, setErrMsg);
         // if (!isValid) return;
+        const isOthersLocation = formData.location?.label?.trim().toLowerCase() === "others";
+        if (isOthersLocation && !formData.other_location) {
+            setErrMsg((prev) => ({ ...prev, other_location: "Enter This Field" }));
+            return;
+        }
+
         const body = {
             member: memberId,
             website: formData.website,
@@ -166,6 +174,7 @@ const ProfileAlumniMain = () => {
             twitter_handle: formData.twitter_handle,
             address: formData.address,
             postal_code: formData.postal_code,
+            other_location: isOthersLocation ? formData.other_location : "",
         };
 
         try {
@@ -372,17 +381,20 @@ const ProfileAlumniMain = () => {
                                                                         type="loadMoreSelect"
                                                                         name="location"
                                                                         label="Location"
-                                                                        // className={"applicant-input"}
-                                                                        onChange={(value) =>
-                                                                            setFormData({
-                                                                                ...formData,
-                                                                                location: value,
-                                                                            })
-                                                                        }
+                                                                        onChange={(value) => {
+                                                                            setFormData({ ...formData, location: value, other_location: "" });
+                                                                            if (value) setErrMsg((prev) => ({ ...prev, location: "", other_location: "" }));
+                                                                        }}
                                                                         value={formData.location}
                                                                         options={location}
                                                                         loadMore={() => locationListLoadMore()}
-                                                                    // error={errMsg?.location}
+                                                                        othersValue={formData.other_location}
+                                                                        onOthersChange={(val) => {
+                                                                            setFormData((prev) => ({ ...prev, other_location: val }));
+                                                                            if (val) setErrMsg((prev) => ({ ...prev, other_location: "" }));
+                                                                        }}
+                                                                        othersError={errMsg?.other_location}
+                                                                        othersPlaceholder="Specify Location"
                                                                     />
                                                                 </div>
                                                             )}

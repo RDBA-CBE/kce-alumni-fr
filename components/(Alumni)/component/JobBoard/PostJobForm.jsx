@@ -17,6 +17,13 @@ import axios from "axios";
 import Models from "@/imports/models.import";
 import Loader from "@/components/(Alumni)/Loader";
 
+const hasOthersOption = (selection) =>
+  (Array.isArray(selection) ? selection : [selection]).some(
+    (option) =>
+      typeof option?.label === "string" &&
+      ["other", "others"].includes(option.label.trim().toLowerCase())
+  );
+
 const PostJobForm = () => {
   const router = useRouter();
   const { Option } = Select;
@@ -24,13 +31,17 @@ const PostJobForm = () => {
   const [formData, setFormData] = useState({
     job_title: "",
     industry: "",
+    other_industry: "",
     contact_email: "",
     contact_link: "",
     role: "",
+    other_role: "",
     experience_level_from: "",
     experience_level_to: "",
     location: "",
+    other_location: "",
     skills: [],
+    other_skill: "",
     salary_package: "",
     dead_line: "",
     file: null,
@@ -245,6 +256,24 @@ const PostJobForm = () => {
       console.log("Validation errors:", errMsg); // Log any validation errors
       return;
     }
+    const otherFieldErrors = {};
+    if (hasOthersOption(formData.industry) && !formData.other_industry.trim()) {
+      otherFieldErrors.other_industry = "Enter This Field";
+    }
+    if (hasOthersOption(formData.role) && !formData.other_role.trim()) {
+      otherFieldErrors.other_role = "Enter This Field";
+    }
+    if (hasOthersOption(formData.location) && !formData.other_location.trim()) {
+      otherFieldErrors.other_location = "Enter This Field";
+    }
+    if (hasOthersOption(formData.skills) && !formData.other_skill.trim()) {
+      otherFieldErrors.other_skill = "Enter This Field";
+    }
+    if (Object.keys(otherFieldErrors).length) {
+      setErrMsg((prev) => ({ ...prev, ...otherFieldErrors }));
+      setState({ btnloading: false });
+      return;
+    }
 
     const formDataToSend = new FormData();
     for (const key in formData) {
@@ -252,6 +281,8 @@ const PostJobForm = () => {
         formData.skills.forEach(
           (skill) => formDataToSend.append("skills", skill.value) // Append each skill ID
         );
+      } else if (key.startsWith("other_")) {
+        formDataToSend.append(key, formData[key] || "");
       }else if (key === "experience_level_from") {
         formDataToSend.append("experience_level_from", formData.experience_level_from.value);
       } else if (key === "industry") {
@@ -278,13 +309,17 @@ const PostJobForm = () => {
         setFormData({
           job_title: "",
           industry: "",
+          other_industry: "",
           contact_email: "",
           contact_link: "",
           role: "",
+          other_role: "",
           skills: [],
+          other_skill: "",
           experience_level_from: "",
           experience_level_to: "",
           location: "",
+          other_location: "",
           salary_package: "",
           dead_line: "",
           file: null,
@@ -463,9 +498,28 @@ const PostJobForm = () => {
                         name="industry"
                         value={formData.industry}
                         onChange={(e) =>
-                          setFormData({ ...formData, industry: e })
+                          setFormData((prev) => ({
+                            ...prev,
+                            industry: e,
+                            other_industry: hasOthersOption(e)
+                              ? prev.other_industry
+                              : "",
+                          }))
                         }
                         error={errMsg.industry}
+                        othersValue={formData.other_industry}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_industry: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({
+                              ...prev,
+                              other_industry: "",
+                            }));
+                        }}
+                        othersError={errMsg.other_industry}
                         options={industry}
                         required={true}
                         loadMore={() => industryListLoadMore()}
@@ -480,8 +534,24 @@ const PostJobForm = () => {
                         className="form-dd"
                         name="role"
                         value={formData.role}
-                        onChange={(e) => setFormData({ ...formData, role: e })}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            role: e,
+                            other_role: hasOthersOption(e) ? prev.other_role : "",
+                          }))
+                        }
                         error={errMsg.role}
+                        othersValue={formData.other_role}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_role: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({ ...prev, other_role: "" }));
+                        }}
+                        othersError={errMsg.other_role}
                         options={roleList}
                         required={true}
                         loadMore={() => roleListLoadMore()}
@@ -497,10 +567,24 @@ const PostJobForm = () => {
                         name="skills"
                         value={formData.skills}
                         onChange={(e) => {
-                          setFormData({ ...formData, skills: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            skills: e,
+                            other_skill: hasOthersOption(e) ? prev.other_skill : "",
+                          }));
                           console.log("skill after select", e);
                         }}
                         error={errMsg.skills}
+                        othersValue={formData.other_skill}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_skill: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({ ...prev, other_skill: "" }));
+                        }}
+                        othersError={errMsg.other_skill}
                         options={skills}
                         required={true}
                         loadMore={() => skillListLoadMore()}
@@ -576,8 +660,27 @@ const PostJobForm = () => {
                         name="location"
                         value={formData.location}
                         onChange={(value) => {
-                          setFormData({ ...formData, location: value });
+                          setFormData((prev) => ({
+                            ...prev,
+                            location: value,
+                            other_location: hasOthersOption(value)
+                              ? prev.other_location
+                              : "",
+                          }));
                         }}
+                        othersValue={formData.other_location}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_location: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({
+                              ...prev,
+                              other_location: "",
+                            }));
+                        }}
+                        othersError={errMsg.other_location}
                         options={location}
                         required={true}
                         error={errMsg.location}

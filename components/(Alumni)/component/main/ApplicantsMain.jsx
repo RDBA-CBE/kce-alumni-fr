@@ -220,7 +220,9 @@ const ApplicantsMain = () => {
                                   </td>
                                   <td>
                                     <span className="b3">
-                                      <Link href="#">{item?.current_role}</Link>
+                                      <Link href="#">
+                                        {item?.other_role || item?.current_role}
+                                      </Link>
                                     </span>
                                   </td>
                                   <td>

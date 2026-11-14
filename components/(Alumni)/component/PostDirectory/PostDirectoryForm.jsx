@@ -16,6 +16,9 @@ import { jobTypeOption, YearOfExperience } from "@/utils/constant.utils";
 import axios from "axios";
 import Models from "@/imports/models.import";
 
+const isOthersOption = (option) =>
+  option?.label?.trim().toLowerCase() === "others";
+
 const PostDirectoryForm = () => {
   const router = useRouter();
   const { Option } = Select;
@@ -24,6 +27,7 @@ const PostDirectoryForm = () => {
   const [formData, setFormData] = useState({
     business_name: "",
     country_code: "",
+    other_country: "",
     contact_email: "",
     contact_number: "",
     website: "",
@@ -31,6 +35,7 @@ const PostDirectoryForm = () => {
     logo: null,
     description: "",
     industry_type: "",
+    other_industry: "",
     are_you_part_of_management: false,
   });
   const [errMsg, setErrMsg] = useState({});
@@ -210,6 +215,20 @@ const PostDirectoryForm = () => {
       console.log("Validation errors:", errMsg);
       return;
     }
+    const otherFieldErrors = {};
+    if (isOthersOption(formData.country_code) && !formData.other_country.trim()) {
+      otherFieldErrors.other_country = "Enter This Field";
+    }
+    if (
+      isOthersOption(formData.industry_type) &&
+      !formData.other_industry.trim()
+    ) {
+      otherFieldErrors.other_industry = "Enter This Field";
+    }
+    if (Object.keys(otherFieldErrors).length) {
+      setErrMsg((prev) => ({ ...prev, ...otherFieldErrors }));
+      return;
+    }
 
     const formDataToSend = new FormData();
 
@@ -221,6 +240,8 @@ const PostDirectoryForm = () => {
         formDataToSend.append("industry_type", formData.industry_type.value);
       } else if (key === "country_code") {
         formDataToSend.append("country_code", formData.country_code.value);
+      } else if (key.startsWith("other_")) {
+        formDataToSend.append(key, formData[key] || "");
       } else {
         formDataToSend.append(key, formData[key]);
       }
@@ -244,6 +265,7 @@ const PostDirectoryForm = () => {
       setFormData({
         business_name: "",
         country_code: "",
+        other_country: "",
         contact_email: "",
         contact_number: "",
         website: "",
@@ -251,6 +273,7 @@ const PostDirectoryForm = () => {
         logo: null,
         description: "",
         industry_type: "",
+        other_industry: "",
       });
       setErrMsg({});
       setPreview(null);
@@ -367,9 +390,28 @@ const PostDirectoryForm = () => {
                         name="country_code"
                         value={formData.country_code}
                         onChange={(e) => {
-                          setFormData({ ...formData, country_code: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            country_code: e,
+                            other_country: isOthersOption(e)
+                              ? prev.other_country
+                              : "",
+                          }));
                         }}
                         error={errMsg.country_code}
+                        othersValue={formData.other_country}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_country: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({
+                              ...prev,
+                              other_country: "",
+                            }));
+                        }}
+                        othersError={errMsg.other_country}
                         options={country}
                         required={true}
                         loadMore={() => CountryListLoadMore()}
@@ -385,9 +427,28 @@ const PostDirectoryForm = () => {
                         name="industry_type"
                         value={formData.industry_type}
                         onChange={(e) => {
-                          setFormData({ ...formData, industry_type: e });
+                          setFormData((prev) => ({
+                            ...prev,
+                            industry_type: e,
+                            other_industry: isOthersOption(e)
+                              ? prev.other_industry
+                              : "",
+                          }));
                         }}
                         error={errMsg.industry_type}
+                        othersValue={formData.other_industry}
+                        onOthersChange={(value) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            other_industry: value,
+                          }));
+                          if (value)
+                            setErrMsg((prev) => ({
+                              ...prev,
+                              other_industry: "",
+                            }));
+                        }}
+                        othersError={errMsg.other_industry}
                         options={industryType}
                         required={true}
                         loadMore={() => industryTypeListLoadMore()}
