@@ -3,7 +3,14 @@ export const menus = {
     { label: "About Us", href: "/about" },
     { label: "Newsroom", href: "/newsroom" },
     // { label: "Members", href: "/members" },
-    { label: "Coimbatore Chapter", href: "/coimbatore-chapter" },
+    {
+      label: "Chapter",
+      key: "chapter",
+      children: [
+        { label: "Coimbatore Chapter", href: "/coimbatore-chapter" },
+        { label: "Bangalore Chapter", href: "/bangalore-chapter" },
+      ],
+    },
     { label: "Alumni Awards", href: "/alumni-awards" },
     { label: "Events", href: "/events" },
     { label: "Gallery", href: "/gallery" },
