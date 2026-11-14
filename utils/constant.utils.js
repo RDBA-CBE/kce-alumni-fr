@@ -9,6 +9,7 @@ export const menus = {
       children: [
         { label: "Coimbatore Chapter", href: "/coimbatore-chapter" },
         { label: "Bangalore Chapter", href: "/bangalore-chapter" },
+        { label: "Chennai Chapter", href: "/chennai-chapter" },
       ],
     },
     { label: "Alumni Awards", href: "/alumni-awards" },
