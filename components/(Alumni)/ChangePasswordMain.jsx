@@ -6,6 +6,7 @@ import { message } from "antd";
 import FormField from "@/commonComponents/FormFields";
 import axios from "axios";
 import Models from "@/imports/models.import";
+import { BaseURL } from "@/utils/BaseUrl";
 
 const ChangePasswordMain = () => {
   const router = useRouter();
@@ -132,26 +133,26 @@ const ChangePasswordMain = () => {
             <div className="form-group">
               <FormField
                 placeholder="Old Password"
-                  type="password"
-                  name="oldPassword"
-                  value={formData.oldPassword}
-                  onChange={handleChange}
-                  error={errMsg.oldPassword}
+                type="password"
+                name="oldPassword"
+                value={formData.oldPassword}
+                onChange={handleChange}
+                error={errMsg.oldPassword}
                 //   className="applicant-input"
-                  required={true}
+                required={true}
               />
               <span className="focus-border"></span>
             </div>
             <div className="form-group">
               <FormField
                 placeholder="New Password"
-                  type="password"
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  error={errMsg.newPassword}
+                type="password"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleChange}
+                error={errMsg.newPassword}
                 //   className="applicant-input"
-                  required={true}
+                required={true}
               />
               <span className="focus-border"></span>
             </div>
@@ -159,18 +160,18 @@ const ChangePasswordMain = () => {
             <div className="form-group">
               <FormField
                 placeholder="Confirm New Password"
-                  type="password"
-                  name="confirmnewPassword"
-                  value={formData.confirmnewPassword}
-                  onChange={handleChange}
-                  error={errMsg.confirmnewPassword}
-                  
-                  required={true}
+                type="password"
+                name="confirmnewPassword"
+                value={formData.confirmnewPassword}
+                onChange={handleChange}
+                error={errMsg.confirmnewPassword}
+
+                required={true}
               />
               <span className="focus-border"></span>
             </div>
 
-            
+
 
             <div className="form-submit-group">
               <button
@@ -191,7 +192,7 @@ const ChangePasswordMain = () => {
 
             <div className="mt-5 text-center">
               <p>
-               Go Back to Home? <Link href={"/home"}>Back</Link>
+                Go Back to Home? <Link href={"/home"}>Back</Link>
               </p>
             </div>
           </form>

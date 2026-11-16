@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { DeleteOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Select } from "antd";
+import { message, Select } from "antd";
 import Link from "next/link";
 import { BaseURL } from "@/utils/BaseUrl";
 import {
@@ -25,10 +25,10 @@ const hasOthersOption = (selection) =>
   );
 
 const EditJobForm = () => {
-const router = useRouter();
+  const router = useRouter();
   const { Option } = Select;
 
-  const {id} = useParams()
+  const { id } = useParams()
 
   const [formData, setFormData] = useState({
     job_title: "",
@@ -165,8 +165,8 @@ const router = useRouter();
         job_description: data.job_description || "",
         // skills: data.skills || [],
         skills: data.skills.map((item) => (
-  { value: item.id, label: item.skill }
-)),
+          { value: item.id, label: item.skill }
+        )),
         other_skill: data.other_skill || "",
       });
 
@@ -392,6 +392,7 @@ const router = useRouter();
         },
       })
       .then((response) => {
+        message.success(response?.data?.message || "Job updated successfully");
         router.back();
         setFormData({
           job_title: "",
@@ -420,8 +421,54 @@ const router = useRouter();
       })
       .catch((error) => {
         setBtnLoading(false);
-
         console.log("❌error --->", error);
+
+        const resData = error?.response?.data;
+        const newFieldErrors = {};
+        const messages = [];
+
+        if (resData && typeof resData === "object") {
+          if (resData.message && typeof resData.message === "string") {
+            messages.push(resData.message);
+          }
+          if (
+            resData.error &&
+            typeof resData.error === "string" &&
+            !messages.includes(resData.error)
+          ) {
+            messages.push(resData.error);
+          }
+          if (
+            resData.detail &&
+            typeof resData.detail === "string" &&
+            !messages.includes(resData.detail)
+          ) {
+            messages.push(resData.detail);
+          }
+
+          Object.entries(resData).forEach(([key, value]) => {
+            if (["message", "error", "detail"].includes(key)) return;
+            const text = Array.isArray(value)
+              ? value.join(", ")
+              : typeof value === "string"
+                ? value
+                : JSON.stringify(value);
+            newFieldErrors[key] = text;
+            messages.push(text);
+          });
+
+          if (Object.keys(newFieldErrors).length > 0) {
+            setErrMsg((prev) => ({ ...prev, ...newFieldErrors }));
+          }
+        }
+
+        if (messages.length > 0) {
+          messages.forEach((msg) => message.error(msg));
+        } else {
+          message.error(
+            error?.message || "Something went wrong while updating job"
+          );
+        }
       });
   };
 
@@ -832,7 +879,7 @@ const router = useRouter();
                           }}
                         >
                           {typeof preview === "string" &&
-                          preview.endsWith(".pdf") ? (
+                            preview.endsWith(".pdf") ? (
                             <div
                               style={{
                                 width: "100%",

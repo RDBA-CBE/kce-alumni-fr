@@ -79,7 +79,7 @@ const CustomSelect = (props) => {
     <div className={`w-full ${className}`}>
       {title && (
         <label className="block text-sm font-bold">
-          {title} {required && <span className="text-red-500">*</span>}
+          {title} {required && <span style={{ color: "red" }}>*</span>}
         </label>
       )}
       <div>
@@ -103,7 +103,14 @@ const CustomSelect = (props) => {
           className={`react-select ${className} ${error ? "border-red-500" : ""} ${isMulti ? "is-multi" : ""}`}
           onMenuScrollToBottom={handleLoadMore}
         />
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && (
+          <p
+            className="sub text-danger"
+            style={{ color: "red", paddingTop: "3px", fontSize: "15px" }}
+          >
+            {error}
+          </p>
+        )}
         {isOthersSelected && onOthersChange && (
           <div style={{ marginTop: '8px' }}>
             <input
@@ -120,7 +127,14 @@ const CustomSelect = (props) => {
                 outline: 'none',
               }}
             />
-            {othersError && <p className="mt-2 text-sm text-red-600">{othersError}</p>}
+            {othersError && (
+              <p
+                className="sub text-danger"
+                style={{ color: "red", paddingTop: "3px", fontSize: "15px" }}
+              >
+                {othersError}
+              </p>
+            )}
           </div>
         )}
       </div>

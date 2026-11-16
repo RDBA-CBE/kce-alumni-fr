@@ -2,9 +2,16 @@ import { instance } from "@/utils/axios.utils";
 
 
 const gallery = {
-  albumList: (page) => {
+  albumList: (page = 1, params = {}) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `albums/?page=${page}&pagesize=10`;
+      let url = `albums/?page=${page}&pagesize=12`;
+      if (params && typeof params === "object") {
+        Object.keys(params).forEach((key) => {
+          if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
+            url += `&${key}=${encodeURIComponent(params[key])}`;
+          }
+        });
+      }
       instance()
         .get(url)
         .then((res) => {
@@ -22,9 +29,16 @@ const gallery = {
     return promise;
   },
 
-  memoriesList: (page) => {
+  memoriesList: (page = 1, params = {}) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `memories/?page=${page}&pagesize=10`;
+      let url = `memories/?page=${page}&pagesize=12`;
+      if (params && typeof params === "object") {
+        Object.keys(params).forEach((key) => {
+          if (params[key] !== undefined && params[key] !== null && params[key] !== "") {
+            url += `&${key}=${encodeURIComponent(params[key])}`;
+          }
+        });
+      }
       instance()
         .get(url)
         .then((res) => {
@@ -189,12 +203,13 @@ const gallery = {
   updateAlbum: (id, body) => {
     let promise = new Promise((resolve, reject) => {
       let url = `updatealbum/${id}/`;
+      const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
       instance()
-        .patch(url, body, {
+        .patch(url, body, isFormData ? {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
+        } : {})
         .then((res) => {
           resolve(res.data);
         })
@@ -261,12 +276,13 @@ const gallery = {
   updateMemories: (id, body) => {
     let promise = new Promise((resolve, reject) => {
       let url = `updatememories/${id}/`;
+      const isFormData = typeof FormData !== "undefined" && body instanceof FormData;
       instance()
-        .patch(url, body, {
+        .patch(url, body, isFormData ? {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
+        } : {})
         .then((res) => {
           resolve(res.data);
         })

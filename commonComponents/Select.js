@@ -72,7 +72,7 @@ const CustomSelect = (props) => {
     <div className={`w-full ${className}`}>
       {title && (
         <label className="block text-sm font-bold">
-          {title} {required && <span className="text-red-500">*</span>}
+          {title} {required && <span style={{ color: "red" }}>*</span>}
         </label>
       )}
       <div className="">
@@ -98,7 +98,14 @@ const CustomSelect = (props) => {
           onMenuScrollToBottom={handleLoadMore}
           menuShouldBlockScroll={true}
         />
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+        {error && (
+          <p
+            className="sub text-danger"
+            style={{ color: "red", paddingTop: "3px", fontSize: "15px" }}
+          >
+            {error}
+          </p>
+        )}
       </div>
     </div>
   );

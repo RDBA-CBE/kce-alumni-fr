@@ -33,6 +33,12 @@ const event = {
       if (body.is_past == "false") {
         url += `&is_past=${encodeURIComponent(body.is_past)}`;
       }
+      if (body.is_approved == "true") {
+        url += `&is_approved=${encodeURIComponent(body.is_approved)}`;
+      }
+      if (body.is_approved == "false") {
+        url += `&is_approved=${encodeURIComponent(body.is_approved)}`;
+      }
 
       instance()
         .post(url)
@@ -311,13 +317,13 @@ const event = {
   UpdateEditEventsDatas: (id, data) => {
     let promise = new Promise((resolve, reject) => {
       let url = `update_event/${id}/`;
-
+      const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
       instance()
-        .patch(url, data, {
+        .patch(url, data, isFormData ? {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
+        } : {})
         .then((res) => {
           resolve(res.data);
         })

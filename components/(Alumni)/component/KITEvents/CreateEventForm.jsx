@@ -24,14 +24,14 @@ import axios from "axios";
 import Models from "@/imports/models.import";
 import dynamic from "next/dynamic";
 import EventQuestion from "@/components/(Alumni)/component/KITEvents/EventQuestion";
- import * as validation from "@/utils/validation.utils"
+import * as validation from "@/utils/validation.utils"
 
 const RichTextEditor = dynamic(() => import("@/commonComponents/RichEditor"), {
   ssr: false, // Disable server-side rendering for this component
 });
 
 const CreateEventForm = () => {
-  
+
 
   const [state, setState] = useSetState({
     activeTab: 1,
@@ -130,7 +130,7 @@ const CreateEventForm = () => {
 
   const createEvent = async (e) => {
     try {
-        e.preventDefault();
+      e.preventDefault();
       setState({ btnLoading: true });
       const body = {
         title: state.title,
@@ -152,6 +152,7 @@ const CreateEventForm = () => {
         event_wallpaper: state.event_wallpaper,
         instructions: state.instructions,
         event_question: state.question,
+        is_approved: true
       };
 
       await validation.createEvent.validate(body, { abortEarly: false });
@@ -218,7 +219,7 @@ const CreateEventForm = () => {
               <div className="rbt-contact-form contact-form-style-1 max-width-auto">
                 <form
                   id="contact-form"
-                
+
                   className="rainbow-dynamic-form max-width-auto"
                   onSubmit={(e) => createEvent(e)}
                 >
@@ -429,7 +430,7 @@ const CreateEventForm = () => {
                   <div className="mt-4 w-100">
                     <label
                       className="mb-3"
-                    
+
                     >
                       Description <span className="text-danger">*</span>
                     </label>

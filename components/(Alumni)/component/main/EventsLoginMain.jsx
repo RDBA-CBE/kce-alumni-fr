@@ -18,7 +18,7 @@ import UpCommingEvents from '../KITEvents/UpCommingEvents';
 import Pagination from '@/commonComponents/Pagination';
 import Loader from '../../Loader';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
 
 const fetchAllPages = async (fetchPage) => {
   const results = [];
@@ -53,6 +53,8 @@ const EventsLoginMain = () => {
     isFaculty: false,
     token: '',
     activeTab: '',
+    filterCategory: '',
+    filterApproval: '', // '' = All, 'approved' = true, 'unapproved' = false
     currentPage: 1,
     total: 0,
     next: undefined,
@@ -97,6 +99,7 @@ const EventsLoginMain = () => {
     state.token,
     state.activeTab,
     state.filterCategory,
+    state.filterApproval,
   ]);
 
   const GetAllEventsAdmin = async (page) => {
@@ -214,23 +217,44 @@ const EventsLoginMain = () => {
 
   const showEventDeleteConfirm = (event) => {
     confirm({
-      title: event.is_active
-        ? 'Are you sure you want to InActive this Event?'
-        : 'Are you sure you want to Active this Event?',
-      okText: event.is_active ? 'InActive' : 'Active',
-      okType: 'danger',
+      title: event.is_approved
+        ? 'Are you sure you want to Un Approve this Event?'
+        : 'Are you sure you want to Approve this Event?',
+      okText: event.is_approved ? 'Un Approve' : 'Approve',
+      okType: event.is_approved ? 'danger' : 'primary',
+      okButtonProps: event.is_approved
+        ? {
+            style: {
+              borderRadius: '8px',
+            },
+          }
+        : {
+            className: 'gallery-confirm-btn',
+            style: {
+              background: 'linear-gradient(90deg, #cc7539, #d76239)',
+              borderColor: 'transparent',
+              color: '#ffffff',
+              borderRadius: '8px',
+            },
+          },
+      cancelButtonProps: {
+        className: 'gallery-cancel-btn',
+        style: {
+          borderRadius: '8px',
+        },
+      },
       cancelText: 'Cancel',
       async onOk() {
         try {
           const body = {
-            is_active: !event.is_active,
+            is_approved: !event.is_approved,
           };
 
-          const res = await Models?.event?.InactiveEvents(event.id, body);
+          const res = await Models?.event?.UpdateEditEventsDatas(event.id, body);
 
           message.success(res.message);
 
-          GetAllEventsAdmin(state.currentPage);
+          filterData(state.currentPage);
         } catch (error) {
           console.log('error: ', error);
 
@@ -270,6 +294,16 @@ const EventsLoginMain = () => {
       }
       if (state.filterCategory == 'completed') {
         body.is_past = 'true';
+      }
+    }
+
+    // Add approval filter
+    if (state.filterApproval) {
+      if (state.filterApproval === 'approved') {
+        body.is_approved = 'true';
+      }
+      if (state.filterApproval === 'unapproved') {
+        body.is_approved = 'false';
       }
     }
 
@@ -346,14 +380,13 @@ const EventsLoginMain = () => {
                                   <li
                                     className='nav-item'
                                     role='presentation'
-                                    // style={{
-                                    //   borderBottom:"1px solid #6b7385"
-                                    // }}
+                                  // style={{
+                                  //   borderBottom:"1px solid #6b7385"
+                                  // }}
                                   >
                                     <a
-                                      className={`w-100 ${
-                                        pathname === '#' ? 'active' : ''
-                                      }`}
+                                      className={`w-100 ${pathname === '#' ? 'active' : ''
+                                        }`}
                                       href='#'
                                     >
                                       <FormField
@@ -375,6 +408,45 @@ const EventsLoginMain = () => {
                                           {
                                             value: 'completed',
                                             label: 'Completed',
+                                          },
+                                        ]}
+                                        className={'border px-3'}
+                                      />
+                                    </a>
+                                  </li>
+                                </ul>
+
+                                <h5 className=' mt-5'>Approval Status</h5>
+                                <ul className='rbt-sidebar-list-wrapper categories-list-check has-show-more-inner-content'>
+                                  <li
+                                    className='nav-item'
+                                    role='presentation'
+                                  >
+                                    <a
+                                      className={`w-100 ${pathname === '#' ? 'active' : ''
+                                        }`}
+                                      href='#'
+                                    >
+                                      <FormField
+                                        type='select'
+                                        disabled={false}
+                                        onChange={(e) =>
+                                          setState({
+                                            filterApproval: e.target.value,
+                                            currentPage: 1,
+                                          })
+                                        }
+                                        name='filterApproval'
+                                        placeholder='Approval Status'
+                                        value={state.filterApproval}
+                                        options={[
+                                          {
+                                            value: 'approved',
+                                            label: 'Approved',
+                                          },
+                                          {
+                                            value: 'unapproved',
+                                            label: 'Unapproved',
                                           },
                                         ]}
                                         className={'border px-3'}
@@ -440,6 +512,7 @@ const EventsLoginMain = () => {
                                     currentPages={state.currentPage}
                                     next={state.next}
                                     maxPage={state.maxPage}
+                                    pageSize={PAGE_SIZE}
                                   />
                                 </div>
                               </div>

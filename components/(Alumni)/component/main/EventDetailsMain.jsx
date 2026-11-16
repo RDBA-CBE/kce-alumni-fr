@@ -85,14 +85,85 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
     }
   }, [id]);
 
+  const { confirm } = Modal;
+
   useEffect(() => {
     const group = localStorage.getItem('group');
+    const isAdmin = localStorage.getItem('isAdmin');
+    const isAlumniManager = localStorage.getItem('isAlumniManager');
     setState({
       group: group,
-      // isAlumniContact:isAlumniContact == "true" ? true : false,
-      // isAlumniEducation:isAlumniEducation ==
+      isAdminLogin: isAdmin === 'true' || isAdmin === true,
+      isAlumniManagerLogin:
+        isAlumniManager === 'true' || isAlumniManager === true,
     });
   }, [state.group]);
+
+  const isEventApproved = () => {
+    const val = state.eventData?.is_approved;
+    if (val !== undefined && val !== null) {
+      return val === true || val === 'true' || val === 1;
+    }
+    return false;
+  };
+
+  const showApprovalConfirm = () => {
+    const currentApproved = isEventApproved();
+    const nextApproved = !currentApproved;
+
+    confirm({
+      title: currentApproved
+        ? 'Are you sure you want to Unapprove this Event?'
+        : 'Are you sure you want to Approve this Event?',
+      okText: currentApproved ? 'Unapprove' : 'Approve',
+      okType: currentApproved ? 'danger' : 'primary',
+      okButtonProps: currentApproved
+        ? {
+            style: {
+              borderRadius: '8px',
+            },
+          }
+        : {
+            className: 'gallery-confirm-btn',
+            style: {
+              background: 'linear-gradient(90deg, #cc7539, #d76239)',
+              borderColor: 'transparent',
+              color: '#ffffff',
+              borderRadius: '8px',
+            },
+          },
+      cancelButtonProps: {
+        className: 'gallery-cancel-btn',
+        style: {
+          borderRadius: '8px',
+        },
+      },
+      async onOk() {
+        try {
+          const body = {
+            is_approved: nextApproved,
+          };
+          const res = await Models?.event?.UpdateEditEventsDatas(id, body);
+          message.success(
+            res?.message ||
+              `Event ${nextApproved ? 'approved' : 'unapproved'} successfully`
+          );
+          await GetEventDetails();
+        } catch (error) {
+          console.log('error: ', error);
+          const errorMessage =
+            error?.response?.data?.error ||
+            error?.error ||
+            error?.data?.error ||
+            'Failed to update event approval status';
+          message.error(errorMessage);
+        }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
 
   console.log('group', state.group);
 
@@ -123,7 +194,7 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
       const tabs = [
         'Email Attendees',
         'Export Attendees',
-        ...(res?.is_admin ? ['Edit Event'] : []), // Only shown for admins
+        ...(res?.is_admin || res?.is_owner ? ['Edit Event'] : []),
         'Publish & Share',
       ];
       setState({
@@ -286,12 +357,30 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
   if (state.pageLoading) {
     return <Loader />; // Show loader while checking token
   }
+
+  const isOwnerOrAdmin = () => {
+    const isOwner =
+      state?.eventData?.is_owner === true ||
+      state?.eventData?.is_owner === 'true' ||
+      state?.eventData?.is_owner === 1;
+    const isAdmin =
+      state?.eventData?.is_admin === true ||
+      state?.eventData?.is_admin === 'true' ||
+      state?.eventData?.is_admin === 1 ||
+      state?.isAdminLogin === true ||
+      state?.group === 'admin' ||
+      (typeof window !== 'undefined' &&
+        (String(localStorage.getItem('isAdmin')).toLowerCase() === 'true' ||
+          localStorage.getItem('isAdmin') === true));
+    return Boolean(isOwner || isAdmin);
+  };
+
   return (
     <>
       <div className='row g-5 event-details'>
         <div className='col-lg-8'>
           <div className='course-details-content'>
-            <div className='rbt-feature-box rbt-shadow-box thuumbnail bg-liblue'>
+            <div className='rbt-feature-box rbt-shadow-box thuumbnail bg-liblue position-relative'>
               <img
                 className='w-100'
                 src={
@@ -309,16 +398,82 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
                   objectFit: 'cover',
                 }}
               />
+              {isOwnerOrAdmin() && (
+                <div
+                  className='rbt-button-group position-absolute'
+                  style={{ top: '20px', right: '20px', zIndex: 10 }}
+                >
+                  <a
+                    className={`rbt-btn btn-xs radius-round shadow-sm ${
+                      isEventApproved()
+                        ? 'bg-color-success-opacity color-success'
+                        : 'bg-color-warning-opacity color-warning'
+                    }`}
+                    style={{ background: '#ffffff' }}
+                    href='#'
+                    title={
+                      isEventApproved()
+                        ? 'Approved (Click to Unapprove)'
+                        : 'Pending (Click to Approve)'
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      showApprovalConfirm();
+                    }}
+                  >
+                    <i
+                      className={`${
+                        isEventApproved()
+                          ? 'feather-check-circle text-success'
+                          : 'feather-x-circle text-warning'
+                      } pl--0`}
+                      style={{ fontSize: '16px' }}
+                    />
+                  </a>
+                </div>
+              )}
             </div>
 
             {state?.eventData?.description && (
               <div className='rbt-feature-box rbt-shadow-box mt--40 bg-liblue'>
                 <div className='row g-5'>
                   <div className='col-lg-12'>
-                    <div className='section-title'>
-                      <h5 className='title mb--20'>
+                    <div className='section-title d-flex justify-content-between align-items-center mb--20'>
+                      <h5 className='title mb--0'>
                         {state?.eventData?.title}
                       </h5>
+                      {isOwnerOrAdmin() && (
+                        <div className='d-flex align-items-center gap-2'>
+                          <a
+                            className={`rbt-btn btn-xs radius-round d-inline-flex align-items-center gap-2 ${
+                              isEventApproved()
+                                ? 'bg-color-success-opacity color-success'
+                                : 'bg-color-warning-opacity color-warning'
+                            }`}
+                            href='#'
+                            title={
+                              isEventApproved()
+                                ? 'Approved (Click to Unapprove)'
+                                : 'Pending (Click to Approve)'
+                            }
+                            onClick={(e) => {
+                              e.preventDefault();
+                              showApprovalConfirm();
+                            }}
+                          >
+                            <i
+                              className={`${
+                                isEventApproved()
+                                  ? 'feather-check-circle'
+                                  : 'feather-x-circle'
+                              } pl--0`}
+                            />
+                            <span style={{ fontSize: '13px', fontWeight: 500 }}>
+                              {isEventApproved() ? 'Approved' : 'Pending'}
+                            </span>
+                          </a>
+                        </div>
+                      )}
                     </div>
                     <p
                       className='mb-2'
@@ -408,8 +563,28 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
                     </div>
                   )}
 
-                  {state.group !== 'alumni' && state.group !== 'student' && (
+                  {isOwnerOrAdmin() && (
                     <div className='event-actions mb--15'>
+                      <button
+                        className={`rbt-btn icon-hover event-btn ${
+                          isEventApproved() ? 'btn-border' : 'btn-gradient'
+                        }`}
+                        onClick={showApprovalConfirm}
+                      >
+                        <span className='btn-text'>
+                          {isEventApproved() ? 'Unapprove Event' : 'Approve Event'}
+                        </span>
+                        <span className='btn-icon'>
+                          <i
+                            className={
+                              isEventApproved()
+                                ? 'feather-x-circle text-danger'
+                                : 'feather-check-circle text-success'
+                            }
+                          ></i>
+                        </span>
+                      </button>
+
                       <button
                         className='rbt-btn btn-gradient icon-hover event-btn'
                         onClick={() => handleClickTab('Email Attendees')}

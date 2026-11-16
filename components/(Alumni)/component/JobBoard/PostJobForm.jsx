@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { DeleteOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
-import { Select } from "antd";
+import { message, Select } from "antd";
 import Link from "next/link";
 import { BaseURL } from "@/utils/BaseUrl";
 import {
@@ -77,7 +77,7 @@ const PostJobForm = () => {
     hasInstitutionLoadMore: null,
     currenLocationPage: 1,
     hasLocationLoadMore: null,
-    btnloading:false
+    btnloading: false
   });
 
   useEffect(() => {
@@ -230,7 +230,7 @@ const PostJobForm = () => {
 
   const handleSubmit = async (e) => {
 
-    setState({btnloading:true})
+    setState({ btnloading: true })
     e.preventDefault();
 
     const validationRules = {
@@ -254,6 +254,7 @@ const PostJobForm = () => {
 
     if (!isValid) {
       console.log("Validation errors:", errMsg); // Log any validation errors
+      setState({ btnloading: false, btnLoading: false });
       return;
     }
     const otherFieldErrors = {};
@@ -283,7 +284,7 @@ const PostJobForm = () => {
         );
       } else if (key.startsWith("other_")) {
         formDataToSend.append(key, formData[key] || "");
-      }else if (key === "experience_level_from") {
+      } else if (key === "experience_level_from") {
         formDataToSend.append("experience_level_from", formData.experience_level_from.value);
       } else if (key === "industry") {
         formDataToSend.append("industry", formData.industry.value);
@@ -305,6 +306,7 @@ const PostJobForm = () => {
       })
       .then((response) => {
         console.log("✌️response --->", response);
+        message.success(response?.data?.message || "Job posted successfully");
         router.push("/job-board/");
         setFormData({
           job_title: "",
@@ -329,11 +331,58 @@ const PostJobForm = () => {
         setErrMsg({});
         setPreview(null);
         setFileInputKey(Date.now());
-        setState({btnLoading:false})
+        setState({ btnloading: false, btnLoading: false });
       })
       .catch((error) => {
         console.log("❌error --->", error);
-        setState({btnLoading:false})
+        setState({ btnloading: false, btnLoading: false });
+
+        const resData = error?.response?.data;
+        const newFieldErrors = {};
+        const messages = [];
+
+        if (resData && typeof resData === "object") {
+          if (resData.message && typeof resData.message === "string") {
+            messages.push(resData.message);
+          }
+          if (
+            resData.error &&
+            typeof resData.error === "string" &&
+            !messages.includes(resData.error)
+          ) {
+            messages.push(resData.error);
+          }
+          if (
+            resData.detail &&
+            typeof resData.detail === "string" &&
+            !messages.includes(resData.detail)
+          ) {
+            messages.push(resData.detail);
+          }
+
+          Object.entries(resData).forEach(([key, value]) => {
+            if (["message", "error", "detail"].includes(key)) return;
+            const text = Array.isArray(value)
+              ? value.join(", ")
+              : typeof value === "string"
+              ? value
+              : JSON.stringify(value);
+            newFieldErrors[key] = text;
+            messages.push(text);
+          });
+
+          if (Object.keys(newFieldErrors).length > 0) {
+            setErrMsg((prev) => ({ ...prev, ...newFieldErrors }));
+          }
+        }
+
+        if (messages.length > 0) {
+          messages.forEach((msg) => message.error(msg));
+        } else {
+          message.error(
+            error?.message || "Something went wrong while posting job"
+          );
+        }
       });
   };
 
@@ -401,7 +450,7 @@ const PostJobForm = () => {
       console.log("error: ", error);
     }
   };
-  
+
 
   const experienceList = async () => {
     try {
@@ -600,7 +649,7 @@ const PostJobForm = () => {
                         className="form-dd"
                         name="experience_level_from"
                         value={formData.experience_level_from}
-                         onChange={(e) => {
+                        onChange={(e) => {
                           setFormData({ ...formData, experience_level_from: e });
                           console.log("experience_level_from select", e);
                         }}
@@ -608,9 +657,9 @@ const PostJobForm = () => {
                         error={errMsg.experience_level_from}
                         required={true}
                         options={YearOfExperience}
-                        
-                        
-                        
+
+
+
                       />
                       {/* <FormField
                         placeholder="Experience From"

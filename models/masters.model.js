@@ -447,6 +447,26 @@ const masters = {
     return promise;
   },
 
+  GetJobCategoryData: (page) => {
+    let promise = new Promise((resolve, reject) => {
+      let url = `postcategory/?page=${page}&pagesize=30`;
+      instance()
+        .get(url)
+        .then((res) => {
+          resolve(res.data);
+        })
+        .catch((error) => {
+          console.log("errorsss: ", error);
+          if (error.response) {
+            reject(error.response.data.error);
+          } else {
+            reject(error);
+          }
+        });
+    });
+    return promise;
+  },
+
   GetPostCategoryList: (page) => {
     let promise = new Promise((resolve, reject) => {
       let url = `postcategory/?page=${page}&pagesize=10`;

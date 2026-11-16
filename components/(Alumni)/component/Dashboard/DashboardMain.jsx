@@ -121,7 +121,7 @@ const DashboardMain = () => {
 
   const GetPostCategory = async () => {
     try {
-      const res = await Models?.masters?.GetPostCategoryData(1);
+      const res = await Models?.masters?.GetJobCategoryData(1);
       const dropdown = Dropdown(res?.results, 'name');
       setState({ postCatOption: dropdown });
     } catch (error) {
@@ -249,8 +249,8 @@ const DashboardMain = () => {
     formData.append(
       'visible_to_public',
       (state.visibility == '1' && 'True') ||
-        (state?.visibility == '2' && 'False') ||
-        false
+      (state?.visibility == '2' && 'False') ||
+      false
     );
 
     try {
@@ -306,8 +306,8 @@ const DashboardMain = () => {
     formData.append(
       'visible_to_public',
       (state.visibility == '1' && 'True') ||
-        (state?.visibility == '2' && 'False') ||
-        'False'
+      (state?.visibility == '2' && 'False') ||
+      'False'
     );
 
     try {
@@ -427,14 +427,14 @@ const DashboardMain = () => {
                             >
                               My Post
                             </div>
-                           {(state.AlumniManagerLogin && !state.AdminLogin ) && (
-                            <div
-                              className="rbt-btn btn-gradient radius-round sm-btn"
-                              onClick={() => router?.push("/published-posts")}
-                            >
-                              Publish Post 
-                            </div>
-                           )}
+                            {(state.AlumniManagerLogin && !state.AdminLogin) && (
+                              <div
+                                className="rbt-btn btn-gradient radius-round sm-btn"
+                                onClick={() => router?.push("/published-posts")}
+                              >
+                                Publish Post
+                              </div>
+                            )}
 
                             <div
                               className='rbt-btn btn-gradient radius-round sm-btn'
@@ -476,9 +476,8 @@ const DashboardMain = () => {
                                       role='presentation'
                                     >
                                       <a
-                                        className={`${
-                                          pathname === '#' ? 'active' : ''
-                                        }`}
+                                        className={`${pathname === '#' ? 'active' : ''
+                                          }`}
                                         href='#'
                                       >
                                         <FormField
@@ -501,9 +500,8 @@ const DashboardMain = () => {
                                       role='presentation'
                                     >
                                       <a
-                                        className={`w-100 ${
-                                          pathname === '#' ? 'active' : ''
-                                        }`}
+                                        className={`w-100 ${pathname === '#' ? 'active' : ''
+                                          }`}
                                         href='#'
                                       >
                                         <FormField

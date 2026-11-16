@@ -2061,3 +2061,32 @@ select {
   ubderline: none !important;
   
 }
+
+/* Confirmation modal buttons */
+.gallery-confirm-btn,
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn-primary {
+  background: linear-gradient(90deg, #cc7539, #d76239) !important;
+  border-color: transparent !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+
+  &:hover,
+  &:focus {
+    background: linear-gradient(90deg, #d76239, #cc7539) !important;
+    border-color: transparent !important;
+    color: #ffffff !important;
+  }
+}
+
+.gallery-cancel-btn,
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn-default {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+}
+
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn-dangerous {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+}

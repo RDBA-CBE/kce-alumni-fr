@@ -152,6 +152,129 @@ const AlbumMain = () => {
     });
   };
 
+  const isOwnerOrAdmin = () => {
+    const isAdmin =
+      state.data?.is_admin === true ||
+      state.data?.is_admin === 'true' ||
+      state.data?.is_admin === 1 ||
+      (typeof window !== 'undefined' &&
+        (String(localStorage.getItem('isAdmin')).toLowerCase() === 'true' ||
+          localStorage.getItem('isAdmin') === true));
+    return Boolean(isAdmin);
+  };
+
+  const showArchiveToggleConfirm = () => {
+    const isCurrentlyActive =
+      state.data?.is_active !== undefined && state.data?.is_active !== null
+        ? state.data?.is_active === true || state.data?.is_active === 'true' || state.data?.is_active === 1
+        : true;
+    const nextActive = !isCurrentlyActive;
+
+    confirm({
+      title: isCurrentlyActive
+        ? 'Are you sure you want to Inactivate this Album?'
+        : 'Are you sure you want to Activate this Album?',
+      okText: isCurrentlyActive ? 'InActive' : 'Active',
+      okType: isCurrentlyActive ? 'danger' : 'primary',
+      okButtonProps: isCurrentlyActive
+        ? {
+            style: {
+              borderRadius: '8px',
+            },
+          }
+        : {
+            className: 'gallery-confirm-btn',
+            style: {
+              background: 'linear-gradient(90deg, #cc7539, #d76239)',
+              borderColor: 'transparent',
+              color: '#ffffff',
+              borderRadius: '8px',
+            },
+          },
+      cancelButtonProps: {
+        className: 'gallery-cancel-btn',
+        style: {
+          borderRadius: '8px',
+        },
+      },
+      async onOk() {
+        try {
+          const formData = new FormData();
+          formData.append('is_active', nextActive);
+          await Models.gallery.updateAlbum(id, formData);
+          message.success(
+            `Album ${nextActive ? 'activated' : 'inactivated'} successfully`
+          );
+          await albumDetails();
+        } catch (error) {
+          console.log('error: ', error);
+          message.error('Failed to update album status');
+        }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
+  const showApprovalToggleConfirm = () => {
+    const isCurrentlyApproved = Boolean(
+      state.data?.is_approved === true ||
+        state.data?.is_approved === 'true' ||
+        state.data?.is_approved === 1 ||
+        state.data?.approved === true ||
+        state.data?.approved === 'true' ||
+        state.data?.approved === 1
+    );
+    const nextApproved = !isCurrentlyApproved;
+
+    confirm({
+      title: isCurrentlyApproved
+        ? 'Are you sure you want to Unapprove this Album?'
+        : 'Are you sure you want to Approve this Album?',
+      okText: isCurrentlyApproved ? 'Unapprove' : 'Approve',
+      okType: isCurrentlyApproved ? 'danger' : 'primary',
+      okButtonProps: isCurrentlyApproved
+        ? {
+            style: {
+              borderRadius: '8px',
+            },
+          }
+        : {
+            className: 'gallery-confirm-btn',
+            style: {
+              background: 'linear-gradient(90deg, #cc7539, #d76239)',
+              borderColor: 'transparent',
+              color: '#ffffff',
+              borderRadius: '8px',
+            },
+          },
+      cancelButtonProps: {
+        className: 'gallery-cancel-btn',
+        style: {
+          borderRadius: '8px',
+        },
+      },
+      async onOk() {
+        try {
+          const formData = new FormData();
+          formData.append('is_approved', nextApproved);
+          await Models.gallery.updateAlbum(id, formData);
+          message.success(
+            `Album ${nextApproved ? 'approved' : 'unapproved'} successfully`
+          );
+          await albumDetails();
+        } catch (error) {
+          console.log('error: ', error);
+          message.error('Failed to update album approval status');
+        }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
+
   const handleDeleteAlbum = async () => {
     try {
       await Models.gallery.deleteAlbum(id);
@@ -188,7 +311,7 @@ const AlbumMain = () => {
     try {
       setState({ uploadLoading: true });
       console.log("uploadPhoto");
-      
+
 
       for (const image of state.uploadedImages) {
         const formData = new FormData();
@@ -244,20 +367,101 @@ const AlbumMain = () => {
 
   return (
     <>
+      {contextHolder}
       <div className='container album'>
         <div className='row g-3 parent-gallery-container KITgallery '>
           <div className='d-flex justify-content-between py-4 mb-4'>
             <h4 className='mb-0'>{state.album_name}</h4>
 
-            {(state.data?.is_owner || state.data?.is_admin) && (
+            {isOwnerOrAdmin() && (
               <div className='rbt-button-group justify-content-end'>
+                <a
+                  className={`rbt-btn btn-xs radius-round ${
+                    state.data?.is_active === false ||
+                    state.data?.is_active === 'false' ||
+                    state.data?.is_active === 0
+                      ? 'bg-color-danger-opacity color-danger'
+                      : 'bg-primary-opacity'
+                  }`}
+                  href='#'
+                  title={
+                    state.data?.is_active === false ||
+                    state.data?.is_active === 'false' ||
+                    state.data?.is_active === 0
+                      ? 'Inactive (Click to Activate)'
+                      : 'Active (Click to Inactivate)'
+                  }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    showArchiveToggleConfirm();
+                  }}
+                >
+                  <i
+                    className={`${
+                      state.data?.is_active === false ||
+                      state.data?.is_active === 'false' ||
+                      state.data?.is_active === 0
+                        ? 'feather-power'
+                        : 'feather-archive'
+                    } pl--0`}
+                  />
+                </a>
+
+                <a
+                  className={`rbt-btn btn-xs radius-round ${
+                    Boolean(
+                      state.data?.is_approved === true ||
+                        state.data?.is_approved === 'true' ||
+                        state.data?.is_approved === 1 ||
+                        state.data?.approved === true ||
+                        state.data?.approved === 'true' ||
+                        state.data?.approved === 1
+                    )
+                      ? 'bg-color-success-opacity color-success'
+                      : 'bg-color-warning-opacity color-warning'
+                  }`}
+                  href='#'
+                  title={
+                    Boolean(
+                      state.data?.is_approved === true ||
+                        state.data?.is_approved === 'true' ||
+                        state.data?.is_approved === 1 ||
+                        state.data?.approved === true ||
+                        state.data?.approved === 'true' ||
+                        state.data?.approved === 1
+                    )
+                      ? 'Approved (Click to Unapprove)'
+                      : 'Unapproved (Click to Approve)'
+                  }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    showApprovalToggleConfirm();
+                  }}
+                >
+                  <i
+                    className={`${
+                      Boolean(
+                        state.data?.is_approved === true ||
+                          state.data?.is_approved === 'true' ||
+                          state.data?.is_approved === 1 ||
+                          state.data?.approved === true ||
+                          state.data?.approved === 'true' ||
+                          state.data?.approved === 1
+                      )
+                        ? 'feather-check-circle'
+                        : 'feather-x-circle'
+                    } pl--0`}
+                    style={{ color: "#fff" }} 
+                  />
+                </a>
+
                 <a
                   className='rbt-btn btn-xs bg-primary-opacity radius-round'
                   href='#'
                   title='Edit Album'
                   onClick={() => setState({ isOpen: true })}
                 >
-                  <i className='feather-edit pl--0' />
+                  <i className='feather-edit pl--0'  />
                 </a>
                 <a
                   className='rbt-btn btn-xs bg-color-danger-opacity radius-round color-danger'
@@ -265,7 +469,7 @@ const AlbumMain = () => {
                   title='Delete Album'
                   onClick={() => showDeleteConfirm()}
                 >
-                  <i className='feather-trash-2 pl--0' />
+                  <i className='feather-trash-2 pl--0'  />
                 </a>
 
                 <a
@@ -308,7 +512,7 @@ const AlbumMain = () => {
                         </div>
 
                         <div className='gal-delete-icon'>
-                          {(data?.is_admin || data?.is_owner) && (
+                          {isOwnerOrAdmin() && (
                             <span
                               className='icon pr-5'
                               onClick={(e) => {
@@ -322,7 +526,7 @@ const AlbumMain = () => {
                             </span>
                           )}
 
-                          {data?.is_admin &&
+                          {isOwnerOrAdmin() &&
                             (data?.approved == true ? (
                               <span
                                 className='icon '
@@ -357,15 +561,16 @@ const AlbumMain = () => {
               <div className=' album-none'>
                 <h5>Album is Empty !</h5>
 
-                <div
-                  className='rbt-btn btn-xs  radius-round'
-                  
-                  title='Create Album'
-                  onClick={() => setState({ isUploadPic: true })}
-                >
-                  Upload Images
-                  <i className='feather-plus-circle pl--2' />
-                </div>
+                {isOwnerOrAdmin() && (
+                  <div
+                    className='rbt-btn btn-xs  radius-round'
+                    title='Create Album'
+                    onClick={() => setState({ isUploadPic: true })}
+                  >
+                    Upload Images
+                    <i className='feather-plus-circle pl--2' />
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -413,7 +618,7 @@ const AlbumMain = () => {
               // className={"applicant-input"}
               onChange={(e) => setState({ description: e.target.value })}
               value={state.description}
-              // error={errMsg?.end_year}
+            // error={errMsg?.end_year}
             />
           </div>
 
