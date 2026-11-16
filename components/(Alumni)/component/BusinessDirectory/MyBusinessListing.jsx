@@ -22,6 +22,7 @@ const MyBusinessListing = () => {
   const [AdminDataLists, setAdminDataLists] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [approvalFilter, setApprovalFilter] = useState('all');
   const [formData, setFormData] = useState({
     business_name: '',
     industry: '',
@@ -143,6 +144,17 @@ const MyBusinessListing = () => {
 
   const handleEditClick = (id) => {
     router.push(`/edit-a-directory/${id}/`);
+  };
+
+  const handleApprovalFilter = (value) => {
+    setApprovalFilter(value);
+    if (value === 'all') {
+      setFilteredData(AdminDataLists);
+    } else if (value === 'approved') {
+      setFilteredData(AdminDataLists.filter((item) => item.is_approved === true || item.is_approved === 'true'));
+    } else {
+      setFilteredData(AdminDataLists.filter((item) => !item.is_approved || item.is_approved === 'false'));
+    }
   };
 
   const handlePageChange = (pageNumber) => {
@@ -388,34 +400,49 @@ const MyBusinessListing = () => {
                                       <h5 className='mb--5'>
                                         My Business Directory
                                       </h5>
-                                      {/* <p className="b3">Create Announcement</p> */}
                                     </div>
                                   </div>
                                 </div>
                                 <div className='col-lg-4 d-flex justify-content-start justify-content-lg-end'>
-                                  <div className='call-to-btn  text-end position-relative '>
+                                  <div className='call-to-btn text-end position-relative'>
                                     <Link
                                       className='rbt-btn btn-gradient radius-round sm-btn'
-                                      href='/my-business-directory'
+                                      href='/post-a-directory'
                                     >
-                                      <span data-text='Add New Announcement'>
-                                        Add Business Directory
-                                      </span>
+                                      <span>Add Business Directory</span>
                                     </Link>
                                   </div>
                                 </div>
                               </div>
 
-                              <div className='row p-0 mt-5'>
-                                <div className='col-lg-12 p-0'>
-                                  <form
-                                    action='#'
-                                    className='rbt-search-style-1'
+                              {/* Approval filter buttons */}
+                              <div className='d-flex flex-wrap gap-2 mt-4'>
+                                {[
+                                  { label: 'All', value: 'all' },
+                                  { label: 'Approved', value: 'approved' },
+                                  { label: 'Pending', value: 'pending' },
+                                ].map((btn) => (
+                                  <button
+                                    key={btn.value}
+                                    type='button'
+                                    onClick={() => handleApprovalFilter(btn.value)}
+                                    className={`rbt-btn btn-xs radius-round ${
+                                      approvalFilter === btn.value
+                                        ? 'btn-white'
+                                        : 'btn-border-gradient'
+                                    }`}
                                   >
+                                    {btn.label}
+                                  </button>
+                                ))}
+                              </div>
+
+                              <div className='row p-0 mt-4'>
+                                <div className='col-lg-12 p-0'>
+                                  <form action='#' className='rbt-search-style-1'>
                                     <input
                                       type='text'
-                                      placeholder='Search Job with Job title and Role'
-                                      // name="search_filter"
+                                      placeholder='Search by business name or industry'
                                       onChange={handleSearchFilter}
                                     />
                                     <button className='search-btn'>
@@ -480,23 +507,30 @@ const MyBusinessListing = () => {
                                               {item?.location}
                                               {item?.other_country
                                                 ? `, ${item.other_country}`
-                                                : ""}
+                                                : item?.country_code
+                                                ? `, ${item.country_code}`
+                                                : ''}
                                             </li>
                                           </ul>
                                           <h4 className='rbt-card-title'>
-                                            <Link href={`#`}>
+                                            <Link href={`/business-directory/${item.id}`}>
                                               {item.business_name}
                                             </Link>
                                           </h4>
-                                          <p
-                                            className='text-gray mt--dec-40'
-                                            style={{ fontSize: '16px' }}
-                                          >
-                                            <Link href={'#'}>
-                                              {item.other_industry ||
-                                                item.industry_type}
-                                            </Link>
+                                          <p className='text-gray mt--dec-40' style={{ fontSize: '16px' }}>
+                                            {item?.other_industry
+                                              ? item.other_industry
+                                              : item?.industry_type_detail?.type_name || item?.industry_type}
                                           </p>
+                                          <span
+                                            className={`${
+                                              item.is_approved === true || item.is_approved === 'true'
+                                                ? 'bg-color-success-opacity color-success'
+                                                : 'bg-color-danger-opacity color-danger'
+                                            }`}
+                                          >
+                                            {item.is_approved === true || item.is_approved === 'true' ? 'Approved' : 'Pending'}
+                                          </span>
                                         </div>
                                       </div>
                                     </div>

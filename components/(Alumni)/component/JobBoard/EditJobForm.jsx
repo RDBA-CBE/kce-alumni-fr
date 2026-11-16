@@ -116,18 +116,20 @@ const EditJobForm = () => {
 
   useEffect(() => {
     if (typeof formData.location !== "string" || !formData.location) return;
-    const locationOption = location.find(
-      (option) =>
-        option.label === formData.location ||
-        String(option.value) === formData.location
-    ) ||
-      (formData.other_location?.trim()
-        ? location.find(hasOthersOption)
-        : undefined);
-    if (locationOption) {
-      setFormData((prev) => ({ ...prev, location: locationOption }));
+    const isOthers = formData.other_location?.trim();
+    const matched = isOthers
+      ? location.find((o) =>
+        ["other", "others"].includes(o.label?.trim().toLowerCase())
+      )
+      : location.find(
+        (o) =>
+          o.label?.toLowerCase() === formData.location.toLowerCase() ||
+          String(o.value) === formData.location
+      );
+    if (matched) {
+      setFormData((prev) => ({ ...prev, location: matched }));
     }
-  }, [location, formData.location]);
+  }, [location]);
 
   const getEditData = async () => {
     try {
@@ -146,14 +148,31 @@ const EditJobForm = () => {
         setFileFormat(filename);
       }
 
+      // helper: find the "Others" option from a list
+      const findOthers = (list) =>
+        list.find((o) =>
+          ["other", "others"].includes(o.label?.trim().toLowerCase())
+        );
+
+      // For industry: if other_industry has value, select the "Others" option
+      // otherwise use the actual industry object
+      const industryOption = data.other_industry
+        ? findOthers(industry) || { value: data.industry.id, label: data.industry.title }
+        : { value: data.industry.id, label: data.industry.title };
+
+      // For role: same logic
+      const roleOption = data.other_role
+        ? findOthers(roleList) || { value: data.role.id, label: data.role.role }
+        : { value: data.role.id, label: data.role.role };
+
       setFormData({
         job_title: data.job_title || "",
         contact_email: data.contact_email || "",
         contact_link: data.contact_link || "",
         post_type: data.post_type || "",
-        industry: { value: data.industry.id, label: data.industry.title } || "",
+        industry: industryOption,
         other_industry: data.other_industry || "",
-        role: { value: data.role.id, label: data.role.role } || "",
+        role: roleOption,
         other_role: data.other_role || "",
         experience_level_from: data.experience_level_from || null,
         experience_level_to: data.experience_level_to || null,
@@ -161,12 +180,9 @@ const EditJobForm = () => {
         other_location: data.other_location || "",
         salary_package: data.salary_package || "",
         dead_line: data.dead_line || "",
-        file: data?.file, // Set the converted file
+        file: data?.file,
         job_description: data.job_description || "",
-        // skills: data.skills || [],
-        skills: data.skills.map((item) => (
-          { value: item.id, label: item.skill }
-        )),
+        skills: data.skills.map((item) => ({ value: item.id, label: item.skill })),
         other_skill: data.other_skill || "",
       });
 
@@ -868,6 +884,10 @@ const EditJobForm = () => {
                         accept="application/pdf"
                         required={true}
                       />
+                      <p style={{ fontSize: 12, color: "#888", marginTop: 6, marginBottom: 0 }}>
+                        <i className="feather-info me-1" style={{ color: "#0091ff" }} />
+                        Upload file as <strong>PDF</strong> with size below <strong>2 MB</strong>
+                      </p>
                       <span className="focus-border"></span>
                       {preview && (
                         <div

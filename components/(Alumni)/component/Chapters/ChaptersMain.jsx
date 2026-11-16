@@ -62,6 +62,8 @@ const ChaptersMain = () => {
   const [createChapterModal, setcreateChapterModal] = useState(false);
   const [country, setCountry] = useState([]);
   const [location, setLocation] = useState([]);
+  const locationPageRef = useRef(1);
+  const locationLoadMoreInProgress = useRef(false);
 
   const pathname = usePathname();
 
@@ -239,12 +241,17 @@ const ChaptersMain = () => {
   const locationList = async () => {
     try {
       setState({ loading: true });
-      const res = await Models.job.locationList();
+      const res = await Models.masters.locationList(1);
       const dropdown = setDropdownData(res?.results, "location");
 
       setLocation(dropdown);
+      locationPageRef.current = 1;
 
-      setState({ loading: false, hasLocationLoadMore: res?.next });
+      setState({
+        loading: false,
+        currenLocationPage: 1,
+        hasLocationLoadMore: res?.next,
+      });
     } catch (error) {
       setState({ loading: false });
       console.log("✌️error --->", error);
@@ -252,22 +259,37 @@ const ChaptersMain = () => {
   };
 
   const locationListLoadMore = async () => {
+    if (
+      !state.hasLocationLoadMore ||
+      locationLoadMoreInProgress.current
+    ) {
+      return;
+    }
+
+    locationLoadMoreInProgress.current = true;
     try {
-      if (state.hasLocationLoadMore) {
-        const res = await Models.job.locationList(state.currenLocationPage + 1);
+      const nextPage = locationPageRef.current + 1;
+      const res = await Models.masters.locationList(nextPage);
+      const locationOptions = setDropdownData(res?.results, "location") || [];
 
-        const LocationOption = setDropdownData(res?.results, "location");
-
-        setLocation([...location, ...LocationOption]);
-        setState({
-          currenLocationPage: state.currenLocationPage + 1,
-          hasLocationLoadMore: res.next,
-        });
-      } else {
-        setLocation(location);
-      }
+      setLocation((currentLocations) => {
+        const optionsById = new Map(
+          currentLocations.map((option) => [option.value, option])
+        );
+        locationOptions.forEach((option) =>
+          optionsById.set(option.value, option)
+        );
+        return Array.from(optionsById.values());
+      });
+      locationPageRef.current = nextPage;
+      setState({
+        currenLocationPage: nextPage,
+        hasLocationLoadMore: res?.next,
+      });
     } catch (error) {
       console.log("error: ", error);
+    } finally {
+      locationLoadMoreInProgress.current = false;
     }
   };
 
@@ -288,17 +310,24 @@ const ChaptersMain = () => {
 
   const handleEditClick = (item) => {
     setcreateChapterModal(true);
+    const findOthers = (list) =>
+      list.find((o) =>
+        ["other", "others"].includes(o.label?.trim().toLowerCase())
+      );
+
+    const countryOption = item?.other_country
+      ? findOthers(country) || { value: item?.country?.id, label: item?.country?.country_name }
+      : { value: item?.country?.id, label: item?.country?.country_name };
+
+    const locationOption = item?.other_location
+      ? findOthers(location) || { value: item?.location?.id, label: item?.location?.location }
+      : { value: item?.location?.id, label: item?.location?.location };
+
     setState({
       chapter_name: item?.name,
-      country_id: {
-        value: item?.country?.id,
-        label: item?.country?.country_name,
-      },
+      country_id: countryOption,
       other_country: item?.other_country || "",
-      location_id: {
-        value: item?.location?.id,
-        label: item?.location?.location,
-      },
+      location_id: locationOption,
       other_location: item?.other_location || "",
       description: item?.description,
       chapter_id: item.id,
@@ -827,10 +856,12 @@ const ChaptersMain = () => {
                                                   <li>
                                                     <i className="feather-map-pin"></i>
                                                     {[
-                                                      item?.other_location ||
-                                                        item?.location?.location,
-                                                      item?.other_country ||
-                                                        item?.country?.country_name,
+                                                      item?.other_location
+                                                        ? item.other_location
+                                                        : item?.location?.location,
+                                                      item?.other_country
+                                                        ? item.other_country
+                                                        : item?.country?.country_name,
                                                     ]
                                                       .filter(Boolean)
                                                       .join(", ")}
