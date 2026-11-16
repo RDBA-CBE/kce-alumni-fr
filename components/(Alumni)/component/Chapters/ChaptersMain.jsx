@@ -24,7 +24,9 @@ import useDebounce from "@/commonComponents/useDebounce";
 import Pagination from "@/commonComponents/Pagination";
 
 const isOthersOption = (option) =>
-  option?.label?.trim().toLowerCase() === "others";
+  ["other", "others"].includes(
+    typeof option?.label === "string" ? option.label.trim().toLowerCase() : ""
+  );
 
 const ChaptersMain = () => {
   const { confirm } = Modal;
@@ -156,15 +158,40 @@ const ChaptersMain = () => {
 
   const countryList = async () => {
     try {
-      const res = await Models.masters.GetCountryList(1);
+      let res = await Models.masters.GetCountryList(1, 100);
+      let allResults = Array.isArray(res?.results) ? [...res.results] : [];
+      let nextUrl = res?.next;
+      let currentPage = 1;
 
-      const countryOptions = res?.results?.map((cou) => ({
+      const hasOthers = (list) =>
+        list.some((item) =>
+          ["other", "others"].includes(
+            (item.country_name || item.label || "")?.trim().toLowerCase()
+          )
+        );
+
+      while (!hasOthers(allResults) && nextUrl && currentPage < 10) {
+        currentPage += 1;
+        try {
+          const nextRes = await Models.masters.GetCountryList(currentPage, 100);
+          if (Array.isArray(nextRes?.results) && nextRes.results.length > 0) {
+            allResults = [...allResults, ...nextRes.results];
+            nextUrl = nextRes?.next;
+          } else {
+            break;
+          }
+        } catch (e) {
+          break;
+        }
+      }
+
+      const countryOptions = allResults.map((cou) => ({
         value: cou.id,
         label: cou.country_name,
       }));
       setCountry(countryOptions);
       setState({
-        hasCountryLoadMore: res?.next,
+        hasCountryLoadMore: nextUrl,
       });
     } catch (error) {
       console.log("✌️error --->", error);
@@ -241,16 +268,49 @@ const ChaptersMain = () => {
   const locationList = async () => {
     try {
       setState({ loading: true });
-      const res = await Models.masters.locationList(1);
-      const dropdown = setDropdownData(res?.results, "location");
+      let res = await Models.masters.locationList(1, 100);
+      let allResults = Array.isArray(res?.results) ? [...res.results] : [];
+      let nextUrl = res?.next;
+      let currentPage = 1;
+
+      const hasOthers = (list) =>
+        list.some((item) =>
+          ["other", "others"].includes(
+            (item.location || item.label || "")?.trim().toLowerCase()
+          )
+        );
+
+      while (!hasOthers(allResults) && nextUrl && currentPage < 10) {
+        currentPage += 1;
+        try {
+          const nextRes = await Models.masters.locationList(currentPage, 100);
+          if (Array.isArray(nextRes?.results) && nextRes.results.length > 0) {
+            allResults = [...allResults, ...nextRes.results];
+            nextUrl = nextRes?.next;
+          } else {
+            break;
+          }
+        } catch (e) {
+          break;
+        }
+      }
+
+      let dropdown = setDropdownData(allResults, "location") || [];
+
+      if (!hasOthers(dropdown)) {
+        dropdown.unshift({
+          label: "Others",
+          value: 34,
+        });
+      }
 
       setLocation(dropdown);
-      locationPageRef.current = 1;
+      locationPageRef.current = currentPage;
 
       setState({
         loading: false,
-        currenLocationPage: 1,
-        hasLocationLoadMore: res?.next,
+        currenLocationPage: currentPage,
+        hasLocationLoadMore: nextUrl,
       });
     } catch (error) {
       setState({ loading: false });
@@ -269,7 +329,7 @@ const ChaptersMain = () => {
     locationLoadMoreInProgress.current = true;
     try {
       const nextPage = locationPageRef.current + 1;
-      const res = await Models.masters.locationList(nextPage);
+      const res = await Models.masters.locationList(nextPage, 100);
       const locationOptions = setDropdownData(res?.results, "location") || [];
 
       setLocation((currentLocations) => {
@@ -312,15 +372,23 @@ const ChaptersMain = () => {
     setcreateChapterModal(true);
     const findOthers = (list) =>
       list.find((o) =>
-        ["other", "others"].includes(o.label?.trim().toLowerCase())
+        ["other", "others"].includes(
+          typeof o?.label === "string" ? o.label.trim().toLowerCase() : ""
+        )
       );
 
     const countryOption = item?.other_country
-      ? findOthers(country) || { value: item?.country?.id, label: item?.country?.country_name }
+      ? findOthers(country) || {
+          value: item?.country?.id,
+          label: item?.country?.country_name || "Others",
+        }
       : { value: item?.country?.id, label: item?.country?.country_name };
 
     const locationOption = item?.other_location
-      ? findOthers(location) || { value: item?.location?.id, label: item?.location?.location }
+      ? findOthers(location) || {
+          value: item?.location?.id || 34,
+          label: item?.location?.location || "Others",
+        }
       : { value: item?.location?.id, label: item?.location?.location };
 
     setState({
@@ -400,6 +468,12 @@ const ChaptersMain = () => {
     e.preventDefault();
     try {
       const otherFieldErrors = {};
+      if (!state.country_id) {
+        otherFieldErrors.country_id = "Country is required";
+      }
+      if (!state.location_id) {
+        otherFieldErrors.location_id = "Location is required";
+      }
       if (isOthersOption(state.country_id) && !state.other_country?.trim()) {
         otherFieldErrors.other_country = "Enter This Field";
       }
@@ -415,11 +489,11 @@ const ChaptersMain = () => {
       const body = {
         name: state.chapter_name,
         description: state.description,
-        country_id: state.country_id.value,
+        country_id: state.country_id?.value || state.country_id,
         other_country: isOthersOption(state.country_id)
           ? state.other_country
           : "",
-        location_id: state.location_id.value,
+        location_id: state.location_id?.value || state.location_id,
         other_location: isOthersOption(state.location_id)
           ? state.other_location
           : "",
@@ -438,10 +512,10 @@ const ChaptersMain = () => {
         }
         const res = await Models.chapter.update(state.chapter_id, formdata);
         setcreateChapterModal(false);
-        message.success("Chapter updated successfully");
+        (messageApi?.success || message.success)("Chapter updated successfully");
       } else {
         const res = await Models.chapter.create(formdata);
-        message.success("Chapter created successfully");
+        (messageApi?.success || message.success)("Chapter created successfully");
         setcreateChapterModal(false);
       }
       chapterList();
@@ -454,10 +528,78 @@ const ChaptersMain = () => {
 
         setState({ errors: validationErrors });
         console.log("errors", validationErrors);
-        return message.error("Please fill the required fields");
+        return (messageApi?.error || message.error)(
+          "Please fill the required fields"
+        );
       } else {
         console.log("error: ", error);
-        setcreateChapterModal(false);
+        const resData = error?.response?.data || error?.data || error;
+        const newFieldErrors = {};
+        const messages = [];
+
+        if (resData && typeof resData === "object") {
+          if (resData.message && typeof resData.message === "string") {
+            messages.push(resData.message);
+          }
+          if (
+            resData.error &&
+            typeof resData.error === "string" &&
+            !messages.includes(resData.error)
+          ) {
+            messages.push(resData.error);
+          }
+          if (
+            resData.detail &&
+            typeof resData.detail === "string" &&
+            !messages.includes(resData.detail)
+          ) {
+            messages.push(resData.detail);
+          }
+
+          Object.entries(resData).forEach(([key, value]) => {
+            if (["message", "error", "detail"].includes(key)) return;
+            const text = Array.isArray(value)
+              ? value.join(", ")
+              : typeof value === "string"
+              ? value
+              : JSON.stringify(value);
+            newFieldErrors[key] = text;
+            messages.push(text);
+          });
+
+          const primaryMsg = resData.message || resData.error;
+          if (typeof primaryMsg === "string") {
+            const lower = primaryMsg.toLowerCase();
+            if (
+              lower.includes("location list") &&
+              !newFieldErrors.other_location
+            ) {
+              newFieldErrors.other_location = primaryMsg;
+            }
+            if (
+              lower.includes("country list") &&
+              !newFieldErrors.other_country
+            ) {
+              newFieldErrors.other_country = primaryMsg;
+            }
+          }
+
+          if (Object.keys(newFieldErrors).length > 0) {
+            setState({
+              errors: { ...state.errors, ...newFieldErrors },
+            });
+          }
+
+          if (messages.length > 0) {
+            messages.forEach((msg) => {
+              (messageApi?.error || message.error)(msg);
+            });
+          }
+        } else {
+          const fallback =
+            error?.message || "Something went wrong while saving chapter";
+          (messageApi?.error || message.error)(fallback);
+        }
       }
     }
   };
@@ -541,6 +683,7 @@ const ChaptersMain = () => {
 
   return (
     <>
+      {contextHolder}
       <div className="rbt-dashboard-area section-pad">
         <div className="container-fluid">
           <div className="row justify-content-center">
@@ -564,26 +707,26 @@ const ChaptersMain = () => {
                           </h5>
                           {(isAdmin === "true" ||
                             isAlumniManager === "true") && (
-                            <Link
-                              className="rbt-btn btn-gradient radius-round sm-btn"
-                              href="#"
-                              onClick={() => {
-                                setcreateChapterModal(true);
-                                setState({
-                                  chapter_name: "",
-                                  country_id: "",
-                                  other_country: "",
-                                  location_id: "",
-                                  other_location: "",
-                                  description: "",
-                                  chapter_id: "",
-                                  preview: "",
-                                });
-                              }}
-                            >
-                              Add a Chapter
-                            </Link>
-                          )}
+                              <Link
+                                className="rbt-btn btn-gradient radius-round sm-btn"
+                                href="#"
+                                onClick={() => {
+                                  setcreateChapterModal(true);
+                                  setState({
+                                    chapter_name: "",
+                                    country_id: "",
+                                    other_country: "",
+                                    location_id: "",
+                                    other_location: "",
+                                    description: "",
+                                    chapter_id: "",
+                                    preview: "",
+                                  });
+                                }}
+                              >
+                                Add a Chapter
+                              </Link>
+                            )}
                         </div>
                       </div>
                     </div>
@@ -603,9 +746,8 @@ const ChaptersMain = () => {
                                       role="presentation"
                                     >
                                       <a
-                                        className={`w-100 ${
-                                          pathname === "#" ? "active" : ""
-                                        }`}
+                                        className={`w-100 ${pathname === "#" ? "active" : ""
+                                          }`}
                                         href="#"
                                       >
                                         <FormField
@@ -631,9 +773,8 @@ const ChaptersMain = () => {
                                       role="presentation"
                                     >
                                       <a
-                                        className={`w-100 ${
-                                          pathname === "#" ? "active" : ""
-                                        }`}
+                                        className={`w-100 ${pathname === "#" ? "active" : ""
+                                          }`}
                                         href="#"
                                       >
                                         <FormField
@@ -773,7 +914,7 @@ const ChaptersMain = () => {
                                             >
                                               {/* Edit Icon in Top Right */}
                                               {isAdmin == "true" ||
-                                              isAlumniManager == "true" ? (
+                                                isAlumniManager == "true" ? (
                                                 <div
                                                   className="rbt-button-group"
                                                   style={{
@@ -839,7 +980,7 @@ const ChaptersMain = () => {
                                                     }
                                                     width={355}
                                                     height={240}
-                                                    
+
                                                     alt="Card image"
                                                     style={{
                                                       objectFit: "contain",
@@ -962,9 +1103,26 @@ const ChaptersMain = () => {
       </Modal>
 
       <Modal
-        title={<div className="custom-modal-header">Create Chapter</div>}
+        title={
+          <div className="custom-modal-header">
+            {state.chapter_id ? "Edit Chapter" : "Create Chapter"}
+          </div>
+        }
         open={createChapterModal}
-        onCancel={() => setcreateChapterModal(false)}
+        onCancel={() => {
+          setcreateChapterModal(false);
+          setState({
+            chapter_name: "",
+            country_id: "",
+            other_country: "",
+            location_id: "",
+            other_location: "",
+            description: "",
+            chapter_id: "",
+            preview: "",
+            errors: null,
+          });
+        }}
         footer={false}
         centered
       >
@@ -1140,7 +1298,7 @@ const ChaptersMain = () => {
               className="rbt-btn btn-gradient radius-round sm-btn"
               type="submit"
             >
-              Submit
+              {state.chapter_id ? "Update" : "Submit"}
             </button>
           </div>
         </form>
