@@ -2,9 +2,11 @@ import { instance } from "@/utils/axios.utils";
 
 
 const post = {
-  GetAllPostData: (page) => {
+  GetAllPostData: (page, isApproved) => {
     let promise = new Promise((resolve, reject) => {
-      let url = `postpending/published_posts/?page=${page}&pagesize=10`;
+      let url = `postpending/published_posts/?page=${page}&pagesize=10${
+        typeof isApproved === "boolean" ? `&is_approved=${isApproved}` : ""
+      }`;
       instance()
         .get(url)
         .then((res) => {

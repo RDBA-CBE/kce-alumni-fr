@@ -60,6 +60,7 @@ const MyPostMain = () => {
     editPostId: null,
     filterTitle: '',
     filterCategory: '',
+    filterApproval: 'all',
     filterShowList: {},
     currentPage: 1,
     preview: null,
@@ -142,6 +143,9 @@ const MyPostMain = () => {
     const Body = {
       title: state.filterTitle,
       post_category: state.filterCategory,
+      ...(state.filterApproval !== 'all'
+        ? { is_approved: state.filterApproval === 'true' }
+        : {}),
     };
     try {
       const res = await Models.post.FilterPostData(Body, page);
@@ -186,6 +190,7 @@ const MyPostMain = () => {
         filterShowList: Body,
         filterTitle: '',
         filterCategory: '',
+        filterApproval: 'all',
         currentPage: 1,
         next: res?.next,
         previous: res?.previous,
@@ -386,9 +391,15 @@ const MyPostMain = () => {
     return item?.value == state?.filterShowList?.post_category;
   });
 
+  const hasAppliedFilters = () =>
+    Boolean(
+      state.filterShowList?.title ||
+        state.filterShowList?.post_category ||
+        state.filterShowList?.is_approved !== undefined
+    );
+
   const handlePageChange = (number) => {
-    const hasFilterValues = Object.values(state.filterShowList).some((val) => val);
-    if (hasFilterValues) {
+    if (hasAppliedFilters()) {
       handleFiltersSubmit(number);
     } else {
       GetPostData(number);
@@ -508,6 +519,40 @@ const MyPostMain = () => {
                                           placeholder={'Category Filter'}
                                           value={state.filterCategory}
                                           options={state.postCatOption}
+                                        />
+                                      </a>
+                                    </li>
+                                    <li
+                                      className='nav-item'
+                                      role='presentation'
+                                    >
+                                      <a
+                                        className={`w-100 ${
+                                          pathname === '#' ? 'active' : ''
+                                        }`}
+                                        href='#'
+                                      >
+                                        <FormField
+                                          type='select'
+                                          onChange={(e) =>
+                                            setState({
+                                              filterApproval: e.target.value,
+                                            })
+                                          }
+                                          name='filterApproval'
+                                          placeholder='Approval Status'
+                                          value={state.filterApproval}
+                                          options={[
+                                            { value: 'all', label: 'All' },
+                                            {
+                                              value: 'true',
+                                              label: 'Approved',
+                                            },
+                                            {
+                                              value: 'false',
+                                              label: 'Pending',
+                                            },
+                                          ]}
                                         />
                                       </a>
                                     </li>

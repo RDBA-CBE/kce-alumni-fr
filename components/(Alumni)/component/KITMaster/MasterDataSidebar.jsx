@@ -14,7 +14,7 @@ const MasterDataSidebar = () => {
   { label: "Course", href: "/course", key: "course", icon: "feather-book" },
   { label: "Batch", href: "/batch", key: "batch", icon: "feather-layers" },
   { label: "Department", href: "/department", key: "department", icon: "feather-grid" },
-  { label: "Institution", href: "/institution", key: "institution", icon: "feather-home" },
+  // { label: "Institution", href: "/institution", key: "institution", icon: "feather-home" },
   { label: "Industry", href: "/industry", key: "industry", icon: "feather-briefcase" },
   { label: "Skills", href: "/skills", key: "skills", icon: "feather-star" },
   { label: "Job Roles", href: "/role", key: "role", icon: "feather-briefcase" },

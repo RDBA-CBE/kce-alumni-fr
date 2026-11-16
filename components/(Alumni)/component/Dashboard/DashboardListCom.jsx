@@ -1,8 +1,8 @@
 import { TrimText, useSetState } from "@/utils/commonFunction.utils";
-import { Modal, message } from "antd";
+import { Modal, message, Tooltip } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import DashboardCommentBox from "./DashboardCommentBox";
 import Models from "@/imports/models.import";
 import DashUserCom from "./DashUserCom";
@@ -10,12 +10,20 @@ import Image from "next/image";
 import LikedUserLIst from "./LikedUserLIst";
 import { RWebShare } from "react-web-share";
 
-const DashboardListCom = ({ data, GetData, editPost, postLikeDisLinke, page }) => {
+const DashboardListCom = ({
+  data,
+  GetData,
+  editPost,
+  postLikeDisLinke,
+  page,
+  canApprovePost = false,
+}) => {
 
   console.log("page", page);
   
   const router = useRouter();
   const { confirm } = Modal;
+  const [approvalUpdating, setApprovalUpdating] = useState(false);
 
   const [state, setState] = useSetState({
     reply: "",
@@ -66,6 +74,43 @@ const DashboardListCom = ({ data, GetData, editPost, postLikeDisLinke, page }) =
     });
   };
 
+  const showApprovalConfirm = () => {
+    const isApproved =
+      data?.is_approved === true || data?.is_approved === "true";
+    const nextApproval = !isApproved;
+
+    confirm({
+      title: `Are you sure you want to ${
+        nextApproval ? "approve" : "unapprove"
+      } this post?`,
+      okText: nextApproval ? "Approve" : "Unapprove",
+      okType: nextApproval ? "primary" : "danger",
+      cancelText: "Cancel",
+      onOk: async () => {
+        const approvalData = new FormData();
+        approvalData.append("is_approved", String(nextApproval));
+        setApprovalUpdating(true);
+
+        try {
+          await Models.post.UpdatePostData(data.id, approvalData);
+          message.success(
+            `Post ${nextApproval ? "approved" : "unapproved"} successfully`
+          );
+          await GetData();
+        } catch (error) {
+          message.error(
+            error?.error ||
+              error?.detail ||
+              error?.message ||
+              "Failed to update post approval status."
+          );
+        } finally {
+          setApprovalUpdating(false);
+        }
+      },
+    });
+  };
+
   return (
     <>
       <div className={`col-12 mt-0 mb-5`}>
@@ -85,6 +130,40 @@ const DashboardListCom = ({ data, GetData, editPost, postLikeDisLinke, page }) =
                 zIndex: 10,
               }}
             >
+              {canApprovePost && state?.AdminLogin == "true" && (
+                <Tooltip
+                  title={
+                    data?.is_approved === true ||
+                    data?.is_approved === "true"
+                      ? "Unapprove post"
+                      : "Approve post"
+                  }
+                >
+                  <button
+                    type="button"
+                    className={`rbt-btn btn-xs radius-round ${
+                      data?.is_approved === true ||
+                      data?.is_approved === "true"
+                        ? "bg-color-success-opacity color-success"
+                        : "bg-color-danger-opacity color-danger"
+                    }`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      showApprovalConfirm();
+                    }}
+                    disabled={approvalUpdating}
+                  >
+                    <i
+                      className={`feather-${
+                        data?.is_approved === true ||
+                        data?.is_approved === "true"
+                          ? "check-circle"
+                          : "x-circle"
+                      } pl--0`}
+                    />
+                  </button>
+                </Tooltip>
+              )}
               <div
                 className="rbt-btn btn-xs bg-primary-opacity radius-round"
                 onClick={(e) => { e.stopPropagation(); editPost(); }}

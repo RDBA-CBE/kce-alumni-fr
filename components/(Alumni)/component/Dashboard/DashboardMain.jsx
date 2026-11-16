@@ -46,9 +46,9 @@ const DashboardMain = () => {
     postList: [],
     postCatOption: [],
     editPostId: null,
-    myPost: [],
     filterTitle: '',
     filterCategory: '',
+    approvalFilter: 'true',
     filterShowList: {},
     AdminLogin: false,
     AlumniManagerLogin: false,
@@ -73,32 +73,21 @@ const DashboardMain = () => {
   useEffect(() => {
     GetPostCategory();
     GetPostData(1);
-    GetMyPostData(1);
     UpcommingBirthdaysList();
   }, []);
 
-  const GetMyPostData = async (page) => {
-    try {
-      setState({ pageLoading: true });
-      const res = await Models.post.GetPostData(page);
-      setState({
-        myPost: res?.results,
-        currentPage: page,
-        next: res?.next,
-        previous: res?.previous,
-        total: res?.count,
-        pageLoading: false,
-      });
-    } catch (error) {
-      console.log('error: ', error);
-      setState({ pageLoading: false });
-    }
-  };
+  const getPostApprovalFilter = () =>
+    localStorage.getItem('isAdmin') === 'true'
+      ? state.approvalFilter === 'true'
+      : true;
 
   const GetPostData = async (page) => {
     setState({ pageLoading: true });
     try {
-      const res = await Models.post.GetAllPostData(page);
+      const res = await Models.post.GetAllPostData(
+        page,
+        getPostApprovalFilter()
+      );
       setState({
         postList: res?.results,
         currentPage: page,
@@ -143,6 +132,7 @@ const DashboardMain = () => {
     const Body = {
       title: state.filterTitle,
       post_category: state.filterCategory,
+      is_approved: getPostApprovalFilter(),
     };
     try {
       const res = await Models.post.FilterPostData(Body, page);
@@ -175,13 +165,14 @@ const DashboardMain = () => {
     };
     try {
       // const res = await Models.post.FilterPostData(Body,1);
-      const res = await Models.post.GetAllPostData(1);
+      const res = await Models.post.GetAllPostData(1, true);
 
       setState({
         postList: res?.results,
         filterShowList: Body,
         filterTitle: '',
         filterCategory: '',
+        approvalFilter: 'true',
         currentPage: 1,
         next: res?.next,
         previous: res?.previous,
@@ -256,7 +247,6 @@ const DashboardMain = () => {
     try {
       const res = await Models.post.CreatePostData(formData);
       GetPostData(1);
-      GetMyPostData(1);
       setState({
         isOpenNewPost: false,
         imageFile: null,
@@ -380,6 +370,14 @@ const DashboardMain = () => {
   const PostCategoryFilterNameShow = state?.postCatOption?.filter((item) => {
     return item?.value == state?.filterShowList?.post_category;
   });
+
+  const refreshPostList = () => {
+    const page = state.currentPage || 1;
+    const hasFilterValues = state.filterTitle || state.filterCategory;
+    return hasFilterValues
+      ? handleFiltersSubmit(page)
+      : GetPostData(page);
+  };
 
   const handlePageChange = (number) => {
     const Body = {
@@ -518,6 +516,42 @@ const DashboardMain = () => {
                                         />
                                       </a>
                                     </li>
+                                    {state.AdminLogin === 'true' && (
+                                      <li
+                                        className='nav-item'
+                                        role='presentation'
+                                      >
+                                        <a
+                                          className={`w-100 ${
+                                            pathname === '#' ? 'active' : ''
+                                          }`}
+                                          href='#'
+                                        >
+                                          <FormField
+                                            type='select'
+                                            onChange={(e) =>
+                                              setState({
+                                                approvalFilter:
+                                                  e.target.value,
+                                              })
+                                            }
+                                            name='approvalFilter'
+                                            placeholder='Approval Status'
+                                            value={state.approvalFilter}
+                                            options={[
+                                              {
+                                                value: 'true',
+                                                label: 'Approved',
+                                              },
+                                              {
+                                                value: 'false',
+                                                label: 'Unapproved',
+                                              },
+                                            ]}
+                                          />
+                                        </a>
+                                      </li>
+                                    )}
                                   </ul>
                                 </nav>
 
@@ -626,7 +660,10 @@ const DashboardMain = () => {
                                           editPost={() => editPost(item)}
                                           data={item}
                                           PostCategory={state?.groupsOption}
-                                          GetData={() => GetPostData(1)}
+                                          GetData={refreshPostList}
+                                          canApprovePost={
+                                            state?.AdminLogin === 'true'
+                                          }
                                           commentsOnClick={(data) =>
                                             console.log(data)
                                           }
@@ -641,7 +678,8 @@ const DashboardMain = () => {
                                   </div>
                                 </div>
 
-                                {Number(state.total) > 0 && (
+                                {state?.postList?.length > 0 &&
+                                  Number(state.total) > 0 && (
                                   <div>
                                     <div
                                       className='mb-20 '
