@@ -473,35 +473,25 @@ const DashboardMain = () => {
                                       className='nav-item'
                                       role='presentation'
                                     >
-                                      <a
-                                        className={`${pathname === '#' ? 'active' : ''
-                                          }`}
-                                        href='#'
-                                      >
-                                        <FormField
-                                          type='text'
-                                          className='applicant-input'
-                                          onChange={(e) =>
-                                            setState({
-                                              filterTitle: e.target.value,
-                                            })
-                                          }
-                                          name='filterTitle'
-                                          placeholder={'Filter Title'}
-                                          value={state.filterTitle}
-                                        />
-                                      </a>
+                                      <FormField
+                                        type='text'
+                                        className='applicant-input'
+                                        onChange={(e) =>
+                                          setState({
+                                            filterTitle: e.target.value,
+                                          })
+                                        }
+                                        name='filterTitle'
+                                        placeholder={'Filter Title'}
+                                        value={state.filterTitle}
+                                      />
                                     </li>
 
                                     <li
                                       className='nav-item'
                                       role='presentation'
                                     >
-                                      <a
-                                        className={`w-100 ${pathname === '#' ? 'active' : ''
-                                          }`}
-                                        href='#'
-                                      >
+                                      <div className='w-100'>
                                         <FormField
                                           type='select'
                                           onChange={(e) =>
@@ -514,25 +504,19 @@ const DashboardMain = () => {
                                           value={state.filterCategory}
                                           options={state.postCatOption}
                                         />
-                                      </a>
+                                      </div>
                                     </li>
                                     {state.AdminLogin === 'true' && (
                                       <li
                                         className='nav-item'
                                         role='presentation'
                                       >
-                                        <a
-                                          className={`w-100 ${
-                                            pathname === '#' ? 'active' : ''
-                                          }`}
-                                          href='#'
-                                        >
+                                        <div className='w-100'>
                                           <FormField
                                             type='select'
                                             onChange={(e) =>
                                               setState({
-                                                approvalFilter:
-                                                  e.target.value,
+                                                approvalFilter: e.target.value,
                                               })
                                             }
                                             name='approvalFilter'
@@ -549,7 +533,7 @@ const DashboardMain = () => {
                                               },
                                             ]}
                                           />
-                                        </a>
+                                        </div>
                                       </li>
                                     )}
                                   </ul>
@@ -562,14 +546,28 @@ const DashboardMain = () => {
                                   <Link
                                     className='rbt-btn btn-gradient radius-round sm-btn'
                                     href='#'
-                                    onClick={() => handleFiltersSubmit(1)}
+                                    onClick={(event) => {
+                                      event.preventDefault();
+                                      handleFiltersSubmit(1);
+                                      window.scrollTo({
+                                        top: 0,
+                                        behavior: 'smooth',
+                                      });
+                                    }}
                                   >
                                     Filter
                                   </Link>
                                   <Link
                                     className='rbt-btn btn-border-gradient radius-round sm-btn'
                                     href='#'
-                                    onClick={handleClearFilter}
+                                    onClick={(event) => {
+                                      event.preventDefault();
+                                      handleClearFilter();
+                                      window.scrollTo({
+                                        top: 0,
+                                        behavior: 'smooth',
+                                      });
+                                    }}
                                   >
                                     Clear all
                                   </Link>

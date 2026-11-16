@@ -67,6 +67,7 @@ const AllTicketsMain = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [responseModal, setResponseModal] = useState(false);
   const [replyModal, setReplyModal] = useState(false);
+  const [replySubmitting, setReplySubmitting] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [departmentDatas, setDepartmentDatas] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -132,7 +133,7 @@ const AllTicketsMain = () => {
       });
       setLoading(false);
     } catch (error) {
-      setLoading(true);
+      setLoading(false);
 
       console.log("✌️error --->", error);
     }
@@ -482,7 +483,7 @@ const AllTicketsMain = () => {
       });
   };
 
-  const handleReplySubmit = (e) => {
+  const handleReplySubmit = async (e) => {
     e.preventDefault();
 
     const validationRules = {
@@ -492,8 +493,9 @@ const AllTicketsMain = () => {
     const isValid = validateForm(replyData, validationRules, setErrMsg);
     if (!isValid) return;
 
-    axios
-      .post(
+    setReplySubmitting(true);
+    try {
+      const response = await axios.post(
         `${BaseURL}/reply_ticket/${replyData.id}/`,
         {
           messages: replyData.messages,
@@ -503,24 +505,32 @@ const AllTicketsMain = () => {
             Authorization: `Bearer ${token}`,
           },
         }
-      )
-      .then((response) => {
-        message.success(response.data.message);
-        setLoading(true);
-        setReplyModal(false);
-        setReplyData({
-          message: "",
-        });
-      })
-      .catch((error) => {
-        message.error(error.response.data.errors);
-        console.log(error.response.data);
-        if (error?.response?.data?.code === "token_not_valid") {
-          localStorage.removeItem("token");
-          router.push("/login");
-        }
-        setLoading(false);
-      });
+      );
+      message.success(response.data?.message || "Reply sent successfully.");
+      setReplyModal(false);
+      setReplyData({ messages: "" });
+      setErrMsg({});
+
+      if (isAdmin === "true" || isAlumniManager === "true") {
+        await GetRole(state.currentPage || 1);
+      } else if (isFatulty === "true") {
+        await GetFatultyAssignedTickets(state.currentPage || 1);
+      }
+    } catch (error) {
+      const errors = error?.response?.data?.errors;
+      message.error(
+        (Array.isArray(errors) ? errors.join(" ") : errors) ||
+          error?.response?.data?.error ||
+          "Failed to send reply."
+      );
+      console.log("reply ticket error:", error);
+      if (error?.response?.data?.code === "token_not_valid") {
+        localStorage.removeItem("token");
+        router.push("/login");
+      }
+    } finally {
+      setReplySubmitting(false);
+    }
   };
 
   const handleStatusSubmit = (e) => {
@@ -607,20 +617,19 @@ const AllTicketsMain = () => {
   };
 
   const handleSearchSubmit = async (page = 1, e) => {
-   
     if (e) {
       e.preventDefault();
     }
     try {
-       setLoading(true);
+      setLoading(true);
       const postData = {
-        category: searchData.category.value,
-        priority: searchData.priority,
-        due_date: searchData.due_date,
+        category: searchData.category?.value || "",
+        priority: searchData.priority || "",
+        due_date: searchData.due_date || "",
       };
 
       if (isAdmin === "true" || isAlumniManager === "true") {
-        postData.status_id = searchData.status_id.value;
+        postData.status_id = searchData.status_id?.value || "";
       }
 
       const res = await Models.helpDesk.filter_ticket(postData, page);
@@ -638,48 +647,28 @@ const AllTicketsMain = () => {
 
       setDepartmentDatas(res.results);
       setStatusModal(false);
-      setAllUserFilterFinalDataList(searchData);
-       setLoading(false);
+      setAllUserFilterFinalDataList(postData);
     } catch (error) {
       console.log("✌️error --->", error);
-       setLoading(false);
+      message.error(error?.errors || "Unable to filter tickets.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const HandleClearFilter = async (page) => {
-    try {
-       setLoading(true);
-      const Body = {
-        category: "",
-        priority: "",
-        due_date: "",
-      };
+    setSearchData({
+      category: "",
+      status_id: "",
+      priority: "",
+      due_date: "",
+    });
+    setAllUserFilterFinalDataList({});
 
-      const res = await Models.helpDesk.filter_ticket(Body, page);
-
-      setState({
-        next: res?.next,
-        prev: res?.previous,
-        refresh: false,
-        moreLoading: false,
-        loading: false,
-        total: res?.count,
-        pageLoading: false,
-      });
-
-      setDepartmentDatas(res.results);
-      setStatusModal(false);
-      setAllUserFilterFinalDataList(Body);
-      setSearchData({
-        category: "",
-        status_id: "",
-        priority: "",
-        due_date: "",
-      });
-       setLoading(false);
-    } catch (error) {
-      console.log("✌️error --->", error);
-       setLoading(false);
+    if (isAdmin === "true" || isAlumniManager === "true") {
+      await GetRole(page);
+    } else {
+      await GetFatultyAssignedTickets(page);
     }
   };
 
@@ -725,7 +714,7 @@ const AllTicketsMain = () => {
       if (isFilter) {
         handleSearchSubmit(number);
       } else {
-        HandleClearFilter(number);
+        GetFatultyAssignedTickets(number);
       }
     }
     setState({ currentPage: number });
@@ -739,6 +728,9 @@ const AllTicketsMain = () => {
       body = true;
     }
     if (searchData.priority) {
+      body = true;
+    }
+    if (searchData.status_id) {
       body = true;
     }
     if (searchData.due_date) {
@@ -839,21 +831,21 @@ const AllTicketsMain = () => {
               <div className="col-lg-12 d-flex justify-content-end gap-4">
                 <button
                   className="rbt-btn btn-gradient radius-round sm-btn"
-                  href="#"
+                  type="button"
                   onClick={(e) => handleSearchSubmit(1, e)}
                 >
                   Filter
                 </button>
-                <Link
+                <button
                   className="rbt-btn btn-border-gradient radius-round sm-btn"
-                  href="#"
+                  type="button"
                   onClick={() => {
                     setState({ currentPage: 1 });
                     HandleClearFilter(1);
                   }}
                 >
                   Clear all
-                </Link>
+                </button>
               </div>
             </div>
           </div>
@@ -1172,8 +1164,9 @@ const AllTicketsMain = () => {
             <button
               className="rbt-btn btn-gradient radius-round sm-btn"
               type="submit"
+              disabled={replySubmitting}
             >
-              Submit
+              {replySubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
         </form>

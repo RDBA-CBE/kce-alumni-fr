@@ -27,8 +27,8 @@ const OpenTicketsMain = () => {
     currentPage: 1,
     currenCategoryPage: 1,
     hasCategoryLoadMore: null,
-    // currenStatusPage: 1,
-    // hasStatusLoadMore: null,
+    currenStatusPage: 1,
+    hasStatusLoadMore: null,
     currenFacultyPage: 1,
     hasFacultyLoadMore: null,
   });
@@ -132,7 +132,7 @@ const OpenTicketsMain = () => {
       });
       setLoading(false);
     } catch (error) {
-      setLoading(true);
+      setLoading(false);
 
       console.log("✌️error --->", error);
     }
@@ -152,21 +152,15 @@ const OpenTicketsMain = () => {
     }
   };
 
-  const GetStatus = () => {
-    setLoading(true);
-    axios
-      .get(`${BaseURL}/retrieve_status/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setStatusList(response.data?.results);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-      });
+  const GetStatus = async () => {
+    try {
+      const res = await Models.masters.status();
+      const dropdown = setDropdownData(res?.results, "status");
+      setStatusList(dropdown);
+      setState({ hasStatusLoadMore: res?.next });
+    } catch (error) {
+      console.log("✌️error --->", error);
+    }
   };
 
   const GetCategoryList = async () => {
@@ -306,50 +300,17 @@ const OpenTicketsMain = () => {
     }));
   };
 
-  const handleSearchSubmitSubmit = (e) => {
-    e.preventDefault();
-
-    const Body = {
-      category: searchData.category,
-      status_id: searchData.status_id,
-      priority: searchData.priority,
-      due_date: searchData.due_date,
-    };
-    axios
-      .post(`${BaseURL}/open_filter_ticket/`, Body)
-      .then((response) => {
-        setDepartmentDatas(response.data);
-        setAllUserFilterFinalDataList(Body);
-        // GetRole();
-        // setSearchData({
-        //   category: "",
-        //   status_id: "",
-        //   priority: "",
-        //   due_date: "",
-        // });
-      })
-      .catch((error) => {
-        message.error(error.response?.data?.errors);
-        console.log(error.response?.data);
-        if (error?.response?.data?.code === "token_not_valid") {
-          localStorage.removeItem("token");
-          router.push("/login");
-        }
-        setLoading(false);
-      });
-  };
-
   const handleSearchSubmit = async (page = 1, e) => {
-    console.log("✌️page --->", page);
     if (e) {
       e.preventDefault();
     }
     try {
+      setLoading(true);
       const postData = {
-        category: searchData.category.value,
-        status_id: searchData.status_id,
-        priority: searchData.priority,
-        due_date: searchData.due_date,
+        category: searchData.category?.value || "",
+        status_id: searchData.status_id?.value || "",
+        priority: searchData.priority || "",
+        due_date: searchData.due_date || "",
       };
 
       const res = await Models.helpDesk.open_filter_ticket(postData, page);
@@ -366,44 +327,24 @@ const OpenTicketsMain = () => {
       });
 
       setDepartmentDatas(res.results);
-      setAllUserFilterFinalDataList(searchData);
+      setAllUserFilterFinalDataList(postData);
     } catch (error) {
       console.log("✌️error --->", error);
+      message.error(error?.errors || "Unable to filter tickets.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const HandleClearFilter = async (page) => {
-    try {
-      const Body = {
-        category: "",
-        status_id: "",
-        priority: "",
-        due_date: "",
-      };
-
-      const res = await Models.helpDesk.open_filter_ticket(Body, page);
-
-      setState({
-        next: res?.next,
-        prev: res?.previous,
-        refresh: false,
-        moreLoading: false,
-        loading: false,
-        total: res?.count,
-        pageLoading: false,
-      });
-
-      setDepartmentDatas(res.results);
-      setAllUserFilterFinalDataList(Body);
-      setSearchData({
-        category: "",
-        status_id: "",
-        priority: "",
-        due_date: "",
-      });
-    } catch (error) {
-      console.log("✌️error --->", error);
-    }
+    setSearchData({
+      category: "",
+      status_id: "",
+      priority: "",
+      due_date: "",
+    });
+    setAllUserFilterFinalDataList({});
+    await GetRole(page);
   };
 
   const handlePageChange = (number) => {
@@ -425,6 +366,9 @@ const OpenTicketsMain = () => {
       body = true;
     }
     if (searchData.priority) {
+      body = true;
+    }
+    if (searchData.status_id) {
       body = true;
     }
     if (searchData.due_date) {
@@ -501,6 +445,22 @@ const OpenTicketsMain = () => {
     }
   };
 
+  const statusListLoadMore = async () => {
+    try {
+      if (state.hasStatusLoadMore) {
+        const res = await Models.masters.status(state.currenStatusPage + 1);
+        const statusOptions = setDropdownData(res?.results, "status");
+        setStatusList([...statusList, ...statusOptions]);
+        setState({
+          currenStatusPage: state.currenStatusPage + 1,
+          hasStatusLoadMore: res?.next,
+        });
+      }
+    } catch (error) {
+      console.log("✌️error --->", error);
+    }
+  };
+
   return (
     <>
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box helpdesk">
@@ -511,7 +471,7 @@ const OpenTicketsMain = () => {
 
           <div className="rbt-dashboard-filter-wrapper">
             <div className="row g-5">
-              <div className="col-lg-6">
+              <div className="col-lg-3">
                 <div className="filter-select rbt-modern-select">
                   <span className="select-label d-block">Catogory</span>
                   <FormField
@@ -525,6 +485,24 @@ const OpenTicketsMain = () => {
                     }}
                     options={categoryTicket}
                     loadMore={() => categoryListLoadMore()}
+                  />
+                </div>
+              </div>
+
+              <div className="col-lg-3">
+                <div className="filter-select rbt-modern-select">
+                  <span className="select-label d-block">Status</span>
+                  <FormField
+                    type="loadMoreSelect"
+                    name="status_id"
+                    placeholder="Status"
+                    className="p-0"
+                    value={searchData.status_id}
+                    onChange={(option) =>
+                      handleSearchChange("status_id", option)
+                    }
+                    options={statusList}
+                    loadMore={statusListLoadMore}
                   />
                 </div>
               </div>
@@ -577,21 +555,21 @@ const OpenTicketsMain = () => {
               <div className="col-lg-12 d-flex justify-content-end gap-4">
                 <button
                   className="rbt-btn btn-gradient radius-round sm-btn"
-                  href="#"
+                  type="button"
                   onClick={(e) => handleSearchSubmit(1, e)}
                 >
                   Filter
                 </button>
-                <Link
+                <button
                   className="rbt-btn btn-border-gradient radius-round sm-btn"
-                  href="#"
+                  type="button"
                   onClick={() => {
                     setState({ currentPage: 1 });
                     HandleClearFilter(1);
                   }}
                 >
                   Clear all
-                </Link>
+                </button>
               </div>
             </div>
           </div>
