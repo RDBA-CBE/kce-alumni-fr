@@ -115,21 +115,29 @@ const EditJobForm = () => {
   }, [token]);
 
   useEffect(() => {
-    if (typeof formData.location !== "string" || !formData.location) return;
-    const isOthers = formData.other_location?.trim();
-    const matched = isOthers
-      ? location.find((o) =>
-        ["other", "others"].includes(o.label?.trim().toLowerCase())
-      )
-      : location.find(
-        (o) =>
-          o.label?.toLowerCase() === formData.location.toLowerCase() ||
-          String(o.value) === formData.location
-      );
-    if (matched) {
-      setFormData((prev) => ({ ...prev, location: matched }));
+    if (!formData.location) return;
+    if (typeof formData.location === "string") {
+      const isOthers = formData.other_location?.trim();
+      const matched = isOthers
+        ? location.find((o) =>
+            ["other", "others"].includes(o.label?.trim().toLowerCase())
+          ) || { value: formData.location, label: "Others" }
+        : location.find(
+            (o) =>
+              o.label?.toLowerCase() === formData.location.toLowerCase() ||
+              String(o.value) === formData.location
+          );
+      if (matched) {
+        setFormData((prev) => ({ ...prev, location: matched }));
+        setLocation((prev) => {
+          if (!prev.some((loc) => String(loc.value) === String(matched.value))) {
+            return [matched, ...prev];
+          }
+          return prev;
+        });
+      }
     }
-  }, [location]);
+  }, [location, formData.location, formData.other_location]);
 
   const getEditData = async () => {
     try {
@@ -157,13 +165,30 @@ const EditJobForm = () => {
       // For industry: if other_industry has value, select the "Others" option
       // otherwise use the actual industry object
       const industryOption = data.other_industry
-        ? findOthers(industry) || { value: data.industry.id, label: data.industry.title }
-        : { value: data.industry.id, label: data.industry.title };
+        ? findOthers(industry) || { value: data.industry?.id, label: data.industry?.title || "Others" }
+        : (data.industry ? { value: data.industry.id, label: data.industry.title } : "");
 
       // For role: same logic
       const roleOption = data.other_role
-        ? findOthers(roleList) || { value: data.role.id, label: data.role.role }
-        : { value: data.role.id, label: data.role.role };
+        ? findOthers(roleList) || { value: data.role?.id, label: data.role?.role || "Others" }
+        : (data.role ? { value: data.role.id, label: data.role.role } : "");
+
+      // For location: if location_name is available or other_location has value, set Others option
+      const locationOption = data.location_name
+        ? { value: data.location, label: data.location_name }
+        : data.other_location
+        ? findOthers(location) || { value: data.location, label: "Others" }
+        : typeof data.location === "object" && data.location !== null
+        ? {
+            value: data.location.id ?? data.location.value,
+            label:
+              data.location.location ??
+              data.location.label ??
+              data.location.name,
+          }
+        : data.location
+        ? { value: data.location, label: String(data.location) }
+        : "";
 
       setFormData({
         job_title: data.job_title || "",
@@ -176,15 +201,42 @@ const EditJobForm = () => {
         other_role: data.other_role || "",
         experience_level_from: data.experience_level_from || null,
         experience_level_to: data.experience_level_to || null,
-        location: data.location || "",
+        location: locationOption,
         other_location: data.other_location || "",
         salary_package: data.salary_package || "",
         dead_line: data.dead_line || "",
         file: data?.file,
         job_description: data.job_description || "",
-        skills: data.skills.map((item) => ({ value: item.id, label: item.skill })),
+        skills: Array.isArray(data.skills)
+          ? data.skills.map((item) => ({ value: item.id ?? item.skill_id, label: item.skill ?? item.label }))
+          : [],
         other_skill: data.other_skill || "",
       });
+
+      if (locationOption && typeof locationOption === "object" && locationOption.value) {
+        setLocation((prev) => {
+          if (!prev.some((loc) => String(loc.value) === String(locationOption.value))) {
+            return [locationOption, ...prev];
+          }
+          return prev;
+        });
+      }
+      if (industryOption && typeof industryOption === "object" && industryOption.value) {
+        setIndustry((prev) => {
+          if (!prev.some((ind) => String(ind.value) === String(industryOption.value))) {
+            return [industryOption, ...prev];
+          }
+          return prev;
+        });
+      }
+      if (roleOption && typeof roleOption === "object" && roleOption.value) {
+        setRoleList((prev) => {
+          if (!prev.some((r) => String(r.value) === String(roleOption.value))) {
+            return [roleOption, ...prev];
+          }
+          return prev;
+        });
+      }
 
       if (data.file) {
         setPreview(data.file);
@@ -203,7 +255,15 @@ const EditJobForm = () => {
     try {
       const res = await Models.job.industryList();
       const dropdown = setDropdownData(res?.results, "title");
-      setIndustry(dropdown);
+      setIndustry((prev) => {
+        const combined = [...dropdown];
+        prev.forEach((item) => {
+          if (!combined.some((c) => String(c.value) === String(item.value))) {
+            combined.unshift(item);
+          }
+        });
+        return combined;
+      });
       setState({
         hasIndustryLoadMore: res?.next,
       });
@@ -216,7 +276,15 @@ const EditJobForm = () => {
     try {
       const res = await Models.job.roleList();
       const dropdown = setDropdownData(res?.results, "role");
-      setRoleList(dropdown);
+      setRoleList((prev) => {
+        const combined = [...dropdown];
+        prev.forEach((item) => {
+          if (!combined.some((c) => String(c.value) === String(item.value))) {
+            combined.unshift(item);
+          }
+        });
+        return combined;
+      });
       setState({
         hasRoleLoadMore: res?.next,
       });
@@ -229,7 +297,15 @@ const EditJobForm = () => {
     try {
       const res = await Models.job.locationList();
       const dropdown = setDropdownData(res?.results, "location");
-      setLocation(dropdown);
+      setLocation((prev) => {
+        const combined = [...dropdown];
+        prev.forEach((item) => {
+          if (!combined.some((c) => String(c.value) === String(item.value))) {
+            combined.unshift(item);
+          }
+        });
+        return combined;
+      });
       setState({
         hasLocationLoadMore: res?.next,
       });
