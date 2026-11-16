@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import FormField from "@/commonComponents/FormFields";
+import QuickAddMaster from "@/components/(Alumni)/component/QuickAddMaster";
 import { Filter } from "react-feather";
 import { DeleteOutlined, FilePdfOutlined } from "@ant-design/icons";
 
@@ -986,6 +987,10 @@ const ChaptersMain = () => {
             />
           </div>
 
+          <div className="d-flex align-items-center mb-1">
+            <small className="text-muted">Country</small>
+            <QuickAddMaster type="country" onCreated={(opt) => { setCountry((prev) => [...prev, opt]); }} />
+          </div>
           <FormField
             label="Country"
             type="loadMoreSelect"
@@ -1014,6 +1019,10 @@ const ChaptersMain = () => {
             loadMore={CountryListLoadMore}
           />
 
+          <div className="d-flex align-items-center mb-1">
+            <small className="text-muted">Location</small>
+            <QuickAddMaster type="location" onCreated={(opt) => { setLocation((prev) => [...prev, opt]); }} />
+          </div>
           <FormField
             label="Location"
             type="loadMoreSelect"

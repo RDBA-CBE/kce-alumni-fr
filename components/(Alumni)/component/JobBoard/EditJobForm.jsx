@@ -13,6 +13,7 @@ import {
   validateForm,
 } from "@/utils/commonFunction.utils";
 import FormField from "@/commonComponents/FormFields";
+import QuickAddMaster from "@/components/(Alumni)/component/QuickAddMaster";
 import { getFileFormatFromUrl, jobTypeOption, YearOfExperience } from "@/utils/constant.utils";
 import axios from "axios";
 import Models from "@/imports/models.import";
@@ -739,6 +740,10 @@ const EditJobForm = () => {
                     </div>
 
                     <div className="form-group">
+                      <div className="d-flex align-items-center mb-1">
+                        <small className="text-muted">Industry</small>
+                        <QuickAddMaster type="industry" onCreated={(opt) => { setIndustry((prev) => [...prev, opt]); }} />
+                      </div>
                       <FormField
                         placeholder="Industry"
                         type="loadMoreSelect"
@@ -776,6 +781,10 @@ const EditJobForm = () => {
                     </div>
 
                     <div className="form-group">
+                      <div className="d-flex align-items-center mb-1">
+                        <small className="text-muted">Role</small>
+                        <QuickAddMaster type="role" onCreated={(opt) => { setRoleList((prev) => [...prev, opt]); }} />
+                      </div>
                       <FormField
                         placeholder="Role"
                         type="loadMoreSelect"
@@ -808,6 +817,10 @@ const EditJobForm = () => {
                     </div>
 
                     <div className="form-group">
+                      <div className="d-flex align-items-center mb-1">
+                        <small className="text-muted">Skills</small>
+                        <QuickAddMaster type="skill" onCreated={(opt) => { setSkills((prev) => [...prev, opt]); }} />
+                      </div>
                       <FormField
                         placeholder="Skills"
                         type="loadMoreSelect"
@@ -883,6 +896,10 @@ const EditJobForm = () => {
                     </div>
 
                     <div className="form-group">
+                      <div className="d-flex align-items-center mb-1">
+                        <small className="text-muted">Location</small>
+                        <QuickAddMaster type="location" onCreated={(opt) => { setLocation((prev) => [...prev, opt]); }} />
+                      </div>
                       <FormField
                         placeholder="Location"
                         type="loadMoreSelect"
