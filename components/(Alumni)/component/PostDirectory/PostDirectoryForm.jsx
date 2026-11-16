@@ -274,6 +274,9 @@ const PostDirectoryForm = () => {
         }
       );
       console.log("✌️response --->", response);
+      (messageApi?.success || message.success)(
+        response?.data?.message || "Business Directory Created Successfully"
+      );
       router.push("/business-directory/");
       setFormData({
         business_name: "",
@@ -295,6 +298,66 @@ const PostDirectoryForm = () => {
     } catch (error) {
       console.log("❌error --->", error);
       setState({ btnLoading: false });
+
+      const resData = error?.response?.data;
+      const newFieldErrors = {};
+      const messages = [];
+
+      if (resData && typeof resData === "object") {
+        if (resData.message && typeof resData.message === "string") {
+          messages.push(resData.message);
+        }
+        if (
+          resData.error &&
+          typeof resData.error === "string" &&
+          !messages.includes(resData.error)
+        ) {
+          messages.push(resData.error);
+        }
+        if (
+          resData.detail &&
+          typeof resData.detail === "string" &&
+          !messages.includes(resData.detail)
+        ) {
+          messages.push(resData.detail);
+        }
+
+        Object.entries(resData).forEach(([key, value]) => {
+          if (["message", "error", "detail"].includes(key)) return;
+          const text = Array.isArray(value)
+            ? value.join(", ")
+            : typeof value === "string"
+            ? value
+            : JSON.stringify(value);
+          newFieldErrors[key] = text;
+          messages.push(text);
+        });
+
+        const primaryMsg = resData.message || resData.error;
+        if (typeof primaryMsg === "string") {
+          const lower = primaryMsg.toLowerCase();
+          if (lower.includes("country list") && !newFieldErrors.other_country) {
+            newFieldErrors.other_country = primaryMsg;
+          }
+          if (lower.includes("industry list") && !newFieldErrors.other_industry) {
+            newFieldErrors.other_industry = primaryMsg;
+          }
+        }
+
+        if (Object.keys(newFieldErrors).length > 0) {
+          setErrMsg((prev) => ({ ...prev, ...newFieldErrors }));
+        }
+      }
+
+      if (messages.length > 0) {
+        messages.forEach((msg) => {
+          (messageApi?.error || message.error)(msg);
+        });
+      } else {
+        const fallback =
+          error?.message || "Something went wrong while posting business directory";
+        (messageApi?.error || message.error)(fallback);
+      }
     }
   };
 
