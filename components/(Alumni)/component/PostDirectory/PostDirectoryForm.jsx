@@ -17,7 +17,9 @@ import axios from "axios";
 import Models from "@/imports/models.import";
 
 const isOthersOption = (option) =>
-  option?.label?.trim().toLowerCase() === "others";
+  ["other", "others"].includes(
+    typeof option?.label === "string" ? option.label.trim().toLowerCase() : ""
+  );
 
 const PostDirectoryForm = () => {
   const router = useRouter();
@@ -204,7 +206,14 @@ const PostDirectoryForm = () => {
       contact_number: { required: true },
       website: { required: true },
       location: { required: true },
-      logo: { required: true },
+      logo: {
+        required: true,
+        custom: (file) =>
+          typeof File !== "undefined" &&
+          file instanceof File &&
+          file.type.startsWith("image/"),
+        customMessage: "Please upload an image.",
+      },
       description: { required: true },
       industry_type: { required: true },
     };
@@ -216,7 +225,10 @@ const PostDirectoryForm = () => {
       return;
     }
     const otherFieldErrors = {};
-    if (isOthersOption(formData.country_code) && !formData.other_country.trim()) {
+    if (
+      isOthersOption(formData.country_code) &&
+      !formData.other_country.trim()
+    ) {
       otherFieldErrors.other_country = "Enter This Field";
     }
     if (
@@ -465,10 +477,14 @@ const PostDirectoryForm = () => {
                         key={fileInputKey}
                         error={errMsg.logo}
                         onChange={(e) => handleChange(e)}
-                        accept="image/*,application/pdf"
+                        accept="image/*"
                         required={true}
                         className="file-input"
                       />
+                      <p style={{ fontSize: 12, color: "#888", marginTop: 6, marginBottom: 0 }}>
+                        <i className="feather-info me-1" style={{ color: "#0091ff" }} />
+                        Upload image with <strong>187 × 142 px</strong> and size below <strong>100 KB</strong>
+                      </p>
                       <span className="focus-border"></span>
                       {preview && (
                         <div

@@ -83,7 +83,9 @@ const ChapterDetail = () => {
                         </span>
                         <span className="jd-dot">—</span>
                         <span className="jd-location">
-                          {state.detail?.location?.location}
+                          {state.detail?.other_location
+                            ? state.detail.other_location
+                            : state.detail?.location?.location}
                         </span>
                         <div className="jd-posted">
                           Created On: {formattedDate(state.detail?.created_at)}
@@ -109,11 +111,15 @@ const ChapterDetail = () => {
                   <h4 className="jd-section-title">Location Details</h4>
                   <p className="jd-text mb-2">
                     <b>Location: </b>
-                    {state.detail?.location?.location}
+                    {state.detail?.other_location
+                      ? state.detail.other_location
+                      : state.detail?.location?.location}
                   </p>
                   <p className="jd-text mb-2">
                     <b>Country: </b>
-                    {state.detail?.country?.country_name}
+                    {state.detail?.other_country
+                      ? state.detail.other_country
+                      : state.detail?.country?.country_name}
                   </p>
                 </div>
 

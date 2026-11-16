@@ -58,6 +58,8 @@ const PostJobForm = () => {
   const [preview, setPreview] = useState(null);
   const [fileInputKey, setFileInputKey] = useState(Date.now());
   const fileInputRef = useRef(null);
+  const locationPageRef = useRef(1);
+  const locationLoadMoreInProgress = useRef(false);
   const [token, setToken] = useState("");
 
   const [state, setState] = useSetState({
@@ -131,10 +133,12 @@ const PostJobForm = () => {
 
   const GetLocationList = async () => {
     try {
-      const res = await Models.job.locationList();
+      const res = await Models.masters.locationList(1);
       const dropdown = setDropdownData(res?.results, "location");
       setLocation(dropdown);
+      locationPageRef.current = 1;
       setState({
+        currenLocationPage: 1,
         hasLocationLoadMore: res?.next,
       });
     } catch (error) {
@@ -143,11 +147,19 @@ const PostJobForm = () => {
   };
 
   const locationListLoadMore = async () => {
-    try {
-      if (!state.hasLocationLoadMore) return;
+    if (
+      !state.hasLocationLoadMore ||
+      locationLoadMoreInProgress.current
+    ) {
+      return;
+    }
 
-      const res = await Models.job.locationList(state.currenLocationPage + 1);
-      const locationOptions = setDropdownData(res?.results, "location");
+    locationLoadMoreInProgress.current = true;
+    try {
+      const nextPage = locationPageRef.current + 1;
+      const locationResponse = await Models.masters.locationList(nextPage);
+      const locationOptions =
+        setDropdownData(locationResponse?.results, "location") || [];
       setLocation((currentLocations) => {
         const optionsById = new Map(
           currentLocations.map((option) => [option.value, option])
@@ -155,12 +167,15 @@ const PostJobForm = () => {
         locationOptions.forEach((option) => optionsById.set(option.value, option));
         return Array.from(optionsById.values());
       });
+      locationPageRef.current = nextPage;
       setState({
-        currenLocationPage: state.currenLocationPage + 1,
-        hasLocationLoadMore: res?.next,
+        currenLocationPage: nextPage,
+        hasLocationLoadMore: locationResponse?.next,
       });
     } catch (error) {
       console.log("✌️error --->", error);
+    } finally {
+      locationLoadMoreInProgress.current = false;
     }
   };
 
@@ -719,6 +734,10 @@ const PostJobForm = () => {
                         accept="application/pdf"
                         required={true}
                       />
+                      <p style={{ fontSize: 12, color: "#888", marginTop: 6, marginBottom: 0 }}>
+                        <i className="feather-info me-1" style={{ color: "#0091ff" }} />
+                        Upload file as <strong>PDF</strong> with size below <strong>2 MB</strong>
+                      </p>
                       <span className="focus-border"></span>
                       {preview && (
                         <div

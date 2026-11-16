@@ -90,7 +90,7 @@ const BusinessDirectoryMain = () => {
       GetDepartmentList();
       MyBusinessDirectory();
     }
-  }, [token]);
+  }, [token, isAdmin, isAlumni, isAlumniManager, isFatulty]);
   console.log('token', token);
 
   console.log('accessToken', token);
@@ -118,8 +118,12 @@ const BusinessDirectoryMain = () => {
 
   const getJobsAdmin = (page = 1) => {
     setState({ pageLoading: true });
+    const params = new URLSearchParams({ page, pagesize: 10 });
+    if (isAlumni === 'true' || isFatulty === 'true') {
+      params.append('is_approved', 'true');
+    }
     axios
-      .get(`${BaseURL}/retrieve_business_directory/?page=${page}&pagesize=10`, {
+      .get(`${BaseURL}/retrieve_business_directory/?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -208,6 +212,42 @@ const BusinessDirectoryMain = () => {
     });
   };
 
+  const showApprovalConfirm = (item) => {
+    const isApproved = item.is_approved === true || item.is_approved === 'true';
+    const nextApproval = !isApproved;
+    confirm({
+      title: `Are you sure you want to ${nextApproval ? 'approve' : 'unapprove'} "${item.business_name}"?`,
+      okText: nextApproval ? 'Approve' : 'Unapprove',
+      okType: nextApproval ? 'primary' : 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          const formDataToSend = new FormData();
+          formDataToSend.append('is_approved', String(nextApproval));
+          await axios.post(
+            `${BaseURL}/update_business_directory/${item.id}/`,
+            formDataToSend,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          success(`Business directory ${nextApproval ? 'approved' : 'unapproved'} successfully`);
+          setFilteredData((prev) =>
+            prev.map((d) => d.id === item.id ? { ...d, is_approved: nextApproval } : d)
+          );
+          setAdminDataLists((prev) =>
+            prev.map((d) => d.id === item.id ? { ...d, is_approved: nextApproval } : d)
+          );
+        } catch (error) {
+          errorNotification(error.response?.data?.error || 'Unable to update approval status.');
+        }
+      },
+    });
+  };
+
   // const showDeleteConfirm = (post) => {
   //   confirm({
   //     title: post.is_active
@@ -256,10 +296,19 @@ const BusinessDirectoryMain = () => {
     if (token) {
       if (value) {
         const filtered = AdminDataLists.filter(
-          (post) =>
-            post?.business_name?.toLowerCase().includes(value) ||
-            post?.industry_type.toLowerCase().includes(value) ||
-            post?.location.toLowerCase().includes(value)
+          (post) => {
+            const industry = String(
+              post?.other_industry ||
+                post?.industry_type ||
+                post?.industry ||
+                ''
+            );
+            return (
+              post?.business_name?.toLowerCase().includes(value) ||
+              industry.toLowerCase().includes(value) ||
+              post?.location?.toLowerCase().includes(value)
+            );
+          }
         );
         setFilteredData(filtered);
       } else {
@@ -269,10 +318,19 @@ const BusinessDirectoryMain = () => {
     {
       if (value) {
         const filtered = listOfPosts.filter(
-          (post) =>
-            post?.business_name?.toLowerCase().includes(value) ||
-            post?.industry?.toLowerCase().includes(value) ||
-            post?.location.toLowerCase().includes(value)
+          (post) => {
+            const industry = String(
+              post?.other_industry ||
+                post?.industry_type ||
+                post?.industry ||
+                ''
+            );
+            return (
+              post?.business_name?.toLowerCase().includes(value) ||
+              industry.toLowerCase().includes(value) ||
+              post?.location?.toLowerCase().includes(value)
+            );
+          }
         );
         setNormelUserFilter(filtered);
       } else {
@@ -375,6 +433,7 @@ const BusinessDirectoryMain = () => {
 
   return (
     <div className='rbt-dashboard-area section-pad'>
+      {contextHolder}
       <div className='container-fluid'>
         <div className='row justify-content-center'>
           <div className='col-11 col-xl-10 con-wid'>
@@ -589,11 +648,11 @@ const BusinessDirectoryMain = () => {
                                           className='rbt-card card-list-2 event-list-card variation-01 rbt-hover relative'
                                           style={{ position: 'relative' }}
                                         >
-                                          {/* Edit Icon in Top Right */}
+                                          {/* Edit + Approve Icons for admin/manager */}
                                           {(isAdmin == 'true' ||
                                             isAlumniManager == 'true') && (
                                             <div
-                                              className='rbt-button-group'
+                                              className='rbt-button-group d-flex gap-2'
                                               style={{
                                                 position: 'absolute',
                                                 top: '15px',
@@ -608,6 +667,33 @@ const BusinessDirectoryMain = () => {
                                               >
                                                 <i className='feather-edit pl--0' />
                                               </a>
+                                              {isAdmin == 'true' && (
+                                                <Tooltip
+                                                  title={
+                                                    item.is_approved === true || item.is_approved === 'true'
+                                                      ? 'Unapprove'
+                                                      : 'Approve'
+                                                  }
+                                                >
+                                                  <button
+                                                    type='button'
+                                                    className={`rbt-btn btn-xs radius-round ${
+                                                      item.is_approved === true || item.is_approved === 'true'
+                                                        ? 'bg-color-success-opacity color-success'
+                                                        : 'bg-color-danger-opacity color-danger'
+                                                    }`}
+                                                    onClick={() => showApprovalConfirm(item)}
+                                                  >
+                                                    <i
+                                                      className={`feather-${
+                                                        item.is_approved === true || item.is_approved === 'true'
+                                                          ? 'check-circle'
+                                                          : 'x-circle'
+                                                      } pl--0`}
+                                                    />
+                                                  </button>
+                                                </Tooltip>
+                                              )}
                                             </div>
                                           )}
 
@@ -634,6 +720,8 @@ const BusinessDirectoryMain = () => {
                                                 {item?.location}
                                                 {item?.other_country
                                                   ? `, ${item.other_country}`
+                                                  : item?.country_code
+                                                  ? `, ${item.country_code}`
                                                   : ""}
                                               </li>
                                             </ul>
@@ -649,8 +737,9 @@ const BusinessDirectoryMain = () => {
                                               style={{ fontSize: '16px' }}
                                             >
                                               <Link href={'#'}>
-                                                {item.other_industry ||
-                                                  item.industry_type}
+                                                {item?.other_industry
+                                                  ? item.other_industry
+                                                  : item?.industry_type_detail?.type_name || item?.industry_type || item?.industry}
                                               </Link>
                                             </p>
                                           </div>

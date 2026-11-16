@@ -997,14 +997,14 @@ const JobBoardMain = () => {
                                           <td>
                                             <span className='b3'>
                                               <Link href='#'>
-                                                {item?.other_industry || item?.industry}
+                                                {item?.other_industry ? item.other_industry : item?.industry}
                                               </Link>
                                             </span>
                                           </td>
                                           <td>
                                             <span className='b3'>
                                               <Link href='#'>
-                                                {item?.other_role || item?.role}
+                                                {item?.other_role ? item.other_role : item?.role}
                                               </Link>
                                             </span>
                                           </td>
@@ -1167,8 +1167,7 @@ const JobBoardMain = () => {
                                               <ul className='rbt-meta'>
                                                 <li>
                                                   <i className='feather-map-pin'></i>
-                                                  {value?.other_location ||
-                                                    value?.location}
+                                                  {value?.other_location ? value.other_location : value?.location}
                                                 </li>
                                                 <li>
                                                   <i className='feather-calendar'></i>
@@ -1187,6 +1186,16 @@ const JobBoardMain = () => {
                                                   {value.job_title}
                                                 </Link>
                                               </h4>
+                                              <ul className='rbt-meta mb-2'>
+                                                <li>
+                                                  <i className='feather-briefcase'></i>
+                                                  {value?.other_industry ? value.other_industry : value?.industry}
+                                                </li>
+                                                <li>
+                                                  <i className='feather-user'></i>
+                                                  {value?.other_role ? value.other_role : value?.role}
+                                                </li>
+                                              </ul>
                                               <p
                                                 className='text-gray mt--dec-40 mb-3'
                                                 style={{ fontSize: '16px' }}

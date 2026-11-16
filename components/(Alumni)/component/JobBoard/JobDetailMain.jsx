@@ -61,11 +61,11 @@ const JobDescription = () => {
                 <h1 className="jd-title">{SingleData.job_title}</h1>
                 <div className="jd-company-line">
                   <span className="jd-company">
-                    {SingleData.other_industry || SingleData.industry}
+                    {SingleData.other_industry ? SingleData.other_industry : SingleData.industry}
                   </span>
                   <span className="jd-dot">—</span>
                   <span className="jd-location">
-                    {SingleData.other_location || SingleData.location}
+                    {SingleData.other_location ? SingleData.other_location : SingleData.location}
                   </span>
                   <div className="jd-posted">
                     Posted on {formattedDate(SingleData.posted_on)}
@@ -146,7 +146,7 @@ const JobDescription = () => {
             <h4 className="jd-section-title">Role Description</h4>
             <p className="jd-text mb-2">
               <b>Role Name: </b>
-              {SingleData?.other_role || SingleData?.role}
+              {SingleData?.other_role ? SingleData.other_role : SingleData?.role}
             </p>
             <p className="jd-text">
               <b>Description: </b>
@@ -191,10 +191,13 @@ const JobDescription = () => {
           <div className="jd-side-card mb-4 rbt-shadow-box">
             <div className="jd-side-title">Industry</div>
             <div className="jd-side-company fw-bold">
-              {SingleData?.industry}
+              {SingleData?.other_industry ? SingleData.other_industry : SingleData?.industry}
             </div>
             <div className="jd-side-small">
-              location: {SingleData?.location}
+              location: {SingleData?.other_location ? SingleData.other_location : SingleData?.location}
+            </div>
+            <div className="jd-side-small">
+              Role: {SingleData?.other_role ? SingleData.other_role : SingleData?.role}
             </div>
             <div className="jd-side-small">
               Posted By: {capitalizeFLetter(SingleData?.posted_by)}

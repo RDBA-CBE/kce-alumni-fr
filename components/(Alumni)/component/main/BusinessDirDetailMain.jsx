@@ -86,14 +86,17 @@ const BusinessDirDetailMain = () => {
                       <h1 className="jd-title">{SingleData.business_name}</h1>
                       <div className="jd-company-line">
                         <span className="jd-company">
-                          {SingleData.other_industry ||
-                            SingleData.industry_type}
+                          {SingleData.other_industry
+                            ? SingleData.other_industry
+                            : SingleData.industry_type_detail?.type_name || SingleData.industry_type}
                         </span>
                         <span className="jd-dot">—</span>
                         <span className="jd-location">
                           {SingleData.location}
                           {SingleData.other_country
                             ? `, ${SingleData.other_country}`
+                            : SingleData.country_code
+                            ? `, ${SingleData.country_code}`
                             : ""}
                         </span>
                         <div className="jd-posted">
@@ -159,10 +162,8 @@ const BusinessDirDetailMain = () => {
                   <p className="jd-text mb-2">
                     <b>Address: </b>
                     {SingleData?.location && SingleData.location}
-                    {SingleData?.location && SingleData?.country_code
-                      ? ", "
-                      : ""}
-                    {SingleData?.country_code && SingleData.country_code}
+                    {SingleData?.location && (SingleData?.other_country || SingleData?.country_code) ? ", " : ""}
+                    {SingleData?.other_country ? SingleData.other_country : SingleData?.country_code}
                   </p>
                   {SingleData?.contact_email && (
                     <p className="jd-text mb-2">

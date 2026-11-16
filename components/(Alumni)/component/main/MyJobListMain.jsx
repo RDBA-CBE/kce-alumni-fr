@@ -20,10 +20,11 @@ import Pagination from "@/commonComponents/Pagination";
 const MyJobListMain = () => {
   const { confirm } = Modal;
   const router = useRouter();
-  const [openSubMenuId, setOpenSubMenuId] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [AdminDataLists, setAdminDataLists] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [approvalFilter, setApprovalFilter] = useState("all");
   const [formData, setFormData] = useState({
     job_title: "",
     industry: "",
@@ -116,6 +117,7 @@ const MyJobListMain = () => {
     try {
       const res = await Models.job.myJobList(page);
       setAdminDataLists(res?.results);
+      setFilteredList(res?.results);
       setState({
         pageLoading: false,
         total: res?.count,
@@ -176,6 +178,17 @@ const MyJobListMain = () => {
 
   const handleEditClick = (id) => {
     router.push(`/edit-a-job/${id}/`);
+  };
+
+  const handleApprovalFilter = (value) => {
+    setApprovalFilter(value);
+    if (value === "all") {
+      setFilteredList(AdminDataLists);
+    } else if (value === "approved") {
+      setFilteredList(AdminDataLists.filter((item) => item.is_approved === true || item.is_approved === "true"));
+    } else {
+      setFilteredList(AdminDataLists.filter((item) => item.is_approved === false || item.is_approved === "false" || !item.is_approved));
+    }
   };
 
   const handlePageChange = (pageNumber) => {
@@ -243,36 +256,25 @@ const MyJobListMain = () => {
 
   const handleSearchFilter = (e) => {
     const value = e.target.value.toLowerCase();
-    console.log("value", value);
-
-    if (token) {
-      if (value) {
-        const filtered = AdminDataLists.filter(
+    const base = approvalFilter === "all"
+      ? AdminDataLists
+      : AdminDataLists.filter((item) =>
+          approvalFilter === "approved"
+            ? item.is_approved === true || item.is_approved === "true"
+            : item.is_approved === false || item.is_approved === "false" || !item.is_approved
+        );
+    if (value) {
+      setFilteredList(
+        base.filter(
           (post) =>
             post?.job_title?.toLowerCase().includes(value) ||
-            post?.industry.toLowerCase().includes(value) ||
-            post?.role?.toLowerCase().includes(value) ||
-            post?.location.toLowerCase().includes(value)
-        );
-        setFilteredData(filtered);
-      } else {
-        setFilteredData(AdminDataLists); // Reset to original data if input is cleared
-      }
-    }
-    {
-      if (value) {
-        const filtered = listOfPosts.filter(
-          (post) =>
-            post?.job_title?.toLowerCase().includes(value) ||
-            post?.industry?.toLowerCase().includes(value) ||
-            post?.role.toLowerCase().includes(value) ||
-            post?.location.toLowerCase().includes(value) ||
-            post?.post_type.toLowerCase().includes(value)
-        );
-        setNormelUserFilter(filtered);
-      } else {
-        setNormelUserFilter(listOfPosts); // Reset to original data if input is cleared
-      }
+            (post?.other_industry || post?.industry)?.toLowerCase().includes(value) ||
+            (post?.other_role || post?.role)?.toLowerCase().includes(value) ||
+            (post?.other_location || post?.location)?.toLowerCase().includes(value)
+        )
+      );
+    } else {
+      setFilteredList(base);
     }
   };
 
@@ -323,42 +325,63 @@ const MyJobListMain = () => {
 
   return (
     <div className="rbt-dashboard-area section-pad">
+      {contextHolder}
       <div className="container-fluid">
         <div className="row justify-content-center">
           <div className="col-11 col-xl-10">
             <div className="container-fluid">
-              
-                <div className="row">
-                  <div className="col-lg-12">
-                    <div className="rbt-elements-area bg-color-extra2 mb-5">
-                      <div className="container-fluid">
-                        <div className="row p-0">
-                          <div className="col-lg-12 p-0">
-                            <form action="#" className="rbt-search-style-1">
-                              <input
-                                type="text"
-                                placeholder="Search Job with Job title and Role"
-                                // name="search_filter"
-                                onChange={handleSearchFilter}
-                              />
-                              <button className="search-btn">
-                                <i className="feather-search"></i>
-                              </button>
-                            </form>
-                          </div>
+              <div className="row">
+                <div className="col-lg-12">
+
+                  {/* Search bar */}
+                  <div className="rbt-elements-area bg-color-extra2 mb-4">
+                    <div className="container-fluid">
+                      <div className="row p-0">
+                        <div className="col-lg-12 p-0">
+                          <form action="#" className="rbt-search-style-1">
+                            <input
+                              type="text"
+                              placeholder="Search by job title, role or industry"
+                              onChange={handleSearchFilter}
+                            />
+                            <button className="search-btn">
+                              <i className="feather-search"></i>
+                            </button>
+                          </form>
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    {(isAdmin == "true" ||
-                      isAlumniManager == "true" ||
-                      isAlumni == "true" ||
-                      isFatulty == "true") && (
-                      <div className="rbt-dashboard-content  p-0">
-                        <div className="content">
-                          <div className="section-title d-flex justify-content-between ">
-                            <h4 className="rbt-title-style-3">My Job Lists</h4>
+                  {(isAdmin == "true" || isAlumniManager == "true" || isAlumni == "true" || isFatulty == "true") && (
+                    <div className="rbt-dashboard-content p-0">
+                      <div className="content">
 
+                        {/* Header + filter */}
+                        <div className="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                          <h4 className="rbt-title-style-3 mb--0">My Job Lists</h4>
+                          <div className="d-flex flex-wrap align-items-center gap-3">
+                            {/* Approval filter buttons */}
+                            <div className="d-flex gap-2">
+                              {[
+                                { label: "All", value: "all" },
+                                { label: "Approved", value: "approved" },
+                                { label: "Pending", value: "pending" },
+                              ].map((btn) => (
+                                <button
+                                  key={btn.value}
+                                  type="button"
+                                  onClick={() => handleApprovalFilter(btn.value)}
+                                  className={`rbt-btn btn-xs radius-round ${
+                                    approvalFilter === btn.value
+                                      ? "btn-gradient"
+                                      : "btn-border-gradient"
+                                  }`}
+                                >
+                                  {btn.label}
+                                </button>
+                              ))}
+                            </div>
                             <Link
                               className="rbt-btn btn-gradient radius-round sm-btn"
                               href="/post-a-job"
@@ -366,164 +389,137 @@ const MyJobListMain = () => {
                               Post Job
                             </Link>
                           </div>
+                        </div>
 
-                          <div className="rbt-dashboard-table table-responsive mobile-table-750">
-                            {AdminDataLists.length > 0 ? (
-                              <table className="rbt-table table table-borderless">
-                                <thead>
-                                  <tr>
-                                    <th>Job Title</th>
-                                    <th>Industry</th>
-                                    <th>Role</th>
-                                    <th>No.Of Applicants</th>
-                                    <th>Posted Date</th>
-                                    <th></th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {currentDataForAdmin.map((item) => (
-                                    <tr key={item.id}>
-                                      <th>
-                                        <span className="b3">
-                                          <Link href="#">{item.job_title}</Link>
-                                        </span>
-                                      </th>
-                                      <td>
-                                        <span className="b3">
-                                          <Link href="#">{item?.industry}</Link>
-                                        </span>
-                                      </td>
-                                      <td>
-                                        <span className="b3">
-                                          <Link href="#">{item?.role}</Link>
-                                        </span>
-                                      </td>
-                                      <td>
-                                        <span className="b3">
-                                          <Link href="#">
-                                            {item.application_count}
-                                          </Link>
-                                        </span>
-                                      </td>
-                                      <td>
-                                        <span className="b3">
-                                          <Link href="#">
-                                            {item?.posted_on}
-                                          </Link>
-                                        </span>
-                                      </td>
-
-                                      <td>
-                                        <div className="rbt-button-group justify-content-end gap-2">
-                                          {item?.is_active && (
-                                            <>
-                                              <Link
-                                                className={`rbt-btn btn-xs radius-round ${
-                                                  item.application_count === 0
-                                                    ? "bg-gray"
-                                                    : "bg-coral-opacity"
-                                                } `}
-                                                href={
-                                                  item.application_count > 0
-                                                    ? `/applicants/${item?.id}`
-                                                    : "#"
-                                                }
-                                                title="View"
-                                                // onClick={
-                                                //   item.application_count > 0
-                                                //     ? () =>
-                                                //         router.push(
-                                                //           `/applicants/${item?.id}`
-                                                //         )
-                                                //     : null
-                                                // }
-
-                                                style={{
-                                                  opacity:
-                                                    item.application_count === 0
-                                                      ? 0.5
-                                                      : 1,
-                                                  cursor:
-                                                    item.application_count === 0
-                                                      ? "not-allowed"
-                                                      : "pointer",
-                                                }}
-                                              >
-                                                <i className="feather-eye pl--0"></i>
-                                              </Link>
-
-                                              <div
-                                                className="rbt-btn btn-xs bg-primary-opacity radius-round color-info"
-                                                href={`/edit-a-job/${item?.id}/`}
-                                                title="Edit"
-                                                onClick={() =>
-                                                  handleEditClick(item?.id)
-                                                }
-                                              >
-                                                <i className="feather-edit pl--0"></i>
-                                              </div>
-                                            </>
+                        <div className="rbt-dashboard-table table-responsive mobile-table-750">
+                          {filteredList.length > 0 ? (
+                            <table className="rbt-table table table-borderless">
+                              <thead>
+                                <tr>
+                                  <th>Job Title</th>
+                                  <th>Industry</th>
+                                  <th>Role</th>
+                                  <th>Location</th>
+                                  <th>Applicants</th>
+                                  <th>Posted Date</th>
+                                  <th>Status</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {filteredList.map((item) => (
+                                  <tr key={item.id}>
+                                    <th>
+                                      <span className="b3">
+                                        <Link href={`/job-details/${item.id}`}>{item.job_title}</Link>
+                                      </span>
+                                    </th>
+                                    <td>
+                                      <span className="b3">
+                                        {item?.other_industry ? item.other_industry : item?.industry}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span className="b3">
+                                        {item?.other_role ? item.other_role : item?.role}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span className="b3">
+                                        {item?.other_location ? item.other_location : item?.location}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <span className="b3">{item.application_count}</span>
+                                    </td>
+                                    <td>
+                                      <span className="b3">{item?.posted_on}</span>
+                                    </td>
+                                    <td>
+                                      <span
+                                        className={` ${
+                                          item.is_approved === true || item.is_approved === "true"
+                                            ? "bg-color-success-opacity color-success"
+                                            : "bg-color-danger-opacity color-danger"
+                                        }`}
+                                      >
+                                        {item.is_approved === true || item.is_approved === "true"
+                                          ? "Approved"
+                                          : "Pending"}
+                                      </span>
+                                    </td>
+                                    <td>
+                                      <div className="rbt-button-group justify-content-end gap-2">
+                                        {item?.is_active && (
+                                          <>
+                                            <Link
+                                              className={`rbt-btn btn-xs radius-round ${
+                                                item.application_count === 0 ? "bg-gray" : "bg-coral-opacity"
+                                              }`}
+                                              href={item.application_count > 0 ? `/applicants/${item?.id}` : "#"}
+                                              title={item.application_count === 0 ? "No applicants" : "View Applicants"}
+                                              style={{
+                                                opacity: item.application_count === 0 ? 0.5 : 1,
+                                                cursor: item.application_count === 0 ? "not-allowed" : "pointer",
+                                              }}
+                                            >
+                                              <i className="feather-eye pl--0"></i>
+                                            </Link>
+                                            <div
+                                              className="rbt-btn btn-xs bg-primary-opacity radius-round color-info"
+                                              title="Edit"
+                                              onClick={() => handleEditClick(item?.id)}
+                                              style={{ cursor: "pointer" }}
+                                            >
+                                              <i className="feather-edit pl--0"></i>
+                                            </div>
+                                          </>
+                                        )}
+                                        <Tooltip title={item?.is_active ? "Active" : "InActive"}>
+                                          {item?.is_active ? (
+                                            <Link
+                                              className="rbt-btn btn-xs bg-color-success-opacity radius-round color-success"
+                                              href="#"
+                                              onClick={() => showDeleteConfirm(item)}
+                                            >
+                                              <i className="feather-check-circle pl--0"></i>
+                                            </Link>
+                                          ) : (
+                                            <Link
+                                              className="rbt-btn btn-xs bg-color-danger-opacity radius-round color-danger"
+                                              href="#"
+                                              onClick={() => showDeleteConfirm(item)}
+                                            >
+                                              <i className="feather-x-circle pl--0"></i>
+                                            </Link>
                                           )}
-
-                                          <Tooltip
-                                            title={
-                                              item?.is_active
-                                                ? "Active"
-                                                : "InActive"
-                                            }
-                                          >
-                                            {item?.is_active ? (
-                                              <Link
-                                                className="rbt-btn btn-xs bg-color-success-opacity radius-round color-success"
-                                                href="#"
-                                                title="Active"
-                                                onClick={() =>
-                                                  showDeleteConfirm(item)
-                                                }
-                                              >
-                                                <i className="feather-check-circle pl--0"></i>
-                                              </Link>
-                                            ) : (
-                                              <Link
-                                                className="rbt-btn btn-xs bg-color-danger-opacity radius-round color-danger"
-                                                href="#"
-                                                title="Inactive"
-                                                onClick={() =>
-                                                  showDeleteConfirm(item)
-                                                }
-                                              >
-                                                <i className="feather-x-circle pl--0"></i>
-                                              </Link>
-                                            )}
-                                          </Tooltip>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            ) : (
-                              <div>No Data</div>
-                            )}
-                          </div>
-                          {Number(state.total) > 0 && (
-                            <div className="d-flex justify-content-center mt-4">
-                              <Pagination
-                                activeNumber={handlePageChange}
-                                totalPage={state.total}
-                                currentPages={state.currentPage}
-                                next={state.next}
-                              />
-                            </div>
+                                        </Tooltip>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <div className="text-center py-4">No jobs found</div>
                           )}
                         </div>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* --------------------table end--------------------- */}
+                        {Number(state.total) > 0 && (
+                          <div className="d-flex justify-content-center mt-4">
+                            <Pagination
+                              activeNumber={handlePageChange}
+                              totalPage={state.total}
+                              currentPages={state.currentPage}
+                              next={state.next}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-            
+              </div>
             </div>
           </div>
         </div>

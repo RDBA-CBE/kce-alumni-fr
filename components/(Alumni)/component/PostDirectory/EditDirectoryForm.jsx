@@ -69,10 +69,10 @@ const EditDirectoryForm = () => {
   }, []);
 
   useEffect(() => {
-    if (id) {
+    if (id && country.length > 0 && industryType.length > 0) {
       GetDirectoryDetails();
     }
-  }, [id]);
+  }, [id, country, industryType]);
 
   useEffect(() => {
     if (token) {
@@ -89,30 +89,37 @@ const EditDirectoryForm = () => {
         },
       })
       .then((response) => {
+        const data = response.data;
+        const findOthers = (list) =>
+          list.find((o) =>
+            ["other", "others"].includes(o.label?.trim().toLowerCase())
+          );
+
+        const countryOption = data.other_country
+          ? findOthers(country) || { value: data.country_detail.id, label: data.country_detail.country_name }
+          : { value: data.country_detail.id, label: data.country_detail.country_name };
+
+        const industryOption = data.other_industry
+          ? findOthers(industryType) || { value: data.industry_type_detail.id, label: data.industry_type_detail.type_name }
+          : { value: data.industry_type_detail.id, label: data.industry_type_detail.type_name };
+
         setFormData({
-          business_name: response.data.business_name,
-          country_code: {
-            value: response.data.country_detail.id,
-            label: response.data.country_detail.country_name,
-          },
-          other_country: response.data.other_country || "",
-          contact_email: response.data.contact_email,
-          contact_number: response.data.contact_number,
-          website: response.data.website,
-          location: response.data.location,
-          logo: response.data.logo,
-          description: response.data.description,
-          industry_type: {
-            value: response.data.industry_type_detail.id,
-            label: response.data.industry_type_detail.type_name,
-          },
-          other_industry: response.data.other_industry || "",
-          are_you_part_of_management: response.data.are_you_part_of_management,
+          business_name: data.business_name,
+          country_code: countryOption,
+          other_country: data.other_country || "",
+          contact_email: data.contact_email,
+          contact_number: data.contact_number,
+          website: data.website,
+          location: data.location,
+          logo: data.logo,
+          description: data.description,
+          industry_type: industryOption,
+          other_industry: data.other_industry || "",
+          are_you_part_of_management: data.are_you_part_of_management,
         });
 
-        // Set the preview if logo exists
-        if (response.data.logo) {
-          setPreview(response.data.logo); // Assuming logo is a URL string
+        if (data.logo) {
+          setPreview(data.logo);
         }
       })
       .catch((error) => {
@@ -526,6 +533,10 @@ const EditDirectoryForm = () => {
                         required={true}
                         className="file-input"
                       />
+                      <p style={{ fontSize: 12, color: "#888", marginTop: 6, marginBottom: 0 }}>
+                        <i className="feather-info me-1" style={{ color: "#0091ff" }} />
+                        Upload image with <strong>187 × 142 px</strong> and size below <strong>100 KB</strong>
+                      </p>
                       <span className="focus-border"></span>
                       {preview && (
                         <div
