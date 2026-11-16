@@ -12,6 +12,7 @@ import {
   validateForm,
 } from "@/utils/commonFunction.utils";
 import FormField from "@/commonComponents/FormFields";
+import QuickAddMaster from "@/components/(Alumni)/component/QuickAddMaster";
 import { jobTypeOption, YearOfExperience } from "@/utils/constant.utils";
 import axios from "axios";
 import Models from "@/imports/models.import";
@@ -514,6 +515,10 @@ const EditDirectoryForm = () => {
                     </div>
 
                     <div className="form-group">
+                      <div className="d-flex align-items-center mb-1">
+                        <small className="text-muted">Country</small>
+                        <QuickAddMaster type="country" onCreated={(opt) => { setCountry((prev) => [...prev, opt]); }} />
+                      </div>
                       <FormField
                         placeholder="Country"
                         type="loadMoreSelect"
@@ -551,6 +556,10 @@ const EditDirectoryForm = () => {
                     </div>
 
                     <div className="form-group">
+                      <div className="d-flex align-items-center mb-1">
+                        <small className="text-muted">Industry Type</small>
+                        <QuickAddMaster type="industry" onCreated={(opt) => { setIndustryType((prev) => [...prev, opt]); }} />
+                      </div>
                       <FormField
                         placeholder="Industry Type"
                         type="loadMoreSelect"
