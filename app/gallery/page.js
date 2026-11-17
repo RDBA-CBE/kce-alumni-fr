@@ -1,4 +1,4 @@
-import GalleryPage from './(gallery)';
+import GalleryPage from "./(gallery)";
 
 export const metadata = {
   title: 'Karpagam College Of Engineering - Gallery',

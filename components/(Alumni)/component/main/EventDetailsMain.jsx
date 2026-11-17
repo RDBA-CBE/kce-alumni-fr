@@ -342,7 +342,7 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
       success('Event Registered Successfully');
 
       setState({ btnLoading: false });
-      onCancel(); // close modal
+      setIsModalOpen(false); // close modal
     } catch (error) {
       console.log(error);
       // error may be a plain string (from model reject), an object with .error, or an Error instance
@@ -426,7 +426,7 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
                         isEventApproved()
                           ? 'feather-check-circle text-success'
                           : 'feather-x-circle text-warning'
-                      } pl--0`}
+                      } pl--0  text-white`}
                       style={{ fontSize: '16px' }}
                     />
                   </a>
@@ -466,9 +466,9 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
                                 isEventApproved()
                                   ? 'feather-check-circle'
                                   : 'feather-x-circle'
-                              } pl--0`}
+                              } pl--0  text-white`}
                             />
-                            <span style={{ fontSize: '13px', fontWeight: 500 }}>
+                            <span style={{ fontSize: '13px', fontWeight: 500, color:"#fff" }}>
                               {isEventApproved() ? 'Approved' : 'Pending'}
                             </span>
                           </a>

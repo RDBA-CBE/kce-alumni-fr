@@ -160,7 +160,11 @@ const AlbumMain = () => {
       (typeof window !== 'undefined' &&
         (String(localStorage.getItem('isAdmin')).toLowerCase() === 'true' ||
           localStorage.getItem('isAdmin') === true));
-    return Boolean(isAdmin);
+    const isOwner =
+      state.data?.is_owner === true ||
+      state.data?.is_owner === 'true' ||
+      state.data?.is_owner === 1;
+    return Boolean(isAdmin || isOwner);
   };
 
   const showArchiveToggleConfirm = () => {

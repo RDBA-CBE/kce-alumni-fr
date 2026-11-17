@@ -23,6 +23,7 @@ const BasicContactMain = () => {
     postal_code: '',
     other_location: '',
   });
+  const [initialData, setInitialData] = useState(null);
   const [errMsg, setErrMsg] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
   const [skills, setSkills] = useState([]);
@@ -94,7 +95,7 @@ const BasicContactMain = () => {
       .then((response) => {
         console.log('res :', response);
         const data = response.data.data;
-        setFormData({
+        const loaded = {
           website: data?.website || '',
           linked_in: data?.linked_in || '',
           location: data?.location_detail?.id
@@ -104,7 +105,9 @@ const BasicContactMain = () => {
           address: data?.address || '',
           postal_code: data?.postal_code || '',
           other_location: data?.other_location || '',
-        });
+        };
+        setFormData(loaded);
+        setInitialData(JSON.parse(JSON.stringify(loaded)));
         localStorage.setItem('isAlumniContact', response.data?.modules?.module4);
         setIsAlumniContact(response.data?.modules?.module4);
         setState({ pageLoading: false });
@@ -233,6 +236,32 @@ const BasicContactMain = () => {
   };
 
   console.log('isAlumniContact:', isAlumniContact);
+
+  // Button is enabled only when current values differ from the last-loaded snapshot
+  const hasChanges = (() => {
+    // Before API data loads, disable unless user manually typed something
+    if (!initialData) {
+      return (
+        !!formData.website.trim() ||
+        !!formData.linked_in.trim() ||
+        !!formData.twitter_handle.trim() ||
+        !!(formData.address || '').trim() ||
+        !!(formData.postal_code || '').trim() ||
+        !!formData.location ||
+        !!(formData.other_location || '').trim()
+      );
+    }
+    // After API data loads, enable only when something changed
+    return (
+      (formData.website || '').trim() !== (initialData.website || '').trim() ||
+      (formData.linked_in || '').trim() !== (initialData.linked_in || '').trim() ||
+      (formData.twitter_handle || '').trim() !== (initialData.twitter_handle || '').trim() ||
+      (formData.address || '').trim() !== (initialData.address || '').trim() ||
+      (formData.postal_code || '').trim() !== (initialData.postal_code || '').trim() ||
+      (formData.other_location || '').trim() !== (initialData.other_location || '').trim() ||
+      (formData.location?.value ?? null) !== (initialData.location?.value ?? null)
+    );
+  })();
   return state.pageLoading ? (
     <Loader /> // 👈 show loader
   ) : (
@@ -371,10 +400,15 @@ const BasicContactMain = () => {
                                   name='submit'
                                   type='submit'
                                   id='submit'
-                                  disabled={state.btnLoading}
+                                  disabled={state.btnLoading || !hasChanges}
                                   className={`rbt-btn btn-md btn-gradient hover-icon-reverse w-100 ${
-                                    state.btnLoading ? 'loading' : ""
+                                    state.btnLoading ? 'loading' : ''
                                   }`}
+                                  style={{
+                                    opacity: hasChanges ? 1 : 0.5,
+                                    cursor: hasChanges ? 'pointer' : 'not-allowed',
+                                    pointerEvents: hasChanges ? 'auto' : 'none',
+                                  }}
                                 >
                                   <span className='icon-reverse-wrapper'>
                                     <span className='btn-text'>

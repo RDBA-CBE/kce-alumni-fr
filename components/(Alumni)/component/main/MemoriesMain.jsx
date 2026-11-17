@@ -270,7 +270,11 @@ const MemoriesMain = () => {
       (typeof window !== "undefined" &&
         (String(localStorage.getItem("isAdmin")).toLowerCase() === "true" ||
           localStorage.getItem("isAdmin") === true));
-    return Boolean(isAdmin);
+    const isOwner =
+      state.memoriesDetails?.is_owner === true ||
+      state.memoriesDetails?.is_owner === "true" ||
+      state.memoriesDetails?.is_owner === 1;
+    return Boolean(isAdmin || isOwner);
   };
 
   const isMemoryActive = () => {

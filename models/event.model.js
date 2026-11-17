@@ -39,6 +39,12 @@ const event = {
       if (body.is_approved == "false") {
         url += `&is_approved=${encodeURIComponent(body.is_approved)}`;
       }
+      if (body.is_owner ) {
+        url += `&is_owner=${encodeURIComponent(body.is_owner)}`;
+      }
+      if (body.is_active === 'true' || body.is_active === 'false') {
+        url += `&is_active=${encodeURIComponent(body.is_active)}`;
+      }
 
       instance()
         .post(url)

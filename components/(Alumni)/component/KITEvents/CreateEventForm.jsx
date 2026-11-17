@@ -101,21 +101,24 @@ const CreateEventForm = () => {
 
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
+    if (!file) return;
     if (type === "image") {
-      setState({ imageFile: file });
+      setState({ imageFile: file, previewUrl: URL.createObjectURL(file) });
     } else if (type === "event_wallpaper") {
-      setState({ event_wallpaper: file });
-      setState({ imageFile: file });
+      setState({
+        event_wallpaper: file,
+        imageFile: file,
+        previewUrl: URL.createObjectURL(file),
+      });
     }
     e.target.value = null;
   };
 
   const removeFile = (type) => {
     if (type === "image") {
-      setState({ imageFile: null });
+      setState({ imageFile: null, previewUrl: null });
     } else if (type === "event_wallpaper") {
-      setState({ event_wallpaper: null });
-      setState({ imageFile: null });
+      setState({ event_wallpaper: null, imageFile: null, previewUrl: null });
     }
   };
 
@@ -152,7 +155,7 @@ const CreateEventForm = () => {
         event_wallpaper: state.event_wallpaper,
         instructions: state.instructions,
         event_question: state.question,
-        is_approved: true
+        // is_approved: true
       };
 
       await validation.createEvent.validate(body, { abortEarly: false });
@@ -381,9 +384,9 @@ const CreateEventForm = () => {
                         required={true}
                       />
                       <div style={{ position: "relative", top: "35px" }}>
-                        {state.event_wallpaper ? (
+                        {state.previewUrl ? (
                           <img
-                            src={state.event_wallpaper}
+                            src={state.previewUrl}
                             alt="Event Wallpaper"
                             style={{
                               width: "100px",
@@ -392,20 +395,10 @@ const CreateEventForm = () => {
                               borderRadius: "5px",
                             }}
                           />
-                        ) : state.imageFile ? (
-                          <img
-                            src={URL.createObjectURL(state.imageFile)}
-                            alt="Uploaded Image"
-                            style={{
-                              width: "100px",
-                              height: "50px",
-                              objectFit: "cover",
-                              borderRadius: "5px",
-                            }}
-                          />
                         ) : null}
-                        {(state.event_wallpaper || state.imageFile) && (
+                        {state.previewUrl && (
                           <button
+                            type="button"
                             style={{
                               background: "white",
                               color: "red",
@@ -418,7 +411,7 @@ const CreateEventForm = () => {
                               border: "none",
                               fontSize: "12px",
                             }}
-                            onClick={() => removeFile("image")}
+                            onClick={() => removeFile("event_wallpaper")}
                           >
                             <i className="feather-trash"></i>
                           </button>

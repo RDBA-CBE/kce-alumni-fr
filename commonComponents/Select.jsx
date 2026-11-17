@@ -56,7 +56,7 @@ const CustomSelect = (props) => {
       : (options || []);
     const others = opts.filter(isOthersOption);
     const rest = opts.filter((option) => !isOthersOption(option));
-    return [...others, ...rest];
+    return [...rest, ...others];
   })();
   const customStyles = {
     control: (provided) => ({

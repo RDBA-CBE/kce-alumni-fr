@@ -54,7 +54,8 @@ const EventsLoginMain = () => {
     token: '',
     activeTab: '',
     filterCategory: '',
-    filterApproval: '', // '' = All, 'approved' = true, 'unapproved' = false
+    filterApproval: 'approved', // default: show approved
+    filterActive: 'active',     // default: show active
     currentPage: 1,
     total: 0,
     next: undefined,
@@ -72,12 +73,18 @@ const EventsLoginMain = () => {
     const Alumni = localStorage.getItem('isAlumni');
     const Faculty = localStorage.getItem('isFaculty');
 
+    const isAdminBool =
+      String(Admin).toLowerCase() === 'true' || Admin === true;
+
     setState({
       isAdmin: Admin,
       isAlumniManager: AlumniManager,
       isAlumni: Alumni,
       isFaculty: Faculty,
       token: Token,
+      // Both admin and alumni start with approved + active events
+      filterApproval: 'approved',
+      filterActive: 'active',
     });
   }, [state?.token]);
 
@@ -100,6 +107,7 @@ const EventsLoginMain = () => {
     state.activeTab,
     state.filterCategory,
     state.filterApproval,
+    state.filterActive,
   ]);
 
   const GetAllEventsAdmin = async (page) => {
@@ -249,16 +257,11 @@ const EventsLoginMain = () => {
           const body = {
             is_approved: !event.is_approved,
           };
-
           const res = await Models?.event?.UpdateEditEventsDatas(event.id, body);
-
           message.success(res.message);
-
           filterData(state.currentPage);
         } catch (error) {
           console.log('error: ', error);
-
-          // Handle error response properly
           const errorMessage =
             error.response?.data?.error || 'An error occurred';
           message.error(errorMessage);
@@ -268,9 +271,64 @@ const EventsLoginMain = () => {
         console.log('Cancel');
       },
     });
+  };
 
-    console.log('Deleting event:', event);
-    // Perform is_active logic here if needed
+  // Admin-only: toggle active/inactive status
+  const showEventActiveConfirm = (event) => {
+    // Treat missing/null as active (true) since events are active by default
+    const rawActive = event?.is_active;
+    const currentActive =
+      rawActive === true ||
+      rawActive === 'true' ||
+      rawActive === 1 ||
+      rawActive === null ||
+      rawActive === undefined;
+    const nextActive = !currentActive;
+
+    confirm({
+      title: currentActive
+        ? 'Are you sure you want to Inactivate this Event?'
+        : 'Are you sure you want to Activate this Event?',
+      okText: currentActive ? 'Inactivate' : 'Activate',
+      okType: currentActive ? 'danger' : 'primary',
+      okButtonProps: currentActive
+        ? {
+            style: { borderRadius: '8px' },
+          }
+        : {
+            className: 'gallery-confirm-btn',
+            style: {
+              background: 'linear-gradient(90deg, #cc7539, #d76239)',
+              borderColor: 'transparent',
+              color: '#ffffff',
+              borderRadius: '8px',
+            },
+          },
+      cancelButtonProps: {
+        className: 'gallery-cancel-btn',
+        style: { borderRadius: '8px' },
+      },
+      cancelText: 'Cancel',
+      async onOk() {
+        try {
+          const body = { is_active: nextActive };
+          const res = await Models?.event?.UpdateEditEventsDatas(event.id, body);
+          message.success(
+            res?.message ||
+              `Event ${nextActive ? 'activated' : 'inactivated'} successfully`
+          );
+          filterData(state.currentPage);
+        } catch (error) {
+          console.log('error: ', error);
+          const errorMessage =
+            error.response?.data?.error || 'An error occurred';
+          message.error(errorMessage);
+        }
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
   };
 
   const handlePageChange = (number) => {
@@ -307,6 +365,13 @@ const EventsLoginMain = () => {
       }
     }
 
+    // Add active/inactive filter
+    if (state.filterActive === 'active') {
+      body.is_active = 'true';
+    } else if (state.filterActive === 'inactive') {
+      body.is_active = 'false';
+    }
+
     return body;
   };
 
@@ -332,12 +397,21 @@ const EventsLoginMain = () => {
                             }}
                           />
                         </h5>
+                        <div className='d-flex gap-4'>
+                          <Link
+                          className='rbt-btn btn-gradient radius-round sm-btn'
+                          href='/my-events'
+                        >
+                          My Events
+                        </Link>
                         <Link
                           className='rbt-btn btn-gradient radius-round sm-btn'
                           href='/create-event'
                         >
                           Create Event
                         </Link>
+                        </div>
+                        
                       </div>
                     </div>
                   </div>
@@ -416,44 +490,77 @@ const EventsLoginMain = () => {
                                   </li>
                                 </ul>
 
-                                <h5 className=' mt-5'>Approval Status</h5>
-                                <ul className='rbt-sidebar-list-wrapper categories-list-check has-show-more-inner-content'>
-                                  <li
-                                    className='nav-item'
-                                    role='presentation'
-                                  >
-                                    <a
-                                      className={`w-100 ${pathname === '#' ? 'active' : ''
-                                        }`}
-                                      href='#'
-                                    >
-                                      <FormField
-                                        type='select'
-                                        disabled={false}
-                                        onChange={(e) =>
-                                          setState({
-                                            filterApproval: e.target.value,
-                                            currentPage: 1,
-                                          })
-                                        }
-                                        name='filterApproval'
-                                        placeholder='Approval Status'
-                                        value={state.filterApproval}
-                                        options={[
-                                          {
-                                            value: 'approved',
-                                            label: 'Approved',
-                                          },
-                                          {
-                                            value: 'unapproved',
-                                            label: 'Unapproved',
-                                          },
-                                        ]}
-                                        className={'border px-3'}
-                                      />
-                                    </a>
-                                  </li>
-                                </ul>
+                                {String(state.isAdmin).toLowerCase() === 'true' && (
+                                  <>
+                                    <h5 className=' mt-5'>Approval Status</h5>
+                                    <ul className='rbt-sidebar-list-wrapper categories-list-check has-show-more-inner-content'>
+                                      <li
+                                        className='nav-item'
+                                        role='presentation'
+                                      >
+                                        <a
+                                          className={`w-100 ${pathname === '#' ? 'active' : ''
+                                            }`}
+                                          href='#'
+                                        >
+                                          <FormField
+                                            type='select'
+                                            disabled={false}
+                                            onChange={(e) =>
+                                              setState({
+                                                filterApproval: e.target.value,
+                                                currentPage: 1,
+                                              })
+                                            }
+                                            name='filterApproval'
+                                            placeholder='Approval Status'
+                                            value={state.filterApproval}
+                                            options={[
+                                              {
+                                                value: 'approved',
+                                                label: 'Approved',
+                                              },
+                                              {
+                                                value: 'unapproved',
+                                                label: 'Unapproved',
+                                              },
+                                            ]}
+                                            className={'border px-3'}
+                                          />
+                                        </a>
+                                      </li>
+                                    </ul>
+
+                                    <h5 className=' mt-5'>Active Status</h5>
+                                    <ul className='rbt-sidebar-list-wrapper categories-list-check has-show-more-inner-content'>
+                                      <li className='nav-item' role='presentation'>
+                                        <a
+                                          className={`w-100 ${pathname === '#' ? 'active' : ''}`}
+                                          href='#'
+                                        >
+                                          <FormField
+                                            type='select'
+                                            disabled={false}
+                                            onChange={(e) =>
+                                              setState({
+                                                filterActive: e.target.value,
+                                                currentPage: 1,
+                                              })
+                                            }
+                                            name='filterActive'
+                                            placeholder='Active Status'
+                                            value={state.filterActive}
+                                            options={[
+                                              { value: 'active', label: 'Active' },
+                                              { value: 'inactive', label: 'Inactive' },
+                                            ]}
+                                            className={'border px-3'}
+                                          />
+                                        </a>
+                                      </li>
+                                    </ul>
+                                  </>
+                                )}
                               </nav>
 
                               {/* <div
@@ -493,13 +600,14 @@ const EventsLoginMain = () => {
                                 (state.currentPage - 1) * PAGE_SIZE,
                                 state.currentPage * PAGE_SIZE
                               )}
-                              // onClick={(id) => {
-                              //   router.push(`edit-event/${id}`);
-                              // }}
                               Admin={state?.isAdmin}
                               AlumniManager={state?.isAlumniManager}
+                              isAdminView={String(state.isAdmin).toLowerCase() === 'true'}
                               showDeleteConfirm={(event) =>
                                 showEventDeleteConfirm(event)
+                              }
+                              showActiveConfirm={(event) =>
+                                showEventActiveConfirm(event)
                               }
                             />
 

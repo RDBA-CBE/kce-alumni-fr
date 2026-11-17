@@ -51,6 +51,7 @@ const GalleryLoginMain = () => {
   const [memoriesSubTab, setMemoriesSubTab] = useState("active");
   const [approvedFilter, setApprovedFilter] = useState("true");
   const [pageLoading, setPageLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [counts, setCounts] = useState({
     activeAlbum: 0,
     archiveAlbum: 0,
@@ -128,9 +129,9 @@ const GalleryLoginMain = () => {
         const baseParams = {
           is_approved: isApprovedBool,
         };
-        if (!isAdmin) {
-          baseParams.is_owner = true;
-        }
+        // if (!isAdmin) {
+        //   baseParams.is_owner = true;
+        // }
 
         const [activeRes, archiveRes] = await Promise.all([
           Models.gallery.albumList(1, { ...baseParams, is_active: true }),
@@ -146,9 +147,9 @@ const GalleryLoginMain = () => {
           approved: isApprovedBool,
           is_approved: isApprovedBool,
         };
-        if (!isAdmin) {
-          baseParams.is_owner = true;
-        }
+        // if (!isAdmin) {
+        //   baseParams.is_owner = true;
+        // }
 
         const [activeRes, archiveRes] = await Promise.all([
           Models.gallery.memoriesList(1, { ...baseParams, is_active: true }),
@@ -166,6 +167,11 @@ const GalleryLoginMain = () => {
   };
 
   useEffect(() => {
+    const adminFlag =
+      String(localStorage.getItem("isAdmin")).toLowerCase() === "true" ||
+      localStorage.getItem("isAdmin") === true;
+    setIsAdmin(adminFlag);
+
     const tabs = localStorage.getItem("memoriesBack");
     if (tabs) {
       setActiveTab("memories");
@@ -195,9 +201,9 @@ const GalleryLoginMain = () => {
         is_approved: approved === "true" || approved === true,
       };
 
-      if (!isAdmin) {
-        params.is_owner = true;
-      }
+      // if (!isAdmin) {
+      //   params.is_owner = true;
+      // }
 
       const { results, total, maxPage } = await fetchAllPages((pageNumber) =>
         Models.gallery.albumList(pageNumber, params)
@@ -244,9 +250,9 @@ const GalleryLoginMain = () => {
         is_approved: approved === "true" || approved === true,
       };
 
-      if (!isAdmin) {
-        params.is_owner = true;
-      }
+      // if (!isAdmin) {
+      //   params.is_owner = true;
+      // }
 
       const { results, total, maxPage } = await fetchAllPages((pageNumber) =>
         Models.gallery.memoriesList(pageNumber, params)
@@ -551,6 +557,7 @@ const GalleryLoginMain = () => {
       error: {},
       isOpen: false,
       isMemoriesOpen: false,
+      uploadedImages: [],
     });
   };
 
@@ -677,6 +684,11 @@ const GalleryLoginMain = () => {
 
   const createMemories = async (e) => {
     e.preventDefault()
+    if (!state.uploadedImages || state.uploadedImages.length === 0) {
+      setState({ error: { ...state.error, uploadedImages: "Please upload at least one image" } });
+      return;
+    }
+    setState({ error: { ...state.error, uploadedImages: "" } });
     try {
       const isAdmin =
         typeof window !== "undefined" &&
@@ -756,15 +768,34 @@ const GalleryLoginMain = () => {
                     </ul>
 
                     <div className="d-flex align-items-center gap-3">
-                      <Select
-                        value={approvedFilter}
-                        onChange={handleApprovedFilterChange}
-                        style={{ minWidth: 140, height: 40 }}
-                        options={[
-                          { value: "true", label: "Approved" },
-                          { value: "false", label: "Unapproved" },
-                        ]}
-                      />
+                      {/* approve/unapprove filter — admin only */}
+                      {isAdmin && (
+                        <Select
+                          value={approvedFilter}
+                          onChange={handleApprovedFilterChange}
+                          style={{ minWidth: 140, height: 40 }}
+                          options={[
+                            { value: "true", label: "Approved" },
+                            { value: "false", label: "Unapproved" },
+                          ]}
+                        />
+                      )}
+
+                      <span>
+                        <button
+                          type="button"
+                          className="rbt-btn btn-gradient radius-round sm-btn"
+                          onClick={() => {
+                           router.push("my-gallery")
+                          }}
+                        >
+                          <span className="title">
+                           
+                              My Gallery
+                             
+                          </span>
+                        </button>
+                      </span>
 
                       <span>
                         <button
@@ -788,7 +819,8 @@ const GalleryLoginMain = () => {
                     </div>
                   </div>
 
-                  {/* --- SUB TAB BUTTONS --- */}
+                  {/* --- SUB TAB BUTTONS (admin only) --- */}
+                  {isAdmin && (
                   <div className="advance-tab-button mb--30 d-flex justify-content-start align-items-center">
                     <ul
                       className="nav nav-tabs tab-button-style-2 justify-content-start"
@@ -871,6 +903,7 @@ const GalleryLoginMain = () => {
                       )}
                     </ul>
                   </div>
+                  )}
 
                   {/* --- TAB CONTENT --- */}
                   <div className="tab-content">
@@ -1380,6 +1413,11 @@ const GalleryLoginMain = () => {
               required
               ref={fileInputRef}
             />
+            {state.error?.uploadedImages && (
+              <p style={{ color: "red", fontSize: "13px", marginTop: "4px" }}>
+                {state.error.uploadedImages}
+              </p>
+            )}
 
             <div
               className="uploaded-images mt_10"

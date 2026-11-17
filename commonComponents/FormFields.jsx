@@ -51,11 +51,20 @@ const FormField = ({
             <option value="" disabled={disabled ? disabled : false}>
               Select {placeholder ? placeholder : label}
             </option>
-            {options?.map((option, index) => (
-              <option key={index} value={option.value}>
-                {option.label}
-              </option>
-            ))}
+            {options
+              ?.slice()
+              .sort((a, b) => {
+                const aIsOthers = a.label?.toString().trim().toLowerCase() === 'others';
+                const bIsOthers = b.label?.toString().trim().toLowerCase() === 'others';
+                if (aIsOthers && !bIsOthers) return 1;
+                if (!aIsOthers && bIsOthers) return -1;
+                return 0;
+              })
+              .map((option, index) => (
+                <option key={index} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
           </select>
         ) : type == "loadMoreSelect" ? (
           <CustomSelect

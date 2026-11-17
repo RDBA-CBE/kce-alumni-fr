@@ -12,12 +12,21 @@ const UpCommingEvents = (props) => {
     isAdmin,
     Faculty,
     showDeleteConfirm,
+    showActiveConfirm,
+    isAdminView, // true on /events page (admin-only active toggle); false/undefined on /my-events
     isEdit,
   } = props;
-  console.log("✌️data --->", data);
 
-  const onClick = (id) => {
-    console.log("✌️id --->", id);
+  const isAdminUser = () => {
+    return (
+      isAdmin === true ||
+      isAdmin === "true" ||
+      Admin === true ||
+      Admin === "true" ||
+      (typeof window !== "undefined" &&
+        (String(localStorage.getItem("isAdmin")).toLowerCase() === "true" ||
+          localStorage.getItem("isAdmin") === true))
+    );
   };
 
   const isOwnerOrAdmin = (event) => {
@@ -25,18 +34,7 @@ const UpCommingEvents = (props) => {
       event?.is_owner === true ||
       event?.is_owner === "true" ||
       event?.is_owner === 1;
-    const isAdminUser =
-      event?.is_admin === true ||
-      event?.is_admin === "true" ||
-      event?.is_admin === 1 ||
-      isAdmin === true ||
-      isAdmin === "true" ||
-      Admin === true ||
-      Admin === "true" ||
-      (typeof window !== "undefined" &&
-        (String(localStorage.getItem("isAdmin")).toLowerCase() === "true" ||
-          localStorage.getItem("isAdmin") === true));
-    return Boolean(isOwner || isAdminUser);
+    return Boolean(isOwner || isAdminUser());
   };
 
   let getAllCourse = EventDetails;
@@ -56,38 +54,86 @@ const UpCommingEvents = (props) => {
                   zIndex: 10,
                 }}
               >
+                {/* Edit — visible to owner + admin */}
                 <a
-                  className="rbt-btn bg-white btn-xs  radius-round eve-edit"
+                  className="rbt-btn bg-white btn-xs radius-round eve-edit"
                   href={`/edit-event/${event.id}/`}
                   title="Edit"
                 >
                   <i
-                    className="feather-edit pl--0 text-white "
+                    className="feather-edit pl--0 text-white"
                     style={{ fontSize: "14px" }}
                   />
                 </a>
-                {event?.is_approved == true ? (
+
+                {/* Approve / Unapprove — admin only */}
+                {isAdminUser() && (
+                <a
+                  className="rbt-btn bg-white btn-xs radius-round"
+                  href="#"
+                  title={event?.is_approved ? "Approved (Click to Unapprove)" : "Unapproved (Click to Approve)"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    showDeleteConfirm(event);
+                  }}
+                >
+                  <i
+                    className={`${
+                      event?.is_approved
+                        ? "feather-check-circle"
+                        : "feather-x-circle"
+                    } pl--0 text-white`}
+                    style={{ fontSize: "14px" }}
+                  />
+                </a>
+                )}
+
+                {/* Active / Inactive — visible to admin only (isAdminView) */}
+                {isAdminView && isAdminUser() && (
                   <a
-                    className="rbt-btn bg-white btn-xs  radius-round "
-                    href={`#`}
-                    title="Active"
-                    onClick={() => showDeleteConfirm(event)}
+                    className="rbt-btn bg-white btn-xs radius-round"
+                    href="#"
+                    title={
+                      event?.is_active
+                        ? "Active (Click to Inactivate)"
+                        : "Inactive (Click to Activate)"
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      showActiveConfirm && showActiveConfirm(event);
+                    }}
                   >
                     <i
-                      className="feather-check-circle pl--0 text-white "
-                      style={{ fontSize: "14px" }}
+                      className="feather-power pl--0 text-white"
+                      style={{
+                        fontSize: "14px",
+                        color: event?.is_active ? "#28a745" : "#dc3545",
+                      }}
                     />
                   </a>
-                ) : (
+                )}
+
+                {/* Active / Inactive — on my-events page, visible to owner + admin */}
+                {!isAdminView && (
                   <a
-                    className="rbt-btn bg-white btn-xs  radius-round "
-                    href={`#`}
-                    title="Inctive"
-                    onClick={() => showDeleteConfirm(event)}
+                    className="rbt-btn bg-white btn-xs radius-round"
+                    href="#"
+                    title={
+                      event?.is_active
+                        ? "Active (Click to Inactivate)"
+                        : "Inactive (Click to Activate)"
+                    }
+                    onClick={(e) => {
+                      e.preventDefault();
+                      showActiveConfirm && showActiveConfirm(event);
+                    }}
                   >
                     <i
-                      className="feather-x-circle pl--0 text-white "
-                      style={{ fontSize: "14px" }}
+                      className="feather-power pl--0 text-white"
+                      style={{
+                        fontSize: "14px",
+                        color: event?.is_active ? "#28a745" : "#dc3545",
+                      }}
                     />
                   </a>
                 )}
@@ -123,7 +169,6 @@ const UpCommingEvents = (props) => {
               <ul className="rbt-meta">
                 <li>
                   <i className="feather-map-pin"></i>
-
                   {event?.venue}
                 </li>
               </ul>

@@ -128,12 +128,23 @@ const HelpDeskFormMain = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const combinedData = {
+      full_name: fixedFormData.full_name,
+      email: fixedFormData.email,
+      contact: fixedFormData.contact,
+      category: formData.category,
+      content: formData.content,
+    };
+
     const validationRules = {
+      full_name: { required: true },
+      email: { required: true },
+      contact: { required: true },
       category: { required: true },
       content: { required: true },
     };
 
-    const isValid = validateForm(formData, validationRules, setErrMsg);
+    const isValid = validateForm(combinedData, validationRules, setErrMsg);
 
     if (!isValid) {
       console.log('Validation errors:', errMsg);
@@ -216,6 +227,7 @@ const HelpDeskFormMain = () => {
                           value={fixedFormData.full_name}
                           onChange={handleFixedFormChange}
                           required={true}
+                          error={errMsg.full_name}
                         />
                         <span className='focus-border'></span>
                       </div>
@@ -229,8 +241,8 @@ const HelpDeskFormMain = () => {
                           name='email'
                           value={fixedFormData.email}
                           onChange={handleFixedFormChange}
-                          // className="applicant-input"
                           required={true}
+                          error={errMsg.email}
                         />
                         <span className='focus-border'></span>
                       </div>
@@ -242,9 +254,8 @@ const HelpDeskFormMain = () => {
                           name='contact'
                           value={fixedFormData.contact}
                           onChange={handleFixedFormChange}
-                          // className="applicant-input"
                           required={true}
-                          // disabled={true}
+                          error={errMsg.contact}
                         />
                         <span className='focus-border'></span>
                       </div>

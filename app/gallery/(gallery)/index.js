@@ -25,7 +25,6 @@ const GalleryPage = () => {
   
     useEffect(() => {
       const Token = localStorage.getItem("token");
-  
       setToken(Token);
     });
 

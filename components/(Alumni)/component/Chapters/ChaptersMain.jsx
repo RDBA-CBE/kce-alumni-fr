@@ -67,6 +67,8 @@ const ChaptersMain = () => {
   const [location, setLocation] = useState([]);
   const locationPageRef = useRef(1);
   const locationLoadMoreInProgress = useRef(false);
+  const countryPageRef = useRef(1);
+  const countryLoadMoreInProgress = useRef(false);
 
   const pathname = usePathname();
 
@@ -191,6 +193,7 @@ const ChaptersMain = () => {
         label: cou.country_name,
       }));
       setCountry(countryOptions);
+      countryPageRef.current = currentPage;
       setState({
         hasCountryLoadMore: nextUrl,
       });
@@ -200,27 +203,30 @@ const ChaptersMain = () => {
   };
 
   const CountryListLoadMore = async () => {
+    if (!state.hasCountryLoadMore || countryLoadMoreInProgress.current) return;
+
+    countryLoadMoreInProgress.current = true;
     try {
-      if (state.hasCountryLoadMore) {
-        const res = await Models.masters.GetCountryList(
-          state.currenCountryPage + 1
-        );
+      const nextPage = countryPageRef.current + 1;
+      const res = await Models.masters.GetCountryList(nextPage, 100);
+      const newOptions = (res?.results || []).map((cou) => ({
+        value: cou.id,
+        label: cou.country_name,
+      }));
 
-        const countryOptions = res?.results?.map((cou) => ({
-          value: cou.id,
-          label: cou.country_name,
-        }));
-
-        setCountry([...country, ...countryOptions]);
-        setState({
-          currenCountryPage: state.currenCountryPage + 1,
-          hasCountryLoadMore: res.next,
-        });
-      } else {
-        setCountry(country);
-      }
+      setCountry((current) => {
+        const optionsById = new Map(current.map((o) => [o.value, o]));
+        newOptions.forEach((o) => optionsById.set(o.value, o));
+        return Array.from(optionsById.values());
+      });
+      countryPageRef.current = nextPage;
+      setState({
+        hasCountryLoadMore: res?.next,
+      });
     } catch (error) {
       console.log("error: ", error);
+    } finally {
+      countryLoadMoreInProgress.current = false;
     }
   };
 
