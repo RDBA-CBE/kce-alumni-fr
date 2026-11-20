@@ -112,6 +112,20 @@
   pointer-events: none;
 }
 
+.initials {
+  position: absolute;
+  inset: 0 0 58px;
+  display: grid;
+  place-items: center;
+  color: #1d345d;
+  font-size: clamp(58px, 8vw, 88px);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  background:
+    radial-gradient(circle at 72% 24%, rgb(214 166 74 / 24%), transparent 18%),
+    linear-gradient(145deg, #eef2f7, #dce4ef);
+}
+
 .photoImage {
   object-fit: cover;
   object-position: center 28%;
