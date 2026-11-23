@@ -42,7 +42,7 @@ const initialData = [
     id: 5,
     designation: "TREASURER",
     name: "AAJAY G V",
-    tenure: "CSE (BATCH: 2020-2024)",
+    tenure: "CSE(CY) (BATCH: 2020-2024)",
     role: "Manual Testing",
     organization: "Stackly",
     image: "/images/alumnimem/chennai/Aajay.webp",

@@ -22,6 +22,7 @@ KITFooter = () => {
     ],
     quicklinks2: [
       { label: "Coimbatore Chapters", href: "/coimbatore-chapter" },
+      { label: "Global Alumni Connect", href: "/global-alumni-connect" },
       { label: "Alumni Awards", href: "/alumni-awards" },
       { label: "Registration", href: "https://forms.gle/ZT2Q6BSUt6dTn6LK9" , target: "_blank", rel: "noopener noreferrer" },
       { label: "Alumni Awards application", href: "https://forms.gle/XkarubU2btPbvumHA" , target: "_blank", rel: "noopener noreferrer" },
