@@ -21,7 +21,7 @@ const NewsRoomMain = ({ selectedYear }) => {
     {/* Main Banner Image */}
     <div className='alumni-main-banner'>
       <Image
-        src='/images/alumni-specials/alumni-ach-1.jfif'
+        src='/images/alumni-specials/alumni-ach-1.jpg'
         alt='R. Praveen Kumar - Governance Icon'
         fill
         priority
