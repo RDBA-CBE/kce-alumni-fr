@@ -10,6 +10,7 @@ import "swiper/css/effect-coverflow";
 import styles from "./main/AlumniSlider.module.css";
 
 const alumniData = [
+   { name: "R. Praveen Kumar", desc: "Deputy SuperIntendent of Police, Ramanathapuram", img: "/images/alumini/12.jpeg" },
   { name: "Mahendran Kamatchi", desc: "Cellular Firmware Engineer Apple", img: "/images/alumini/3.png" },
   { name: "Mohammed Javid", desc: "Software Engineer Apple", img: "/images/alumini/1.png" }, 
   { name: "Vignesh Sukumar", desc: "Senior Software Engineer Microsoft", img: "/images/alumini/2.png" },
