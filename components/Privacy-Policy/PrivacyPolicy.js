@@ -183,6 +183,7 @@ const PrivacyPolicy = () => {
               <ul>
                 <li>The account deletion option available within the application, where provided.</li>
                 <li>The Help Desk or account support section of the application.</li>
+                <li>Online Request Form: <Link href="/remove-account" className="color-primary fw-bold">Submit Account Removal Request</Link></li>
                 <li>Email: <a href="mailto:alumni@kce.ac.in" className="color-primary">alumni@kce.ac.in</a></li>
               </ul>
               <p>
