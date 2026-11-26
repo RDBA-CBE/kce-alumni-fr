@@ -489,13 +489,13 @@ const MembersLoginMain = () => {
         }));
 
         setState({
-          deparmentList: [...state.deparmentList, ...DepartmentOption],
-          currenDeparmentPage: state.currenDeparmentPage + 1,
-          hasDeparmentLoadMore: res.next,
+          departmentList: [...state.departmentList, ...DepartmentOption],
+          currenDepartmentPage: state.currenDepartmentPage + 1,
+          hasDepartmentLoadMore: res.next,
         });
       } else {
         setState({
-          deparmentList: state.deparmentList,
+          departmentList: state.departmentList,
         });
       }
     } catch (error) {

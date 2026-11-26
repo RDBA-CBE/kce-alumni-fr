@@ -12,6 +12,7 @@ const JobDescription = () => {
   const [SingleData, setSingleData] = useState({});
   const [token, setToken] = useState("");
   const [isAlumni, setIsAlumni] = useState(false);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     const Token = localStorage.getItem("token");
@@ -23,6 +24,9 @@ const JobDescription = () => {
 
     const alumni = localStorage.getItem("isAlumni");
     setIsAlumni(alumni);
+
+    const storedUserId = localStorage.getItem("user_id");
+    setUserId(storedUserId || "");
   }, []);
 
   console.log("isAlumni", isAlumni);
@@ -46,6 +50,28 @@ const JobDescription = () => {
       .catch((error) => {
         console.log("❌error --->", error);
       });
+  };
+
+  const isJobOwner = () => {
+    if (
+      SingleData?.is_owner === true ||
+      SingleData?.is_owner === "true" ||
+      SingleData?.is_owner === 1
+    ) {
+      return true;
+    }
+
+    const ownerId =
+      SingleData?.user_id ??
+      SingleData?.posted_by_id ??
+      SingleData?.created_by ??
+      (typeof SingleData?.user === "object"
+        ? SingleData?.user?.id
+        : SingleData?.user);
+
+    return Boolean(
+      userId && ownerId != null && String(ownerId) === String(userId)
+    );
   };
 
   return (
@@ -75,6 +101,8 @@ const JobDescription = () => {
 
               <div className="d-flex align-items-start gap-2 jd-action-group">
                 {token &&
+                  (SingleData?.id || SingleData?.job_title) &&
+                  !isJobOwner() &&
                   (isAlumni == "true" || isAlumni == true) &&
                   (SingleData.contact_link ? (
                     <Link

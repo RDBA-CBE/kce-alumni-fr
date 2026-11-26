@@ -10,7 +10,9 @@ export const menus = {
         { label: "Coimbatore Chapter", href: "/coimbatore-chapter" },
         { label: "Bangalore Chapter", href: "/bangalore-chapter" },
         { label: "Chennai Chapter", href: "/chennai-chapter" },
+        { label: "Gulf Chapter", href: "/gulf-chapter" },
         { label: "Global Alumni Connect", href: "/global-alumni-connect" },
+        
       ],
     },
     { label: "Alumni Awards", href: "/alumni-awards" },

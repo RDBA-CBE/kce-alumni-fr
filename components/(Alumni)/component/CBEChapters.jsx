@@ -65,7 +65,7 @@ const CBEChapters = () => (
           {/* <span className={styles.eyebrow}>
             Karpagam College of Engineering
           </span> */}
-          <h1 className={styles.title}>Meet the alumni serving the chapter and its community.</h1>
+          <h1 className={styles.title}>Meet the alumni serving the Coimbatore chapter and its community.</h1>
           {/* <p className={styles.description}> */}
             
           {/* </p> */}

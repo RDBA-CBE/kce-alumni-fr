@@ -358,21 +358,44 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
     return <Loader />; // Show loader while checking token
   }
 
-  const isOwnerOrAdmin = () => {
-    const isOwner =
-      state?.eventData?.is_owner === true ||
-      state?.eventData?.is_owner === 'true' ||
-      state?.eventData?.is_owner === 1;
-    const isAdmin =
+  const isAdminUser = () => {
+    return Boolean(
       state?.eventData?.is_admin === true ||
-      state?.eventData?.is_admin === 'true' ||
-      state?.eventData?.is_admin === 1 ||
-      state?.isAdminLogin === true ||
-      state?.group === 'admin' ||
-      (typeof window !== 'undefined' &&
-        (String(localStorage.getItem('isAdmin')).toLowerCase() === 'true' ||
-          localStorage.getItem('isAdmin') === true));
-    return Boolean(isOwner || isAdmin);
+        state?.eventData?.is_admin === 'true' ||
+        state?.eventData?.is_admin === 1 ||
+        state?.isAdminLogin === true ||
+        state?.group === 'admin' ||
+        (typeof window !== 'undefined' &&
+          (String(localStorage.getItem('isAdmin')).toLowerCase() === 'true' ||
+            localStorage.getItem('isAdmin') === true))
+    );
+  };
+
+  const isEventOwner = () => {
+    return Boolean(
+      state?.eventData?.is_owner === true ||
+        state?.eventData?.is_owner === 'true' ||
+        state?.eventData?.is_owner === 1
+    );
+  };
+
+  const isOwnerOrAdmin = () => {
+    return Boolean(isEventOwner() || isAdminUser());
+  };
+
+  const approvalBadgeTitle = isAdminUser()
+    ? isEventApproved()
+      ? 'Approved (Click to Unapprove)'
+      : 'Pending (Click to Approve)'
+    : isEventApproved()
+    ? 'Approved'
+    : 'Pending';
+
+  const handleApprovalBadgeClick = (e) => {
+    e.preventDefault();
+    if (isAdminUser()) {
+      showApprovalConfirm();
+    }
   };
 
   return (
@@ -411,15 +434,8 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
                     }`}
                     style={{ background: '#ffffff' }}
                     href='#'
-                    title={
-                      isEventApproved()
-                        ? 'Approved (Click to Unapprove)'
-                        : 'Pending (Click to Approve)'
-                    }
-                    onClick={(e) => {
-                      e.preventDefault();
-                      showApprovalConfirm();
-                    }}
+                    title={approvalBadgeTitle}
+                    onClick={handleApprovalBadgeClick}
                   >
                     <i
                       className={`${
@@ -451,15 +467,8 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
                                 : 'bg-color-warning-opacity color-warning'
                             }`}
                             href='#'
-                            title={
-                              isEventApproved()
-                                ? 'Approved (Click to Unapprove)'
-                                : 'Pending (Click to Approve)'
-                            }
-                            onClick={(e) => {
-                              e.preventDefault();
-                              showApprovalConfirm();
-                            }}
+                            title={approvalBadgeTitle}
+                            onClick={handleApprovalBadgeClick}
                           >
                             <i
                               className={`${
@@ -537,22 +546,24 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
 
               <div className='content '>
                 <div>
-                  <div className='add-to-card-button mb--15'>
-                    <div
-                      className='rbt-btn btn-gradient icon-hover w-100 d-block text-center'
-                      onClick={() => handleClickBtn()}
-                    >
-                      <span className='btn-text'>Apply Now</span>
-                      <span className='btn-icon'>
-                        <i className='feather-arrow-right'></i>
-                      </span>
+                  {!isEventOwner() && (
+                    <div className='add-to-card-button mb--15'>
+                      <div
+                        className='rbt-btn btn-gradient icon-hover w-100 d-flex align-items-center justify-content-center text-center'
+                        onClick={() => handleClickBtn()}
+                      >
+                        <span className='btn-text'>Apply Now</span>
+                        <span className='btn-icon'>
+                          <i className='feather-arrow-right'></i>
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {(state.group === 'alumni' || state.group === 'student') && (
                     <div className='add-to-card-button mb--15'>
                       <div
-                        className='rbt-btn btn-border  icon-hover w-100 d-block text-center'
+                        className='rbt-btn btn-border icon-hover w-100 d-flex align-items-center justify-content-center text-center'
                         onClick={AddToCalendarButton}
                       >
                         <span className='btn-text'>Add to Calendar</span>
@@ -565,25 +576,29 @@ const EventDetailsMain = ({ getMatchEvent, id }) => {
 
                   {isOwnerOrAdmin() && (
                     <div className='event-actions mb--15'>
-                      <button
-                        className={`rbt-btn icon-hover event-btn ${
-                          isEventApproved() ? 'btn-border' : 'btn-gradient'
-                        }`}
-                        onClick={showApprovalConfirm}
-                      >
-                        <span className='btn-text'>
-                          {isEventApproved() ? 'Unapprove Event' : 'Approve Event'}
-                        </span>
-                        <span className='btn-icon'>
-                          <i
-                            className={
-                              isEventApproved()
-                                ? 'feather-x-circle text-danger'
-                                : 'feather-check-circle text-success'
-                            }
-                          ></i>
-                        </span>
-                      </button>
+                      {isAdminUser() && (
+                        <button
+                          className={`rbt-btn icon-hover event-btn ${
+                            isEventApproved() ? 'btn-border' : 'btn-gradient'
+                          }`}
+                          onClick={showApprovalConfirm}
+                        >
+                          <span className='btn-text'>
+                            {isEventApproved()
+                              ? 'Unapprove Event'
+                              : 'Approve Event'}
+                          </span>
+                          <span className='btn-icon'>
+                            <i
+                              className={
+                                isEventApproved()
+                                  ? 'feather-x-circle text-danger'
+                                  : 'feather-check-circle text-success'
+                              }
+                            ></i>
+                          </span>
+                        </button>
+                      )}
 
                       <button
                         className='rbt-btn btn-gradient icon-hover event-btn'

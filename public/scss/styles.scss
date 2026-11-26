@@ -293,6 +293,7 @@ body {
     background: var(--color-primary) !important;
     border: 2px solid var(--color-primary) !important;
     color: white;
+    line-height: 36px;
   }
 
   .rbt-btn.btn-border:hover {
@@ -1009,6 +1010,7 @@ select {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   padding: 6px 10px; /* smaller height */
   font-size: 12px; /* smaller text */
   font-weight: 500;
@@ -1052,6 +1054,18 @@ select {
 @media (max-width: 1200px) {
   .event-actions {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 990px) {
+  .event-actions .event-btn {
+    padding: 8px 12px;
+    min-height: 40px;
+    font-size: 13px;
+  }
+
+  .event-actions .btn-border {
+    color: var(--color-white);
   }
 }
 
@@ -1855,6 +1869,7 @@ select {
       var(--color-btn-1)
     ) !important;
     height: 40px;
+    line-height: 40px;
 
     color: var(--color-white);
     font-size: 14px;
