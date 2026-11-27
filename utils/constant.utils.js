@@ -7,12 +7,12 @@ export const menus = {
       label: "Chapter",
       key: "chapter",
       children: [
-        { label: "Coimbatore Chapter", href: "/coimbatore-chapter" },
+        { label: "Asia Pacific Chapter", href: "/asia-pacific-chapter" },
         { label: "Bangalore Chapter", href: "/bangalore-chapter" },
         { label: "Chennai Chapter", href: "/chennai-chapter" },
-        { label: "Gulf Chapter", href: "/gulf-chapter" },
+        { label: "Coimbatore Chapter", href: "/coimbatore-chapter" },
         { label: "Global Alumni Connect", href: "/global-alumni-connect" },
-        
+        { label: "Gulf Chapter", href: "/gulf-chapter" },
       ],
     },
     { label: "Alumni Awards", href: "/alumni-awards" },
